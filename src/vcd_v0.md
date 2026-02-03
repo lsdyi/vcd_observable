@@ -1,15 +1,16 @@
 ---
-title: Visualizing conditional distributions
+title: Visualizing conditional distributions(Close Loop)
 ---
 
-<h1>Visualizing conditional distributions</h1>
-<title>Visualizing conditional distributions</title>
+<h1>Visualizing conditional distributions(Close Loop)</h1>
+<title>Visualizing conditional distributions(Close Loop)</title>
 
 <mark>Process</mark>
+
 - load dataset
 - select model <mark>use **possion regression** to make the process first</mark>
 - select conditional data
-- plot predictive distribution 
+- plot predictive distribution
 - plot observed data dist
 - plot selected data dist
 - data generating process
@@ -19,10 +20,13 @@ title: Visualizing conditional distributions
 We use [credit card dataset](https://www.kaggle.com/datasets/dansbecker/aer-credit-card-data/data)
 
 ```js
-const creditCard = FileAttachment('./data/AER_credit_card_data.csv').csv({typed: true});
+const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
+  typed: true,
+});
 ```
+
 ```js
-Inputs.table(creditCard)
+Inputs.table(creditCard);
 ```
 
 <h2>Select Model</h2>
@@ -42,41 +46,23 @@ Use possion regression to make the process first.
 The strike through above is because these two covariates are not numerical. We'll consider this later.</mark>
 
 ## Select Conditioning Data
+
 ```js
 // cant use dataset right now, its async
-const ebay = FileAttachment('./data/ebay.csv').csv({typed: true}); 
+const ebay = await FileAttachment("./data/ebay.csv").csv({ typed: true });
 
 // active ~ age + income + expenditure + owner + selfemp + dependents + months"
-import ml_pois_reg from "./components/possionReg.js";
-const data = creditCard.map(item => {
-  return {
-    y: item.active,
-    x: item.income
-  }
-})
-const param = ml_pois_reg(data)
-display(param)
-display(data)
+// display(ebay);
 ```
+
 ```js
-Inputs.table(ebay)
-const data = ebay.map(item => {
-  return {
-    y: item.NBidders,
-    x: item.ReservePriceFrac
-  }
-})
-const param = ml_pois_reg(data)
-display(param)
-```
-```js
-import 'imports-loader?this=>window!glm';
-// import * as glm from "glm"
-// const glm = _glm_.default
-// display(glm)
-// var glm_model = glm.GLM(glm.GLM.families.Gaussian());
-// var feature_vectors = [[1], [2]];
-// var target_values = [3, 4];
-// glm_model.fit(target_values, feature_vectors);
-// console.log(glm_model.predict([10, 100]));  // == 12, 102
+import { webR, regressionBy } from "./components/r.js";
+await webR.objs.globalEnv.bind("df_raw", creditCard);
+
+const output = await regressionBy(`poisson`)
+const output2 = await regressionBy(`gaussian`)
+
+display(output.values[0].values)
+display(output2.values[0].values)
+
 ```
