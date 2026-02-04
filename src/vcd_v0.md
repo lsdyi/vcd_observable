@@ -26,43 +26,116 @@ const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
 ```
 
 ```js
-Inputs.table(creditCard);
+display(Inputs.table(creditCard));
 ```
 
 <h2>Select Model</h2>
-
 Use a dropdown menu to select generalized linear model to fit the dataset.
 
-<select name="cars" id="cars">
-  <option value="volvo">Linear Regression (Gaussian)</option>
-  <option value="saab">Logistic Regression (Binomial + Logit)</option>
-  <option value="mercedes">Poisson Regression (Poisson + Log)</option>
-  <option value="audi">Negative Binomial Regression</option>
-</select>
+```js
+// state block must be ahead of component block cuz useState here is async
+import { useOption } from "./components/hook/useOption.js";
+import { modelList } from "./components/modelList.js";
+
+const [option, setOption] = await useOption(modelList[4].family);
+```
+
+```jsx
+// UI component
+const Dropdown = () => {
+  return (
+    <select
+      name="model-selection"
+      defaultValue={option}
+      onChange={(e) => setOption(e.target.value)}
+    >
+      {modelList.map((item) => {
+        const { family } = item;
+        return <option value={family}>{family}</option>;
+      })}
+    </select>
+  );
+};
+display(<Dropdown />);
+```
 
 <mark>
-Use possion regression to make the process first. 
+Use possion regression to make the process first.
 "active ~ age + income + expenditure ~~+ owner + selfemp +~~ dependents + months"
 The strike through above is because these two covariates are not numerical. We'll consider this later.</mark>
 
-## Select Conditioning Data
+## Model Parameter Estimation
 
 ```js
-// cant use dataset right now, its async
-const ebay = await FileAttachment("./data/ebay.csv").csv({ typed: true });
+import { webR, regressionBy, getSummary } from "./components/r.js";
+await webR.objs.globalEnv.bind("df_raw", creditCard);
 
-// active ~ age + income + expenditure + owner + selfemp + dependents + months"
-// display(ebay);
+const output = await regressionBy(option);
+display(output.values[0].values);
 ```
 
 ```js
-import { webR, regressionBy } from "./components/r.js";
-await webR.objs.globalEnv.bind("df_raw", creditCard);
+const clicks = view(Inputs.button("Switch Summary"));
+```
 
-const output = await regressionBy(`poisson`)
-const output2 = await regressionBy(`gaussian`)
+```js
+const summary = await getSummary();
+if (clicks % 2 !== 0) {
+  display(summary);
+} else {
+  display(html`<div></div>`);
+}
+```
 
-display(output.values[0].values)
-display(output2.values[0].values)
+## Check Model Adequacy
 
+### Select Conditioning Data
+
+```js
+const getRanges = (arr) => {
+  if (!arr.length) return {};
+
+  return arr.reduce((acc, obj) => {
+    Object.keys(obj).forEach(key => {
+      const val = obj[key];
+
+      if (typeof val === 'number') {
+        // Initialize or update numeric min/max
+        if (!acc[key]) {
+          acc[key] = { min: val, max: val };
+        } else {
+          acc[key].min = Math.min(acc[key].min, val);
+          acc[key].max = Math.max(acc[key].max, val);
+        }
+      } else {
+        // Handle strings/categories using a Set for unique values
+        if (!acc[key]) acc[key] = new Set();
+        acc[key].add(val);
+      }
+    });
+    return acc;
+  }, {});
+};
+
+const ranges = getRanges(creditCard);
+
+// Formatting the output for readability
+const formMap = {}
+Object.keys(ranges).forEach(key => {
+  const result = ranges[key];
+  if (result instanceof Set) {
+    // @todo: countable variable
+  } else {
+    const {min, max} = result
+    formMap[key] = Inputs.range([min, max], {value: (min + max)/2, step: 1, label: key})
+  }
+});
+
+const conditionPoint = view(
+  Inputs.form(formMap)
+)
+```
+```js
+display(conditionPoint)
+display(ranges)
 ```

@@ -6,7 +6,7 @@ await webR.init();
 const regressionBy = async (family) => {
   await webR.evalR(`
   df <- as.data.frame(df_raw)
-  model <- glm(active ~ age + income + expenditure + owner + selfemp + dependents + months, family = ${family}, data = df)
+  model <- glm(active ~ age + income + expenditure + dependents + months, family = ${family}, data = df)
   summary_stats <- summary(model)
 `);
 
@@ -17,4 +17,12 @@ const regressionBy = async (family) => {
   return output;
 };
 
-export { webR, regressionBy };
+const getSummary = async () => {
+  const result = await webR.evalR(
+    'paste(capture.output(summary_stats), collapse = "\n")',
+  );
+  const text = await result.toArray();
+  return text[0];
+};
+
+export { webR, regressionBy, getSummary };
