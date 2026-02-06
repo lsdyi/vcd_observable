@@ -158,7 +158,7 @@ display(<Demo />);
 ```
 
 ```js
-pdfplot;
+display(pdfplot)
 ```
 
 ```js
