@@ -1,12 +1,16 @@
 import { WebR } from "webr";
 
+import { modelConfig } from "./modelConfig.js";
+
 const webR = new WebR();
 await webR.init();
 
 const regressionBy = async (family) => {
+  const { continousCovariates, response } = modelConfig;
+  const modelStr = `${response} ~ ${continousCovariates.join(" + ")}`;
   await webR.evalR(`
   df <- as.data.frame(df_raw)
-  model <- glm(active ~ age + income + expenditure + dependents + months, family = ${family}, data = df)
+  model <- glm(${modelStr}, family = ${family}, data = df)
   summary_stats <- summary(model)
 `);
 

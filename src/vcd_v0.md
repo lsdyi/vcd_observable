@@ -3,6 +3,19 @@ title: Visualizing conditional distributions(Close Loop)
 toc: false
 ---
 
+```js
+import _ from "lodash";
+import jStat from "jstat";
+import { multiply, transpose } from "mathjs";
+
+import { useOption } from "./components/hook/useOption.js";
+import { modelList } from "./components/modelList.js";
+import { getRanges } from "./components/getRanges.js";
+import { modelConfig } from "./components/modelConfig.js";
+import { normWeights } from "./components/normWeights.js";
+import { getCombinations } from "./components/getCombinations.js";
+```
+
 <h1>Visualizing conditional distributions(Close Loop)</h1>
 <title>Visualizing conditional distributions(Close Loop)</title>
 
@@ -34,10 +47,6 @@ display(Inputs.table(creditCard));
 Use a dropdown menu to select generalized linear model to fit the dataset.
 
 ```js
-// state block must be ahead of component block cuz useState here is async
-import { useOption } from "./components/hook/useOption.js";
-import { modelList } from "./components/modelList.js";
-
 const [option, setOption] = await useOption(modelList[4].family);
 ```
 
@@ -60,23 +69,100 @@ const Dropdown = () => {
 display(<Dropdown />);
 ```
 
-<mark>
-Use possion regression to make the process first.
-"active ~ age + income + expenditure ~~+ owner + selfemp +~~ dependents + months"
-The strike through above is because these two covariates are not numerical. We'll consider this later.</mark>
-
 ## Model Parameter Estimation
 
 ```js
+// @todo: this import cant be lifted up?
 import { webR, regressionBy, getSummary } from "./components/r.js";
 await webR.objs.globalEnv.bind("df_raw", creditCard);
 
 const output = await regressionBy(option);
-display(output.values[0].values);
+const params = output.values[0].values;
+const { dist } = modelList.find((item) => item.family === option);
+const mean = multiply(transpose([1, ...conPointAr]), params);
+
+const xGrid = d3.range(1, 40, 0.1);
+
+const coordinates = xGrid.map((item) => {
+  if (option === `gaussian(link = "identity")`) {
+    return {
+      x: item,
+      y: dist.pdf(item, mean, 1),
+    };
+  } else if (option === `poisson(link = "log")`) {
+    return {
+      x: item,
+      y: dist.pdf(item, Math.exp(mean)),
+    };
+  }
+});
+
+const pdfplot = Plot.plot({
+  // title: md`Local histogram and conditional distribution fit<br>E(bleaching | x) = ${meanbleaching.toFixed(3)}<br>Pr(No bleaching | x) = ${probZeroModel.toFixed(3)}`,
+  title: "pdf",
+  color: {
+    domain: [d3.min(xGrid), d3.max(xGrid)],
+    scheme: "blues",
+    label: "Closeness in time to selected time period",
+    legend: false,
+  },
+
+  marks: [
+    Plot.ruleX([0]),
+    Plot.ruleY([0]),
+    Plot.rectY(
+      data_with_weights.map((item, index) => ({
+        ...item,
+        active: creditCard[index].active,
+      })),
+      Plot.binX(
+        {
+          y: (bindata, bin) => {
+            return d3.sum(bindata.map((d) => d.weight)) / (bin.x2 - bin.x1);
+          },
+        },
+        { x: "active", thresholds: 50, fill: "orange" },
+      ),
+    ),
+    Plot.line(coordinates, { x: "x", y: "y", stroke: "blue", strokeWidth: 2 }),
+  ],
+});
+```
+
+```jsx
+const Demo = () => {
+  return (
+    <div>
+      <table class="border-collapse border border-gray-400 ...">
+        <thead>
+          <tr>
+            <th class="border border-gray-300 ...">param</th>
+            <th class="border border-gray-300 ...">estimate</th>
+          </tr>
+        </thead>
+        <tbody>
+          {["Intercept", ...keys].map((item, index) => {
+            return (
+              <tr>
+                <td class="border border-gray-300 ...">{`${item} beta_${index}`}</td>
+                <td class="border border-gray-300 ...">{params[index]}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+display(<Demo />);
 ```
 
 ```js
-const clicks = view(Inputs.button("Switch Summary"));
+pdfplot;
+```
+
+```js
+const clicks = view(Inputs.button("Switch Model Summary"));
 ```
 
 ```js
@@ -93,36 +179,12 @@ if (clicks % 2 !== 0) {
 ### Select Conditioning Data
 
 ```js
-const getRanges = (arr) => {
-  if (!arr.length) return {};
-
-  return arr.reduce((acc, obj) => {
-    Object.keys(obj).forEach((key) => {
-      const val = obj[key];
-
-      if (typeof val === "number") {
-        // Initialize or update numeric min/max
-        if (!acc[key]) {
-          acc[key] = { min: val, max: val };
-        } else {
-          acc[key].min = Math.min(acc[key].min, val);
-          acc[key].max = Math.max(acc[key].max, val);
-        }
-      } else {
-        // Handle strings/categories using a Set for unique values
-        if (!acc[key]) acc[key] = new Set();
-        acc[key].add(val);
-      }
-    });
-    return acc;
-  }, {});
-};
-
 const ranges = getRanges(creditCard);
 
 // Formatting the output for readability
 const formMap = {};
-Object.keys(ranges).forEach((key) => {
+const { continousCovariates } = modelConfig;
+continousCovariates.forEach((key) => {
   const result = ranges[key];
   if (result instanceof Set) {
     // @todo: countable variable
@@ -144,19 +206,35 @@ display(conditionPoint);
 display(ranges);
 ```
 
-```js
-import { normWeights } from "./components/normWeights.js";
-import jStat from "jstat";
-import _ from "lodash";
+### Select Kernal Weight
 
-const keys = Object.keys(conditionPoint);
+To give every data point a weight.
+
+```js
+const kernal = view(
+  Inputs.range([0, 100], {
+    value: 10,
+    step: 0.1,
+    label: "kernal weight",
+  }),
+);
+```
+
+```js
+const keys = continousCovariates;
 const conPointAr = Object.values(conditionPoint);
 
 const temp = keys.map((key) => creditCard.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
 
 const data = creditCard.map((item) => _.pick(item, keys));
-const unnormalizedweights = normWeights(data, conPointAr, stdevs);
+const unnormalizedweights = normWeights(
+  data,
+  conPointAr,
+  stdevs,
+  undefined,
+  kernal,
+);
 const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
 const weights = unnormalizedweights.map((d) => ({
   id: d.id,
@@ -167,8 +245,6 @@ display(data);
 ```
 
 ```js
-import { getCombinations } from "./components/getCombinations.js";
-
 const weighteddata = "Yes";
 const data_with_weights = data.map((d, index) => ({
   ...d,
@@ -184,6 +260,7 @@ const distance_type = "euclidean";
 
 const dim = 2;
 const axisAr = getCombinations(keys, dim);
+
 const sactterAr = axisAr.map((item) => {
   const [key1, key2] = item;
   return Plot.plot({
