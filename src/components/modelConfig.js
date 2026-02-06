@@ -1,2 +1,34 @@
-
-export const keys = ['reports', 'age', 'income', 'share', 'expenditure', 'dependents', 'months', 'majorcards', 'active']
+export const modelConfig = {
+  variables: [
+    "card",
+    "reports",
+    "age",
+    "income",
+    "share",
+    "expenditure",
+    "owner",
+    "selfemp",
+    "dependents",
+    "months",
+    "majorcards",
+    "active",
+  ],
+  covariates: [
+    "card",
+    "reports",
+    "age",
+    "income",
+    "share",
+    "expenditure",
+    "owner",
+    "selfemp",
+    "dependents",
+    "months",
+    "majorcards",
+  ],
+  continousCovariates: [],
+  discreteCovariate: [],
+  nomial: [],
+  ordinal: [],
+  response: "active",
+};

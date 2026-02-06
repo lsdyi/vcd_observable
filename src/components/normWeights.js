@@ -1,7 +1,6 @@
 import kd from "kd-tree-javascript";
 
 function distance(x, xlocal, stdev, power) {
-  console.log("dsadas", x, xlocal, stdev, power);
   let dist = 0;
   if (power == Infinity) {
     let dist = -Infinity;
@@ -27,7 +26,6 @@ function find_k_nearest(data, xlocal, stdev, power, k_nearest) {
     keys.map((key, index) => [key, xlocal[index]]),
   );
   var nearest = tree.nearest(conData, k_nearest);
-  console.log('3231', keys)
   return nearest;
 }
 
@@ -59,7 +57,6 @@ export const normWeights = (
       k_nearest,
     );
     const ids = k_nearest_neighbors.map((d) => d[0].id);
-    console.log("1111", ids);
     return data.map((d, index) => ({
       id: index,
       w: ids.includes(d.id) ? 1 : 0,
