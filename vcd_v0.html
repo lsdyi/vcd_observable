@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.3">
+<title>Visualizing conditional distributions(Close Loop) | VCD Project</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="preload" as="style" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="modulepreload" href="./_observablehq/client.146648d5.js">
+<link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
+<link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
+<link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
+<link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
+<link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
+<link rel="modulepreload" href="./_import/components/hook/useOption.a983f875.js">
+<link rel="modulepreload" href="./_import/components/modelList.98b739ae.js">
+<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
+<link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
+<link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
+<link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
+<link rel="modulepreload" href="./_npm/react@19.2.4/jsx-runtime.017fae8d.js">
+<link rel="modulepreload" href="./_import/components/r.6233bc48.js">
+<link rel="modulepreload" href="./_npm/d3@7.9.0/e324157d.js">
+<link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
+<link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/7c43807f.js">
+<link rel="modulepreload" href="./_npm/react-dom@19.2.4/client.066853a3.js">
+<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_node/webr@0.5.8/index.d12ac113.js">
+<link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
+<link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
+<link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
+<link rel="modulepreload" href="./_node/decimal.js@10.6.0/index.7033d8a1.js">
+<link rel="modulepreload" href="./_node/complex.js@2.4.3/index.4529d832.js">
+<link rel="modulepreload" href="./_node/fraction.js@5.3.4/index.0a55e83c.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/defineProperty.57a30997.js">
+<link rel="modulepreload" href="./_node/javascript-natural-sort@0.7.1/index.5392e267.js">
+<link rel="modulepreload" href="./_node/escape-latex@1.2.0/index.8adbe58e.js">
+<link rel="modulepreload" href="./_node/seedrandom@3.0.5/index.d180388a.js">
+<link rel="modulepreload" href="./_node/tiny-emitter@2.1.0/index.82df77ed.js">
+<link rel="modulepreload" href="./_npm/d3-array@3.2.4/e93ca09f.js">
+<link rel="modulepreload" href="./_npm/d3-axis@3.0.0/0f2de24d.js">
+<link rel="modulepreload" href="./_npm/d3-brush@3.0.0/65eb105b.js">
+<link rel="modulepreload" href="./_npm/d3-chord@3.0.1/7ef8fb2e.js">
+<link rel="modulepreload" href="./_npm/d3-color@3.1.0/aeb57b94.js">
+<link rel="modulepreload" href="./_npm/d3-contour@4.0.2/1d2aed74.js">
+<link rel="modulepreload" href="./_npm/d3-delaunay@6.0.4/5ced1d52.js">
+<link rel="modulepreload" href="./_npm/d3-dispatch@3.0.1/9ba9c7f3.js">
+<link rel="modulepreload" href="./_npm/d3-drag@3.0.0/4202580c.js">
+<link rel="modulepreload" href="./_npm/d3-ease@3.0.1/cdd7e898.js">
+<link rel="modulepreload" href="./_npm/d3-fetch@3.0.1/b4e2ad9a.js">
+<link rel="modulepreload" href="./_npm/d3-force@3.0.0/5e804d15.js">
+<link rel="modulepreload" href="./_npm/d3-format@3.1.2/3785bf2d.js">
+<link rel="modulepreload" href="./_npm/d3-geo@3.1.1/40599fb3.js">
+<link rel="modulepreload" href="./_npm/d3-hierarchy@3.1.2/e49e792c.js">
+<link rel="modulepreload" href="./_npm/d3-interpolate@3.0.1/8d1e5425.js">
+<link rel="modulepreload" href="./_npm/d3-path@3.1.0/20d3f133.js">
+<link rel="modulepreload" href="./_npm/d3-polygon@3.0.1/7553081f.js">
+<link rel="modulepreload" href="./_npm/d3-quadtree@3.0.1/0dfd751c.js">
+<link rel="modulepreload" href="./_npm/d3-random@3.0.1/3c90ee06.js">
+<link rel="modulepreload" href="./_npm/d3-scale@4.0.2/720b7f0a.js">
+<link rel="modulepreload" href="./_npm/d3-scale-chromatic@3.1.0/ba24c2e7.js">
+<link rel="modulepreload" href="./_npm/d3-selection@3.0.0/4d94e5b7.js">
+<link rel="modulepreload" href="./_npm/d3-shape@3.2.0/6d3a6726.js">
+<link rel="modulepreload" href="./_npm/d3-time@3.1.0/9f03c579.js">
+<link rel="modulepreload" href="./_npm/d3-time-format@4.1.0/07c9626f.js">
+<link rel="modulepreload" href="./_npm/d3-timer@3.0.1/b58a267d.js">
+<link rel="modulepreload" href="./_npm/d3-transition@3.0.1/004da2ac.js">
+<link rel="modulepreload" href="./_npm/d3-zoom@3.0.0/b5786b3f.js">
+<link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/53fe8176.js">
+<link rel="modulepreload" href="./_npm/scheduler@0.27.0/d391a6bb.js">
+<link rel="modulepreload" href="./_npm/react@19.2.4/29be9e5f.js">
+<link rel="modulepreload" href="./_npm/react-dom@19.2.4/39718d6b.js">
+<link rel="modulepreload" href="./_npm/internmap@2.0.3/e08981d9.js">
+<link rel="modulepreload" href="./_npm/delaunator@5.0.1/02d43215.js">
+<link rel="modulepreload" href="./_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
+<link rel="modulepreload" href="./_npm/robust-predicates@3.0.2/aa00730b.js">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
+<script type="module">
+
+import {define} from "./_observablehq/client.146648d5.js";
+import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
+
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770494057519,"size":73250});
+
+define({id: "065ae52c", outputs: ["_","jStat","multiply","transpose","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js")]);
+
+
+return {_,jStat,multiply,transpose,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations};
+}});
+
+define({id: "3e3650fd", inputs: ["FileAttachment"], outputs: ["creditCard"], body: (FileAttachment) => {
+const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
+  typed: true,
+});
+return {creditCard};
+}});
+
+define({id: "9573c418", inputs: ["display","Inputs","creditCard"], body: (display,Inputs,creditCard) => {
+display(Inputs.table(creditCard));
+}});
+
+define({id: "03a432db", inputs: ["useOption","modelList"], outputs: ["option","setOption"], body: async (useOption,modelList) => {
+const [option, setOption] = await useOption(modelList[4].family);
+return {option,setOption};
+}});
+
+define({id: "3c68cac7", mode: "jsx", inputs: ["option","setOption","modelList","display"], outputs: ["jsx","Dropdown"], body: async (option,setOption,modelList,display) => {
+const {jsx} = await import("./_npm/react@19.2.4/jsx-runtime.017fae8d.js");
+const Dropdown = () => {
+  return /* @__PURE__ */ jsx(
+    "select",
+    {
+      name: "model-selection",
+      defaultValue: option,
+      onChange: (e) => setOption(e.target.value),
+      children: modelList.map((item) => {
+        const { family } = item;
+        return /* @__PURE__ */ jsx("option", { value: family, children: family });
+      })
+    }
+  );
+};
+display(/* @__PURE__ */ jsx(Dropdown, {}));
+return {jsx,Dropdown};
+}});
+
+define({id: "84847793", inputs: ["creditCard","option","modelList","multiply","transpose","conPointAr","d3","Plot","data_with_weights"], outputs: ["webR","regressionBy","getSummary","output","params","dist","mean","xGrid","coordinates","pdfplot"], body: async (creditCard,option,modelList,multiply,transpose,conPointAr,d3,Plot,data_with_weights) => {
+const {webR, regressionBy, getSummary} = await import("./_import/components/r.6233bc48.js");
+// @todo: this import cant be lifted up?
+await webR.objs.globalEnv.bind("df_raw", creditCard);
+
+const output = await regressionBy(option);
+const params = output.values[0].values;
+const { dist } = modelList.find((item) => item.family === option);
+const mean = multiply(transpose([1, ...conPointAr]), params);
+
+const xGrid = d3.range(1, 40, 0.1);
+
+const coordinates = xGrid.map((item) => {
+  if (option === `gaussian(link = "identity")`) {
+    return {
+      x: item,
+      y: dist.pdf(item, mean, 1),
+    };
+  } else if (option === `poisson(link = "log")`) {
+    return {
+      x: item,
+      y: dist.pdf(item, Math.exp(mean)),
+    };
+  }
+});
+
+const pdfplot = Plot.plot({
+  // title: md`Local histogram and conditional distribution fit<br>E(bleaching | x) = ${meanbleaching.toFixed(3)}<br>Pr(No bleaching | x) = ${probZeroModel.toFixed(3)}`,
+  title: "pdf",
+  color: {
+    domain: [d3.min(xGrid), d3.max(xGrid)],
+    scheme: "blues",
+    label: "Closeness in time to selected time period",
+    legend: false,
+  },
+
+  marks: [
+    Plot.ruleX([0]),
+    Plot.ruleY([0]),
+    Plot.rectY(
+      data_with_weights.map((item, index) => ({
+        ...item,
+        active: creditCard[index].active,
+      })),
+      Plot.binX(
+        {
+          y: (bindata, bin) => {
+            return d3.sum(bindata.map((d) => d.weight)) / (bin.x2 - bin.x1);
+          },
+        },
+        { x: "active", thresholds: 50, fill: "orange" },
+      ),
+    ),
+    Plot.line(coordinates, { x: "x", y: "y", stroke: "blue", strokeWidth: 2 }),
+  ],
+});
+return {webR,regressionBy,getSummary,output,params,dist,mean,xGrid,coordinates,pdfplot};
+}});
+
+define({id: "ca4e8a47", mode: "jsx", inputs: ["keys","params","display"], outputs: ["jsx","jsxs","Demo"], body: async (keys,params,display) => {
+const {jsx, jsxs} = await import("./_npm/react@19.2.4/jsx-runtime.017fae8d.js");
+const Demo = () => {
+  return /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("table", { class: "border-collapse border border-gray-400 ...", children: [
+    /* @__PURE__ */ jsx("thead", { children: /* @__PURE__ */ jsxs("tr", { children: [
+      /* @__PURE__ */ jsx("th", { class: "border border-gray-300 ...", children: "param" }),
+      /* @__PURE__ */ jsx("th", { class: "border border-gray-300 ...", children: "estimate" })
+    ] }) }),
+    /* @__PURE__ */ jsx("tbody", { children: ["Intercept", ...keys].map((item, index) => {
+      return /* @__PURE__ */ jsxs("tr", { children: [
+        /* @__PURE__ */ jsx("td", { class: "border border-gray-300 ...", children: `${item} beta_${index}` }),
+        /* @__PURE__ */ jsx("td", { class: "border border-gray-300 ...", children: params[index] })
+      ] });
+    }) })
+  ] }) });
+};
+display(/* @__PURE__ */ jsx(Demo, {}));
+return {jsx,jsxs,Demo};
+}});
+
+define({id: "de2dfaa2", inputs: ["display","pdfplot"], body: (display,pdfplot) => {
+display(pdfplot)
+}});
+
+define({id: "56d0f008", inputs: ["view","Inputs"], outputs: ["clicks"], body: (view,Inputs) => {
+const clicks = view(Inputs.button("Switch Model Summary"));
+return {clicks};
+}});
+
+define({id: "ca24a8b4", inputs: ["getSummary","clicks","display","html"], outputs: ["summary"], body: async (getSummary,clicks,display,html) => {
+const summary = await getSummary();
+if (clicks % 2 !== 0) {
+  display(summary);
+} else {
+  display(html`<div></div>`);
+}
+return {summary};
+}});
+
+define({id: "64a41663", inputs: ["getRanges","creditCard","modelConfig","Inputs","view"], outputs: ["ranges","formMap","continousCovariates","conditionPoint"], body: (getRanges,creditCard,modelConfig,Inputs,view) => {
+const ranges = getRanges(creditCard);
+
+// Formatting the output for readability
+const formMap = {};
+const { continousCovariates } = modelConfig;
+continousCovariates.forEach((key) => {
+  const result = ranges[key];
+  if (result instanceof Set) {
+    // @todo: countable variable
+  } else {
+    const { min, max } = result;
+    formMap[key] = Inputs.range([min, max], {
+      value: (min + max) / 2,
+      step: 1,
+      label: key,
+    });
+  }
+});
+
+const conditionPoint = view(Inputs.form(formMap));
+return {ranges,formMap,continousCovariates,conditionPoint};
+}});
+
+define({id: "0d01064f", inputs: ["display","conditionPoint","ranges"], body: (display,conditionPoint,ranges) => {
+display(conditionPoint);
+display(ranges);
+}});
+
+define({id: "b0aa9609", inputs: ["view","Inputs"], outputs: ["kernal"], body: (view,Inputs) => {
+const kernal = view(
+  Inputs.range([0, 100], {
+    value: 10,
+    step: 0.1,
+    label: "kernal weight",
+  }),
+);
+return {kernal};
+}});
+
+define({id: "3ae633d3", inputs: ["continousCovariates","conditionPoint","creditCard","jStat","_","normWeights","kernal","d3","display"], outputs: ["keys","conPointAr","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights"], body: (continousCovariates,conditionPoint,creditCard,jStat,_,normWeights,kernal,d3,display) => {
+const keys = continousCovariates;
+const conPointAr = Object.values(conditionPoint);
+
+const temp = keys.map((key) => creditCard.map((item) => item[key]));
+const stdevs = temp.map((item) => jStat.stdev(item));
+
+const data = creditCard.map((item) => _.pick(item, keys));
+const unnormalizedweights = normWeights(
+  data,
+  conPointAr,
+  stdevs,
+  undefined,
+  kernal,
+);
+const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
+const weights = unnormalizedweights.map((d) => ({
+  id: d.id,
+  w: d.w / totalunnormalizedweight,
+}));
+display(weights);
+display(data);
+return {keys,conPointAr,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights};
+}});
+
+define({id: "83967f15", inputs: ["data","weights","display","getCombinations","keys","Plot","conditionPoint"], outputs: ["weighteddata","data_with_weights","distance_type","dim","axisAr","sactterAr"], body: (data,weights,display,getCombinations,keys,Plot,conditionPoint) => {
+const weighteddata = "Yes";
+const data_with_weights = data.map((d, index) => ({
+  ...d,
+  weight:
+    weighteddata == "Yes"
+      ? weights.find((item) => item.id === index).w
+      : 1 / data.length,
+}));
+
+display(data_with_weights);
+
+const distance_type = "euclidean";
+
+const dim = 2;
+const axisAr = getCombinations(keys, dim);
+
+const sactterAr = axisAr.map((item) => {
+  const [key1, key2] = item;
+  return Plot.plot({
+    color: {
+      scheme: "blues",
+      transform: (f) => Math.sqrt(f),
+    },
+    title: `${key1} vs ${key2}`,
+    marks: [
+      Plot.dot(data_with_weights, {
+        filter: (d) => distance_type == "euclidean",
+        x: key1,
+        y: key2,
+        fill: "weight",
+        sort: "weight",
+      }),
+      // Plot.dot(data_with_weights, {
+      //   filter: (d) => (distance_type == "k-nearest") & (d.weight == 0),
+      //   x: "heatstress",
+      //   y: "cloudfree",
+      //   fill: "#E8E8E8",
+      //   sort: "weight",
+      // }),
+      // Plot.dot(data_with_weights, {
+      //   filter: (d) => (distance_type == "k-nearest") & (d.weight > 0),
+      //   x: "heatstress",
+      //   y: "cloudfree",
+      //   fill: "#0047AB",
+      //   sort: "weight",
+      // }),
+
+      // conditional data point with orange color
+      Plot.dot(
+        [
+          {
+            [key1]: conditionPoint[key1],
+            [key2]: conditionPoint[key2],
+          },
+        ],
+        {
+          x: key1,
+          y: key2,
+          fill: "orange",
+          r: 5,
+        },
+      ),
+      // Plot.tip(
+      //   data_with_weights,
+      //   Plot.pointer({
+      //     x: "heatstress",
+      //     y: "cloudfree",
+      //     title: (d) =>
+      //       [
+      //         "bleaching = ",
+      //         d.reports.toFixed(1),
+      //         ", depth = ",
+      //         d.age.toFixed(1),
+      //         ", weight = ",
+      //         d.income.toFixed(3),
+      //       ].join(""),
+      //   }),
+      // ),
+    ],
+  });
+});
+return {weighteddata,data_with_weights,distance_type,dim,axisAr,sactterAr};
+}});
+
+define({id: "b736fed8", mode: "inline", inputs: ["sactterAr","display"], body: async (sactterAr,display) => {
+display(await(
+sactterAr.map(scatter => {
+    return scatter
+  })
+))
+}});
+
+</script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="./">VCD Project</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="./pca">PCA example</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<main id="observablehq-main" class="observablehq">
+<div class="observablehq observablehq--block"><!--:065ae52c:--></div>
+<h1>Visualizing conditional distributions(Close Loop)</h1>
+<title>Visualizing conditional distributions(Close Loop)</title>
+<p><mark>Process</mark></p>
+<ul>
+<li>load dataset</li>
+<li>select model <mark>use <strong>possion regression</strong> to make the process first</mark></li>
+<li>select conditional data</li>
+<li>plot predictive distribution</li>
+<li>plot observed data dist</li>
+<li>plot selected data dist</li>
+<li>data generating process</li>
+</ul>
+<h2>Load Dataset</h2>
+<p>We use <a href="https://www.kaggle.com/datasets/dansbecker/aer-credit-card-data/data" target="_blank" rel="noopener noreferrer">credit card dataset</a></p>
+<div class="observablehq observablehq--block"><!--:3e3650fd:--></div>
+<div class="observablehq observablehq--block"><!--:9573c418:--></div>
+<h2>Select Model</h2>
+Use a dropdown menu to select generalized linear model to fit the dataset.
+<div class="observablehq observablehq--block"><!--:03a432db:--></div>
+<div class="observablehq observablehq--block"><!--:3c68cac7:--></div>
+<h2 id="model-parameter-estimation" tabindex="-1"><a class="observablehq-header-anchor" href="#model-parameter-estimation">Model Parameter Estimation</a></h2>
+<div class="observablehq observablehq--block"><!--:84847793:--></div>
+<div class="observablehq observablehq--block"><!--:ca4e8a47:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:de2dfaa2:--></div>
+<div class="observablehq observablehq--block"><!--:56d0f008:--></div>
+<div class="observablehq observablehq--block"><!--:ca24a8b4:--></div>
+<h2 id="check-model-adequacy" tabindex="-1"><a class="observablehq-header-anchor" href="#check-model-adequacy">Check Model Adequacy</a></h2>
+<h3 id="select-conditioning-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditioning-data">Select Conditioning Data</a></h3>
+<div class="observablehq observablehq--block"><!--:64a41663:--></div>
+<div class="observablehq observablehq--block"><!--:0d01064f:--></div>
+<h3 id="select-kernal-weight" tabindex="-1"><a class="observablehq-header-anchor" href="#select-kernal-weight">Select Kernal Weight</a></h3>
+<p>To give every data point a weight.</p>
+<div class="observablehq observablehq--block"><!--:b0aa9609:--></div>
+<div class="observablehq observablehq--block"><!--:3ae633d3:--></div>
+<div class="observablehq observablehq--block"><!--:83967f15:--></div>
+<div class="grid grid-cols-4">
+  <observablehq-loading></observablehq-loading><!--:b736fed8:-->
+</div>
+</main>
+<footer id="observablehq-footer">
+<nav><a rel="prev" href="./pca"><span>PCA example</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-07T19:54:29">Feb 7, 2026</a>.</div>
+</footer>
+</div>
+</body>
+</html>

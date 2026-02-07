@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.3">
+<title>PCA example | VCD Project</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="preload" as="style" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="modulepreload" href="./_observablehq/client.146648d5.js">
+<link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
+<link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
+<link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
+<link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
+<link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
+<link rel="modulepreload" href="./_import/components/hook/useOption.a983f875.js">
+<link rel="modulepreload" href="./_import/components/modelList.98b739ae.js">
+<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
+<link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
+<link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
+<link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
+<link rel="modulepreload" href="./_import/components/r.6233bc48.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.ede0b902.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
+<link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/7c43807f.js">
+<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_node/webr@0.5.8/index.d12ac113.js">
+<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.3.1/index.2e2a1aa9.js">
+<link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
+<link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
+<link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
+<link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
+<link rel="modulepreload" href="./_node/decimal.js@10.6.0/index.7033d8a1.js">
+<link rel="modulepreload" href="./_node/complex.js@2.4.3/index.4529d832.js">
+<link rel="modulepreload" href="./_node/fraction.js@5.3.4/index.0a55e83c.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/defineProperty.57a30997.js">
+<link rel="modulepreload" href="./_node/javascript-natural-sort@0.7.1/index.5392e267.js">
+<link rel="modulepreload" href="./_node/escape-latex@1.2.0/index.8adbe58e.js">
+<link rel="modulepreload" href="./_node/seedrandom@3.0.5/index.d180388a.js">
+<link rel="modulepreload" href="./_node/tiny-emitter@2.1.0/index.82df77ed.js">
+<link rel="modulepreload" href="./_npm/d3@7.9.0/e324157d.js">
+<link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/53fe8176.js">
+<link rel="modulepreload" href="./_npm/d3-array@3.2.4/e93ca09f.js">
+<link rel="modulepreload" href="./_npm/d3-axis@3.0.0/0f2de24d.js">
+<link rel="modulepreload" href="./_npm/d3-brush@3.0.0/65eb105b.js">
+<link rel="modulepreload" href="./_npm/d3-chord@3.0.1/7ef8fb2e.js">
+<link rel="modulepreload" href="./_npm/d3-color@3.1.0/aeb57b94.js">
+<link rel="modulepreload" href="./_npm/d3-contour@4.0.2/1d2aed74.js">
+<link rel="modulepreload" href="./_npm/d3-delaunay@6.0.4/5ced1d52.js">
+<link rel="modulepreload" href="./_npm/d3-dispatch@3.0.1/9ba9c7f3.js">
+<link rel="modulepreload" href="./_npm/d3-drag@3.0.0/4202580c.js">
+<link rel="modulepreload" href="./_npm/d3-ease@3.0.1/cdd7e898.js">
+<link rel="modulepreload" href="./_npm/d3-fetch@3.0.1/b4e2ad9a.js">
+<link rel="modulepreload" href="./_npm/d3-force@3.0.0/5e804d15.js">
+<link rel="modulepreload" href="./_npm/d3-format@3.1.2/3785bf2d.js">
+<link rel="modulepreload" href="./_npm/d3-geo@3.1.1/40599fb3.js">
+<link rel="modulepreload" href="./_npm/d3-hierarchy@3.1.2/e49e792c.js">
+<link rel="modulepreload" href="./_npm/d3-interpolate@3.0.1/8d1e5425.js">
+<link rel="modulepreload" href="./_npm/d3-path@3.1.0/20d3f133.js">
+<link rel="modulepreload" href="./_npm/d3-polygon@3.0.1/7553081f.js">
+<link rel="modulepreload" href="./_npm/d3-quadtree@3.0.1/0dfd751c.js">
+<link rel="modulepreload" href="./_npm/d3-random@3.0.1/3c90ee06.js">
+<link rel="modulepreload" href="./_npm/d3-scale@4.0.2/720b7f0a.js">
+<link rel="modulepreload" href="./_npm/d3-scale-chromatic@3.1.0/ba24c2e7.js">
+<link rel="modulepreload" href="./_npm/d3-selection@3.0.0/4d94e5b7.js">
+<link rel="modulepreload" href="./_npm/d3-shape@3.2.0/6d3a6726.js">
+<link rel="modulepreload" href="./_npm/d3-time@3.1.0/9f03c579.js">
+<link rel="modulepreload" href="./_npm/d3-time-format@4.1.0/07c9626f.js">
+<link rel="modulepreload" href="./_npm/d3-timer@3.0.1/b58a267d.js">
+<link rel="modulepreload" href="./_npm/d3-transition@3.0.1/004da2ac.js">
+<link rel="modulepreload" href="./_npm/d3-zoom@3.0.0/b5786b3f.js">
+<link rel="modulepreload" href="./_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
+<link rel="modulepreload" href="./_npm/internmap@2.0.3/e08981d9.js">
+<link rel="modulepreload" href="./_npm/delaunator@5.0.1/02d43215.js">
+<link rel="modulepreload" href="./_npm/robust-predicates@3.0.2/aa00730b.js">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
+<script type="module">
+
+import {define} from "./_observablehq/client.146648d5.js";
+import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
+
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770494057519,"size":73250});
+
+define({id: "a1a07fec", outputs: ["_","jStat","multiply","transpose","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","webR","regressionBy","getSummary","calculatePCA","scatterPlot3d","demo"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {webR, regressionBy, getSummary, calculatePCA}, {scatterPlot3d, demo}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/r.6233bc48.js"), import("./_import/components/scatterPlot3d.ede0b902.js")]);
+
+
+return {_,jStat,multiply,transpose,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations,webR,regressionBy,getSummary,calculatePCA,scatterPlot3d,demo};
+}});
+
+define({id: "3e3650fd", inputs: ["FileAttachment"], outputs: ["creditCard"], body: (FileAttachment) => {
+const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
+  typed: true,
+});
+return {creditCard};
+}});
+
+define({id: "aab73093", inputs: ["modelConfig","creditCard","_","webR","calculatePCA","display","Plot"], outputs: ["continousCovariates","continousCov","temp","temp2","result","output","pcaSummaryProxy","pcaSummaryText","pcaXProxy","pcaXText","pcaData","pcaPlot2d"], body: async (modelConfig,creditCard,_,webR,calculatePCA,display,Plot) => {
+const { continousCovariates } = modelConfig;
+const continousCov = creditCard.map((item) => {
+  return _.pick(item, continousCovariates);
+});
+await webR.objs.globalEnv.bind("creditCard", continousCov);
+const temp = await webR.evalR(`
+    data <- as.data.frame(creditCard)
+    data_pca <- prcomp(data, center = TRUE, scale. = TRUE)
+    summary_stats <- summary(data_pca)
+`);
+const temp2 = await temp.toJs()
+console.log(temp2["x"])
+// Extracting coefficients specifically
+const result = await webR.evalR("summary_stats");
+const output = await calculatePCA(continousCov);
+display(output);
+
+const pcaSummaryProxy = await webR.evalR(
+  'paste(capture.output(summary_stats), collapse = "\n")',
+);
+const pcaSummaryText = (await pcaSummaryProxy.toArray())[0];
+
+const pcaXProxy = await webR.evalR(
+  'paste(capture.output(head(summary_stats$x)), collapse = "\n")',
+);
+const pcaXText = (await pcaXProxy.toArray())[0];
+
+// Transform R output to D3-friendly format
+const pcaData = output.values[0].values.map((val, i) => ({
+  pc1: val,
+  pc2: output.values[1].values[i],
+  pc3: output.values[2].values[i],
+  label:
+    creditCard.map((item) => {
+      return _.pick(item, continousCovariates);
+    })[i].label || i, // Optional label
+}));
+
+const pcaPlot2d = Plot.plot({
+  marginTop: 30,
+  x: { nice: true, label: null, tickFormat: "" },
+  y: { axis: null },
+  marks: [
+    Plot.dot(pcaData, {
+      x: "pc1",
+      y: "pc2",
+      z: "pc3",
+    }),
+    Plot.ruleX([0]),
+    Plot.ruleY([0]),
+    Plot.text(pcaData, {
+      x: "pc1",
+      y: "pc2",
+      text: "name",
+      lineAnchor: "bottom",
+      dy: -10,
+      lineWidth: 10,
+      fontSize: 12,
+    }),
+  ],
+});
+return {continousCovariates,continousCov,temp,temp2,result,output,pcaSummaryProxy,pcaSummaryText,pcaXProxy,pcaXText,pcaData,pcaPlot2d};
+}});
+
+define({id: "9573c418", inputs: ["display","Inputs","creditCard"], body: (display,Inputs,creditCard) => {
+display(Inputs.table(creditCard));
+}});
+
+define({id: "7379cf19", inputs: ["display","Inputs","continousCov"], body: (display,Inputs,continousCov) => {
+display(Inputs.table(continousCov));
+}});
+
+define({id: "0bd75bab", inputs: ["display","pcaSummaryText"], body: (display,pcaSummaryText) => {
+display(pcaSummaryText);
+}});
+
+define({id: "4fe6ed35", inputs: ["display","pcaXText"], body: (display,pcaXText) => {
+display(pcaXText);
+}});
+
+define({id: "70d56781", inputs: ["display","pcaPlot2d"], body: (display,pcaPlot2d) => {
+display(pcaPlot2d);
+}});
+
+define({id: "ab04222f", inputs: ["scatterPlot3d","pcaData","display"], outputs: ["container"], body: (scatterPlot3d,pcaData,display) => {
+const container = scatterPlot3d(pcaData, ["pc1", "pc2", "pc3"]);
+display(container);
+return {container};
+}});
+
+</script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="./">VCD Project</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link observablehq-link-active"><a href="./pca">PCA example</a></li>
+    <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<main id="observablehq-main" class="observablehq">
+<div class="observablehq observablehq--block"><!--:a1a07fec:--></div>
+<div class="observablehq observablehq--block"><!--:3e3650fd:--></div>
+<div class="observablehq observablehq--block"><!--:aab73093:--></div>
+<h1>PCA example</h1>
+<title>PCA example</title>
+<h2>Dataset</h2>
+<p>
+Use creditCard dataset, the dataset is shown as follows.
+</p>
+<div class="observablehq observablehq--block"><!--:9573c418:--></div>
+<p>Do PCA to numeric continous covariates. The covariates and data are as follows.</p>
+<div class="observablehq observablehq--block"><!--:7379cf19:--></div>
+<h2>PCA Result</h2>
+<h3>Excecute R codes, get the pca summary</h3>
+<div class="observablehq observablehq--block"><!--:0bd75bab:--></div>
+<h3>Excecute R codes, get all the principle components</h3>
+<div class="observablehq observablehq--block"><!--:4fe6ed35:--></div>
+<h3>PCA Conclusion</h3>
+<p>Every observation in PCA components corresposes to one observation in processed dataset. According to pca model summary, the first 2 components covers <mark>46.6%</mark> coverage of data i.e. PC1 and PC2. The first 3 components covers <mark>60.28%</mark> of data i.e PC1, PC2 and PC3.</p>
+<h3>Scatterplot of PC1 and PC2</h3>
+<div class="observablehq observablehq--block"><!--:70d56781:--></div>
+<h2>PCA Result with 3 Principle Components</h2>
+<div class="observablehq observablehq--block"><!--:ab04222f:--></div>
+</main>
+<footer id="observablehq-footer">
+<nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./vcd_v0"><span>Visualizing conditional distributions(Close Loop)</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-07T19:54:29">Feb 7, 2026</a>.</div>
+</footer>
+</div>
+</body>
+</html>
