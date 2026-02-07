@@ -1,5 +1,5 @@
 ---
-title: PCA
+title: PCA example
 toc: false
 ---
 
@@ -93,8 +93,8 @@ const pcaPlot2d = Plot.plot({
 });
 ```
 
-<h1>PCA</h1>
-<title>PCA</title>
+<h1>PCA example</h1>
+<title>PCA example</title>
 <h2>Dataset</h2>
 <p>
 Use creditCard dataset, the dataset is shown as follows.

@@ -28,9 +28,9 @@ jobs:
           # This fix ensures GH Pages doesn't ignore your assets
           touch dist/.nojekyll
 
-      - name: Deploy to docs/auto_dish
+      - name: Deploy to docs/building_output
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist           # The folder created by npm run build
-          branch: docs/auto_dish  # The branch where dist content will live
+          branch: docs/building_output  # The branch where dist content will live
           clean: true             # Ensures old files in the branch are removed
