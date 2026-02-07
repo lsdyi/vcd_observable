@@ -6,7 +6,7 @@ function unpack(rows, key) {
   });
 }
 
-export const scatterPlot3d = (data, keys = ["x", "y", "z"]) => {
+export const scatterPlot3d = (data, keys = ["x", "y", "z"], cordinate = []) => {
   const trace = [
     {
       x: unpack(data, keys[0]),
@@ -17,6 +17,18 @@ export const scatterPlot3d = (data, keys = ["x", "y", "z"]) => {
       marker: {
         size: 5,
         color: "rgb(23, 190, 207)",
+        opacity: 0.8,
+      },
+    },
+    {
+      x: [cordinate[0]],
+      y: [cordinate[1]],
+      z: [cordinate[2]],
+      mode: "markers",
+      type: "scatter3d",
+      marker: {
+        size: 5,
+        color: "red",
         opacity: 0.8,
       },
     },
@@ -36,4 +48,3 @@ export const scatterPlot3d = (data, keys = ["x", "y", "z"]) => {
   Plotly.newPlot(container, trace, layout);
   return container;
 };
-
