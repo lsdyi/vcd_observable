@@ -131,7 +131,7 @@ display(pcaXText);
 display(pcaPlot2d);
 ```
 
-<h2>PCA Result with 3 Principle Components</h2>
+<h3>Scatterplot of PC1, PC2 and PC3</h3>
 
 ```js
 const container = scatterPlot3d(pcaData, ["pc1", "pc2", "pc3"]);
