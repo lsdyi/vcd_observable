@@ -85,7 +85,7 @@
 import {define} from "./_observablehq/client.146648d5.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770494057519,"size":73250});
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770495756874,"size":73250});
 
 define({id: "a1a07fec", outputs: ["_","jStat","multiply","transpose","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","webR","regressionBy","getSummary","calculatePCA","scatterPlot3d","demo"], body: async () => {
 const [{default: _}, {default: jStat}, {multiply, transpose}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {webR, regressionBy, getSummary, calculatePCA}, {scatterPlot3d, demo}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/r.6233bc48.js"), import("./_import/components/scatterPlot3d.ede0b902.js")]);
@@ -101,7 +101,7 @@ const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
 return {creditCard};
 }});
 
-define({id: "aab73093", inputs: ["modelConfig","creditCard","_","webR","calculatePCA","display","Plot"], outputs: ["continousCovariates","continousCov","temp","temp2","result","output","pcaSummaryProxy","pcaSummaryText","pcaXProxy","pcaXText","pcaData","pcaPlot2d"], body: async (modelConfig,creditCard,_,webR,calculatePCA,display,Plot) => {
+define({id: "b2cdcf33", inputs: ["modelConfig","creditCard","_","webR","calculatePCA","Plot"], outputs: ["continousCovariates","continousCov","temp","temp2","result","output","pcaSummaryProxy","pcaSummaryText","pcaXProxy","pcaXText","pcaData","pcaPlot2d"], body: async (modelConfig,creditCard,_,webR,calculatePCA,Plot) => {
 const { continousCovariates } = modelConfig;
 const continousCov = creditCard.map((item) => {
   return _.pick(item, continousCovariates);
@@ -117,7 +117,6 @@ console.log(temp2["x"])
 // Extracting coefficients specifically
 const result = await webR.evalR("summary_stats");
 const output = await calculatePCA(continousCov);
-display(output);
 
 const pcaSummaryProxy = await webR.evalR(
   'paste(capture.output(summary_stats), collapse = "\n")',
@@ -212,7 +211,7 @@ return {container};
 <main id="observablehq-main" class="observablehq">
 <div class="observablehq observablehq--block"><!--:a1a07fec:--></div>
 <div class="observablehq observablehq--block"><!--:3e3650fd:--></div>
-<div class="observablehq observablehq--block"><!--:aab73093:--></div>
+<div class="observablehq observablehq--block"><!--:b2cdcf33:--></div>
 <h1>PCA example</h1>
 <title>PCA example</title>
 <h2>Dataset</h2>
@@ -231,12 +230,12 @@ Use creditCard dataset, the dataset is shown as follows.
 <p>Every observation in PCA components corresposes to one observation in processed dataset. According to pca model summary, the first 2 components covers <mark>46.6%</mark> coverage of data i.e. PC1 and PC2. The first 3 components covers <mark>60.28%</mark> of data i.e PC1, PC2 and PC3.</p>
 <h3>Scatterplot of PC1 and PC2</h3>
 <div class="observablehq observablehq--block"><!--:70d56781:--></div>
-<h2>PCA Result with 3 Principle Components</h2>
+<h3>Scatterplot of PC1, PC2 and PC3</h3>
 <div class="observablehq observablehq--block"><!--:ab04222f:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./vcd_v0"><span>Visualizing conditional distributions(Close Loop)</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-07T19:54:29">Feb 7, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-07T20:22:50">Feb 7, 2026</a>.</div>
 </footer>
 </div>
 </body>
