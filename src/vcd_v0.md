@@ -130,7 +130,7 @@ const pdfplot = Plot.plot({
 ```
 
 ```jsx
-const Demo = () => {
+const ShowEstimate = () => {
   return (
     <div>
       <table class="border-collapse border border-gray-400 ...">
@@ -154,7 +154,7 @@ const Demo = () => {
     </div>
   );
 };
-display(<Demo />);
+display(<ShowEstimate />);
 ```
 
 ```js
