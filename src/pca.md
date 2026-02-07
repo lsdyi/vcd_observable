@@ -45,7 +45,6 @@ console.log(temp2["x"])
 // Extracting coefficients specifically
 const result = await webR.evalR("summary_stats");
 const output = await calculatePCA(continousCov);
-display(output);
 
 const pcaSummaryProxy = await webR.evalR(
   'paste(capture.output(summary_stats), collapse = "\n")',

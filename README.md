@@ -1,6 +1,7 @@
 # 📊 VCD Observable Project
 
-This is an [Observable Framework](https://observablehq.com/framework/) (ob_fw) app.
+This is an [Observable Framework](https://observablehq.com/framework/) (ob_fw) app. The public application is available at:  
+👉 https://lsdyi.github.io/vcd_observable/
 
 ## 🚀 Getting Started
 
