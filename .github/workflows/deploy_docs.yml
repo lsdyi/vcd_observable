@@ -25,6 +25,8 @@ jobs:
         run: |
           npm install
           npm run build
+          # This fix ensures GH Pages doesn't ignore your assets
+          touch dist/.nojekyll
 
       - name: Deploy to docs/auto_dish
         uses: JamesIves/github-pages-deploy-action@v4
