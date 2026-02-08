@@ -15,8 +15,10 @@ import { modelConfig } from "./components/modelConfig.js";
 import { normWeights } from "./components/normWeights.js";
 import { getCombinations } from "./components/getCombinations.js";
 import { webR, regressionBy, getSummary } from "./components/r.js";
+import { matrixData } from "./components/organizeData.js";
+import { getPcaData } from "./components/getPcaData.js";
+import { PcaInputRange } from "./components/UI/PcaInputRange.js";
 import { scatterPlot3d } from "./components/scatterPlot3d.js";
-import { organizeData, matrixData } from "./components/organizeData.js";
 ```
 
 ```js
@@ -31,18 +33,8 @@ const continousCov = creditCard.map((item) => {
   return _.pick(item, continousCovariates);
 });
 await webR.objs.globalEnv.bind("creditCard", continousCov);
-const pcaProxy = await webR.evalR(`
-    data <- as.data.frame(creditCard)
-    data_pca <- prcomp(data, center = TRUE, scale. = TRUE)
-    summary_stats <- summary(data_pca)
-`);
-const pcaProxyObj = await pcaProxy.toJs();
-const pcaData = organizeData(
-  pcaProxyObj.values[4].values,
-  continousCovariates.map((_, index) => {
-    return `pc${index + 1}`;
-  }),
-);
+
+const { pcaData, pcaProxyObj } = await getPcaData();
 
 const pcaSummaryProxy = await webR.evalR(
   'paste(capture.output(summary_stats), collapse = "\n")',
@@ -134,13 +126,7 @@ display(container);
 ### Reconstruct Data from Reduced Space to Original Space
 
 ```js
-const inputRanges = ["pc1", "pc2", "pc3"].map((pcaKey) => {
-  return Inputs.range([0, 100], {
-    value: 0,
-    step: 0.1,
-    label: pcaKey,
-  });
-});
+const inputRanges = PcaInputRange();
 const pcCordinate = view(Inputs.form(inputRanges));
 ```
 
@@ -158,15 +144,15 @@ const reConCor = add(
 );
 ```
 
-Data in the reduced space is 
+Data in the reduced space is
 
 ```js
-display(pcCordinate)
+display(pcCordinate);
 ```
 
 Reconstructed data is
 
 ```js
-display(tex`\hat{X} = Z W^T + \mu`)
-display(reConCor)
+display(tex`\hat{X} = Z W^T + \mu`);
+display(reConCor);
 ```
