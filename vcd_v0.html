@@ -88,7 +88,7 @@
 import {define} from "./_observablehq/client.7cf2dc7d.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770584756111,"size":73250});
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770585010604,"size":73250});
 
 define({id: "065ae52c", outputs: ["_","jStat","multiply","transpose","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations"], body: async () => {
 const [{default: _}, {default: jStat}, {multiply, transpose}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js")]);
@@ -401,7 +401,7 @@ sactterAr.map(scatter => {
   </ol>
   <ol>
     <li class="observablehq-link"><a href="./pca">PCA example</a></li>
-    <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(Close Loop)</a></li>
+    <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
 </nav>
@@ -411,16 +411,6 @@ sactterAr.map(scatter => {
 <div class="observablehq observablehq--block"><!--:065ae52c:--></div>
 <h1>Visualizing conditional distributions(Close Loop)</h1>
 <title>Visualizing conditional distributions(Close Loop)</title>
-<p><mark>Process</mark></p>
-<ul>
-<li>load dataset</li>
-<li>select model <mark>use <strong>possion regression</strong> to make the process first</mark></li>
-<li>select conditional data</li>
-<li>plot predictive distribution</li>
-<li>plot observed data dist</li>
-<li>plot selected data dist</li>
-<li>data generating process</li>
-</ul>
 <h2>Load Dataset</h2>
 <p>We use <a href="https://www.kaggle.com/datasets/dansbecker/aer-credit-card-data/data" target="_blank" rel="noopener noreferrer">credit card dataset</a></p>
 <div class="observablehq observablehq--block"><!--:3e3650fd:--></div>
@@ -449,8 +439,8 @@ Use a dropdown menu to select generalized linear model to fit the dataset.
 </div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="./vcd_pca"><span>Visualizing conditional distributions(Close Loop)</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-08T21:06:07">Feb 8, 2026</a>.</div>
+<nav><a rel="prev" href="./vcd_pca"><span>Visualizing conditional distributions(PCA)</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-08T21:10:23">Feb 8, 2026</a>.</div>
 </footer>
 </div>
 </body>
