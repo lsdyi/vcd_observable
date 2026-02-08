@@ -19,16 +19,6 @@ import { getCombinations } from "./components/getCombinations.js";
 <h1>Visualizing conditional distributions(Close Loop)</h1>
 <title>Visualizing conditional distributions(Close Loop)</title>
 
-<mark>Process</mark>
-
-- load dataset
-- select model <mark>use **possion regression** to make the process first</mark>
-- select conditional data
-- plot predictive distribution
-- plot observed data dist
-- plot selected data dist
-- data generating process
-
 <h2>Load Dataset</h2>
 
 We use [credit card dataset](https://www.kaggle.com/datasets/dansbecker/aer-credit-card-data/data)

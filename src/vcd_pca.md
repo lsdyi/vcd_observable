@@ -1,5 +1,5 @@
 ---
-title: Visualizing conditional distributions(Close Loop)
+title: Visualizing conditional distributions(PCA)
 toc: false
 ---
 
@@ -21,8 +21,8 @@ import { matrixData } from "./components/organizeData.js";
 
 ```
 
-<h1>Visualizing conditional distributions(Close Loop)</h1>
-<title>Visualizing conditional distributions(Close Loop)</title>
+<h1>Visualizing conditional distributions(PCA)</h1>
+<title>Visualizing conditional distributions(PCA)</title>
 
 <h2>Load Dataset</h2>
 
