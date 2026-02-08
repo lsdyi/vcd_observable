@@ -24,6 +24,10 @@
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
+<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.60581762.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.f1071786.js">
+<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
 <link rel="modulepreload" href="./_npm/react@19.2.4/jsx-runtime.017fae8d.js">
 <link rel="modulepreload" href="./_import/components/r.5d0f4917.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/e324157d.js">
@@ -32,6 +36,8 @@
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="./_npm/react-dom@19.2.4/client.066853a3.js">
 <link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
+<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.3.1/index.2e2a1aa9.js">
 <link rel="modulepreload" href="./_node/webr@0.5.8/index.d12ac113.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
@@ -78,6 +84,8 @@
 <link rel="modulepreload" href="./_npm/scheduler@0.27.0/d391a6bb.js">
 <link rel="modulepreload" href="./_npm/react@19.2.4/29be9e5f.js">
 <link rel="modulepreload" href="./_npm/react-dom@19.2.4/39718d6b.js">
+<link rel="modulepreload" href="./_node/htl@0.3.1/index.0caf36e7.js">
+<link rel="modulepreload" href="./_node/isoformat@0.2.1/index.0882e9d9.js">
 <link rel="modulepreload" href="./_npm/internmap@2.0.3/e08981d9.js">
 <link rel="modulepreload" href="./_npm/delaunator@5.0.1/02d43215.js">
 <link rel="modulepreload" href="./_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
@@ -90,11 +98,11 @@ import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
 registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770584756111,"size":73250});
 
-define({id: "065ae52c", outputs: ["_","jStat","multiply","transpose","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js")]);
+define({id: "4c32a04a", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","PcaInputRange","scatterPlot3d","getPcaData","matrixData"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.60581762.js"), import("./_import/components/getPcaData.f1071786.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
 
 
-return {_,jStat,multiply,transpose,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations};
+return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations,PcaInputRange,scatterPlot3d,getPcaData,matrixData};
 }});
 
 define({id: "3e3650fd", inputs: ["FileAttachment"], outputs: ["creditCard"], body: (FileAttachment) => {
@@ -133,15 +141,80 @@ display(/* @__PURE__ */ jsx(Dropdown, {}));
 return {jsx,Dropdown};
 }});
 
-define({id: "84847793", inputs: ["creditCard","option","modelList","multiply","transpose","conPointAr","d3","Plot","data_with_weights"], outputs: ["webR","regressionBy","getSummary","output","params","dist","mean","xGrid","coordinates","pdfplot"], body: async (creditCard,option,modelList,multiply,transpose,conPointAr,d3,Plot,data_with_weights) => {
+define({id: "5fe2a388", mode: "jsx", inputs: ["continousCovariates","params","display"], outputs: ["jsx","jsxs","ShowEstimate"], body: async (continousCovariates,params,display) => {
+const {jsx, jsxs} = await import("./_npm/react@19.2.4/jsx-runtime.017fae8d.js");
+const ShowEstimate = () => {
+  return /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("table", { class: "border-collapse border border-gray-400 ...", children: [
+    /* @__PURE__ */ jsx("thead", { children: /* @__PURE__ */ jsxs("tr", { children: [
+      /* @__PURE__ */ jsx("th", { class: "border border-gray-300 ...", children: "param" }),
+      /* @__PURE__ */ jsx("th", { class: "border border-gray-300 ...", children: "estimate" })
+    ] }) }),
+    /* @__PURE__ */ jsx("tbody", { children: ["Intercept", ...continousCovariates].map((item, index) => {
+      return /* @__PURE__ */ jsxs("tr", { children: [
+        /* @__PURE__ */ jsx("td", { class: "border border-gray-300 ...", children: `${item} beta_${index}` }),
+        /* @__PURE__ */ jsx("td", { class: "border border-gray-300 ...", children: params[index] })
+      ] });
+    }) })
+  ] }) });
+};
+display(/* @__PURE__ */ jsx(ShowEstimate, {}));
+return {jsx,jsxs,ShowEstimate};
+}});
+
+define({id: "05ced95b", inputs: ["display","pdfplot"], body: (display,pdfplot) => {
+display(pdfplot);
+}});
+
+define({id: "56d0f008", inputs: ["view","Inputs"], outputs: ["clicks"], body: (view,Inputs) => {
+const clicks = view(Inputs.button("Switch Model Summary"));
+return {clicks};
+}});
+
+define({id: "ca24a8b4", inputs: ["getSummary","clicks","display","html"], outputs: ["summary"], body: async (getSummary,clicks,display,html) => {
+const summary = await getSummary();
+if (clicks % 2 !== 0) {
+  display(summary);
+} else {
+  display(html`<div></div>`);
+}
+return {summary};
+}});
+
+define({id: "72e55c71", inputs: ["creditCard","modelConfig","_","getPcaData","pcCordinate","matrixData","add","dotMultiply","multiply","transpose","scatterPlot3d","display"], outputs: ["webR","regressionBy","getSummary","continousCovariates","continousCov","pcaData","pcaProxyObj","zCor","rotationMatrix","scaleVec","centerVec","reConCor","container","conditionPoint"], body: async (creditCard,modelConfig,_,getPcaData,pcCordinate,matrixData,add,dotMultiply,multiply,transpose,scatterPlot3d,display) => {
 const {webR, regressionBy, getSummary} = await import("./_import/components/r.5d0f4917.js");
 // @todo: this import cant be lifted up?
 await webR.objs.globalEnv.bind("df_raw", creditCard);
 
+const { continousCovariates } = modelConfig;
+const continousCov = creditCard.map((item) => {
+  return _.pick(item, continousCovariates);
+});
+await webR.objs.globalEnv.bind("creditCard", continousCov);
+
+const { pcaData, pcaProxyObj } = await getPcaData();
+const zCor = continousCovariates.map((_, index) => {
+  return pcCordinate[index] || 0;
+});
+const rotationMatrix = matrixData(pcaProxyObj.values[1].values, 8, 8);
+const scaleVec = pcaProxyObj.values[3].values;
+const centerVec = pcaProxyObj.values[2].values;
+const reConCor = add(
+  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
+  centerVec,
+);
+const container = scatterPlot3d(pcaData, ["pc1", "pc2", "pc3"], pcCordinate);
+display(container);
+const conditionPoint = Object.fromEntries(
+      continousCovariates.map((key, index) => [key, reConCor[index]]),
+    );
+return {webR,regressionBy,getSummary,continousCovariates,continousCov,pcaData,pcaProxyObj,zCor,rotationMatrix,scaleVec,centerVec,reConCor,container,conditionPoint};
+}});
+
+define({id: "1fdb8fbe", inputs: ["regressionBy","option","modelList","multiply","transpose","reConCor","d3","Plot","data_with_weights","creditCard"], outputs: ["output","params","dist","mean","xGrid","coordinates","pdfplot"], body: async (regressionBy,option,modelList,multiply,transpose,reConCor,d3,Plot,data_with_weights,creditCard) => {
 const output = await regressionBy(option);
 const params = output.values[0].values;
 const { dist } = modelList.find((item) => item.family === option);
-const mean = multiply(transpose([1, ...conPointAr]), params);
+const mean = multiply(transpose([1, ...reConCor]), params);
 
 const xGrid = d3.range(1, 40, 0.1);
 
@@ -160,7 +233,6 @@ const coordinates = xGrid.map((item) => {
 });
 
 const pdfplot = Plot.plot({
-  // title: md`Local histogram and conditional distribution fit<br>E(bleaching | x) = ${meanbleaching.toFixed(3)}<br>Pr(No bleaching | x) = ${probZeroModel.toFixed(3)}`,
   title: "pdf",
   color: {
     domain: [d3.min(xGrid), d3.max(xGrid)],
@@ -189,75 +261,17 @@ const pdfplot = Plot.plot({
     Plot.line(coordinates, { x: "x", y: "y", stroke: "blue", strokeWidth: 2 }),
   ],
 });
-return {webR,regressionBy,getSummary,output,params,dist,mean,xGrid,coordinates,pdfplot};
+return {output,params,dist,mean,xGrid,coordinates,pdfplot};
 }});
 
-define({id: "3a7597fc", mode: "jsx", inputs: ["keys","params","display"], outputs: ["jsx","jsxs","ShowEstimate"], body: async (keys,params,display) => {
-const {jsx, jsxs} = await import("./_npm/react@19.2.4/jsx-runtime.017fae8d.js");
-const ShowEstimate = () => {
-  return /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsxs("table", { class: "border-collapse border border-gray-400 ...", children: [
-    /* @__PURE__ */ jsx("thead", { children: /* @__PURE__ */ jsxs("tr", { children: [
-      /* @__PURE__ */ jsx("th", { class: "border border-gray-300 ...", children: "param" }),
-      /* @__PURE__ */ jsx("th", { class: "border border-gray-300 ...", children: "estimate" })
-    ] }) }),
-    /* @__PURE__ */ jsx("tbody", { children: ["Intercept", ...keys].map((item, index) => {
-      return /* @__PURE__ */ jsxs("tr", { children: [
-        /* @__PURE__ */ jsx("td", { class: "border border-gray-300 ...", children: `${item} beta_${index}` }),
-        /* @__PURE__ */ jsx("td", { class: "border border-gray-300 ...", children: params[index] })
-      ] });
-    }) })
-  ] }) });
-};
-display(/* @__PURE__ */ jsx(ShowEstimate, {}));
-return {jsx,jsxs,ShowEstimate};
+define({id: "a3c331af", inputs: ["PcaInputRange","view","Inputs"], outputs: ["inputRanges","pcCordinate"], body: (PcaInputRange,view,Inputs) => {
+const inputRanges = PcaInputRange();
+const pcCordinate = view(Inputs.form(inputRanges));
+return {inputRanges,pcCordinate};
 }});
 
-define({id: "de2dfaa2", inputs: ["display","pdfplot"], body: (display,pdfplot) => {
-display(pdfplot)
-}});
-
-define({id: "56d0f008", inputs: ["view","Inputs"], outputs: ["clicks"], body: (view,Inputs) => {
-const clicks = view(Inputs.button("Switch Model Summary"));
-return {clicks};
-}});
-
-define({id: "ca24a8b4", inputs: ["getSummary","clicks","display","html"], outputs: ["summary"], body: async (getSummary,clicks,display,html) => {
-const summary = await getSummary();
-if (clicks % 2 !== 0) {
-  display(summary);
-} else {
-  display(html`<div></div>`);
-}
-return {summary};
-}});
-
-define({id: "64a41663", inputs: ["getRanges","creditCard","modelConfig","Inputs","view"], outputs: ["ranges","formMap","continousCovariates","conditionPoint"], body: (getRanges,creditCard,modelConfig,Inputs,view) => {
-const ranges = getRanges(creditCard);
-
-// Formatting the output for readability
-const formMap = {};
-const { continousCovariates } = modelConfig;
-continousCovariates.forEach((key) => {
-  const result = ranges[key];
-  if (result instanceof Set) {
-    // @todo: countable variable
-  } else {
-    const { min, max } = result;
-    formMap[key] = Inputs.range([min, max], {
-      value: (min + max) / 2,
-      step: 1,
-      label: key,
-    });
-  }
-});
-
-const conditionPoint = view(Inputs.form(formMap));
-return {ranges,formMap,continousCovariates,conditionPoint};
-}});
-
-define({id: "0d01064f", inputs: ["display","conditionPoint","ranges"], body: (display,conditionPoint,ranges) => {
-display(conditionPoint);
-display(ranges);
+define({id: "3a5868e6", inputs: ["display","reConCor"], body: (display,reConCor) => {
+display(reConCor);
 }});
 
 define({id: "b0aa9609", inputs: ["view","Inputs"], outputs: ["kernal"], body: (view,Inputs) => {
@@ -271,17 +285,14 @@ const kernal = view(
 return {kernal};
 }});
 
-define({id: "3ae633d3", inputs: ["continousCovariates","conditionPoint","creditCard","jStat","_","normWeights","kernal","d3","display"], outputs: ["keys","conPointAr","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights"], body: (continousCovariates,conditionPoint,creditCard,jStat,_,normWeights,kernal,d3,display) => {
-const keys = continousCovariates;
-const conPointAr = Object.values(conditionPoint);
-
-const temp = keys.map((key) => creditCard.map((item) => item[key]));
+define({id: "c6a8be93", inputs: ["continousCovariates","creditCard","jStat","continousCov","normWeights","reConCor","kernal","d3","display"], outputs: ["temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights"], body: (continousCovariates,creditCard,jStat,continousCov,normWeights,reConCor,kernal,d3,display) => {
+const temp = continousCovariates.map((key) => creditCard.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
 
-const data = creditCard.map((item) => _.pick(item, keys));
+const data = continousCov;
 const unnormalizedweights = normWeights(
   data,
-  conPointAr,
+  reConCor,
   stdevs,
   undefined,
   kernal,
@@ -293,10 +304,10 @@ const weights = unnormalizedweights.map((d) => ({
 }));
 display(weights);
 display(data);
-return {keys,conPointAr,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights};
+return {temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights};
 }});
 
-define({id: "83967f15", inputs: ["data","weights","display","getCombinations","keys","Plot","conditionPoint"], outputs: ["weighteddata","data_with_weights","distance_type","dim","axisAr","sactterAr"], body: (data,weights,display,getCombinations,keys,Plot,conditionPoint) => {
+define({id: "db8609cb", inputs: ["data","weights","display","getCombinations","continousCovariates","Plot","conditionPoint"], outputs: ["weighteddata","data_with_weights","distance_type","dim","axisAr","sactterAr"], body: (data,weights,display,getCombinations,continousCovariates,Plot,conditionPoint) => {
 const weighteddata = "Yes";
 const data_with_weights = data.map((d, index) => ({
   ...d,
@@ -311,7 +322,7 @@ display(data_with_weights);
 const distance_type = "euclidean";
 
 const dim = 2;
-const axisAr = getCombinations(keys, dim);
+const axisAr = getCombinations(continousCovariates, dim);
 
 const sactterAr = axisAr.map((item) => {
   const [key1, key2] = item;
@@ -401,26 +412,16 @@ sactterAr.map(scatter => {
   </ol>
   <ol>
     <li class="observablehq-link"><a href="./pca">PCA example</a></li>
-    <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(Close Loop)</a></li>
-    <li class="observablehq-link observablehq-link-active"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./vcd_pca">Visualizing conditional distributions(Close Loop)</a></li>
+    <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:065ae52c:--></div>
+<div class="observablehq observablehq--block"><!--:4c32a04a:--></div>
 <h1>Visualizing conditional distributions(Close Loop)</h1>
 <title>Visualizing conditional distributions(Close Loop)</title>
-<p><mark>Process</mark></p>
-<ul>
-<li>load dataset</li>
-<li>select model <mark>use <strong>possion regression</strong> to make the process first</mark></li>
-<li>select conditional data</li>
-<li>plot predictive distribution</li>
-<li>plot observed data dist</li>
-<li>plot selected data dist</li>
-<li>data generating process</li>
-</ul>
 <h2>Load Dataset</h2>
 <p>We use <a href="https://www.kaggle.com/datasets/dansbecker/aer-credit-card-data/data" target="_blank" rel="noopener noreferrer">credit card dataset</a></p>
 <div class="observablehq observablehq--block"><!--:3e3650fd:--></div>
@@ -430,26 +431,27 @@ Use a dropdown menu to select generalized linear model to fit the dataset.
 <div class="observablehq observablehq--block"><!--:03a432db:--></div>
 <div class="observablehq observablehq--block"><!--:3c68cac7:--></div>
 <h2 id="model-parameter-estimation" tabindex="-1"><a class="observablehq-header-anchor" href="#model-parameter-estimation">Model Parameter Estimation</a></h2>
-<div class="observablehq observablehq--block"><!--:84847793:--></div>
-<div class="observablehq observablehq--block"><!--:3a7597fc:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:de2dfaa2:--></div>
+<div class="observablehq observablehq--block"><!--:5fe2a388:--></div>
+<div class="observablehq observablehq--block"><!--:05ced95b:--></div>
 <div class="observablehq observablehq--block"><!--:56d0f008:--></div>
 <div class="observablehq observablehq--block"><!--:ca24a8b4:--></div>
+<div class="observablehq observablehq--block"><!--:72e55c71:--></div>
+<div class="observablehq observablehq--block"><!--:1fdb8fbe:--></div>
 <h2 id="check-model-adequacy" tabindex="-1"><a class="observablehq-header-anchor" href="#check-model-adequacy">Check Model Adequacy</a></h2>
 <h3 id="select-conditioning-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditioning-data">Select Conditioning Data</a></h3>
-<div class="observablehq observablehq--block"><!--:64a41663:--></div>
-<div class="observablehq observablehq--block"><!--:0d01064f:--></div>
+<div class="observablehq observablehq--block"><!--:a3c331af:--></div>
+<div class="observablehq observablehq--block"><!--:3a5868e6:--></div>
 <h3 id="select-kernal-weight" tabindex="-1"><a class="observablehq-header-anchor" href="#select-kernal-weight">Select Kernal Weight</a></h3>
 <p>To give every data point a weight.</p>
 <div class="observablehq observablehq--block"><!--:b0aa9609:--></div>
-<div class="observablehq observablehq--block"><!--:3ae633d3:--></div>
-<div class="observablehq observablehq--block"><!--:83967f15:--></div>
+<div class="observablehq observablehq--block"><!--:c6a8be93:--></div>
+<div class="observablehq observablehq--block"><!--:db8609cb:--></div>
 <div class="grid grid-cols-4">
   <observablehq-loading></observablehq-loading><!--:b736fed8:-->
 </div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="./vcd_pca"><span>Visualizing conditional distributions(Close Loop)</span></a></nav>
+<nav><a rel="prev" href="./pca"><span>PCA example</span></a><a rel="next" href="./vcd_v0"><span>Visualizing conditional distributions(Close Loop)</span></a></nav>
 <div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-08T21:06:07">Feb 8, 2026</a>.</div>
 </footer>
 </div>

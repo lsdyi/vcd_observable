@@ -27,13 +27,16 @@
 <link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
 <link rel="modulepreload" href="./_import/components/r.5d0f4917.js">
-<link rel="modulepreload" href="./_import/components/scatterPlot3d.60581762.js">
 <link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.f1071786.js">
+<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.60581762.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/7c43807f.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/tex.c79b643a.js">
 <link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
 <link rel="modulepreload" href="./_node/webr@0.5.8/index.d12ac113.js">
+<link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
 <link rel="modulepreload" href="./_node/plotly.js-dist-min@3.3.1/index.2e2a1aa9.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
 <link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
@@ -51,6 +54,8 @@
 <link rel="modulepreload" href="./_node/tiny-emitter@2.1.0/index.82df77ed.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/53fe8176.js">
+<link rel="modulepreload" href="./_node/htl@0.3.1/index.0caf36e7.js">
+<link rel="modulepreload" href="./_node/isoformat@0.2.1/index.0882e9d9.js">
 <link rel="modulepreload" href="./_npm/d3-array@3.2.4/e93ca09f.js">
 <link rel="modulepreload" href="./_npm/d3-axis@3.0.0/0f2de24d.js">
 <link rel="modulepreload" href="./_npm/d3-brush@3.0.0/65eb105b.js">
@@ -90,13 +95,13 @@
 import {define} from "./_observablehq/client.7cf2dc7d.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770508340802,"size":73250});
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1770584756111,"size":73250});
 
-define({id: "0d25bf11", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","webR","regressionBy","getSummary","scatterPlot3d","organizeData","matrixData"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {webR, regressionBy, getSummary}, {scatterPlot3d}, {organizeData, matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/r.5d0f4917.js"), import("./_import/components/scatterPlot3d.60581762.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
+define({id: "51a18025", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","webR","regressionBy","getSummary","matrixData","getPcaData","PcaInputRange","scatterPlot3d"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {webR, regressionBy, getSummary}, {matrixData}, {getPcaData}, {PcaInputRange}, {scatterPlot3d}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/r.5d0f4917.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_import/components/getPcaData.f1071786.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.60581762.js")]);
 
 
-return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations,webR,regressionBy,getSummary,scatterPlot3d,organizeData,matrixData};
+return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations,webR,regressionBy,getSummary,matrixData,getPcaData,PcaInputRange,scatterPlot3d};
 }});
 
 define({id: "3e3650fd", inputs: ["FileAttachment"], outputs: ["creditCard"], body: (FileAttachment) => {
@@ -106,24 +111,14 @@ const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
 return {creditCard};
 }});
 
-define({id: "2e341845", inputs: ["modelConfig","creditCard","_","webR","organizeData","Plot"], outputs: ["continousCovariates","continousCov","pcaProxy","pcaProxyObj","pcaData","pcaSummaryProxy","pcaSummaryText","pcaXProxy","pcaXText","pcaPlot2d"], body: async (modelConfig,creditCard,_,webR,organizeData,Plot) => {
+define({id: "c2001c16", inputs: ["modelConfig","creditCard","_","webR","getPcaData","Plot"], outputs: ["continousCovariates","continousCov","pcaData","pcaProxyObj","pcaSummaryProxy","pcaSummaryText","pcaXProxy","pcaXText","pcaPlot2d"], body: async (modelConfig,creditCard,_,webR,getPcaData,Plot) => {
 const { continousCovariates } = modelConfig;
 const continousCov = creditCard.map((item) => {
   return _.pick(item, continousCovariates);
 });
 await webR.objs.globalEnv.bind("creditCard", continousCov);
-const pcaProxy = await webR.evalR(`
-    data <- as.data.frame(creditCard)
-    data_pca <- prcomp(data, center = TRUE, scale. = TRUE)
-    summary_stats <- summary(data_pca)
-`);
-const pcaProxyObj = await pcaProxy.toJs();
-const pcaData = organizeData(
-  pcaProxyObj.values[4].values,
-  continousCovariates.map((_, index) => {
-    return `pc${index + 1}`;
-  }),
-);
+
+const { pcaData, pcaProxyObj } = await getPcaData();
 
 const pcaSummaryProxy = await webR.evalR(
   'paste(capture.output(summary_stats), collapse = "\n")',
@@ -158,7 +153,7 @@ const pcaPlot2d = Plot.plot({
     }),
   ],
 });
-return {continousCovariates,continousCov,pcaProxy,pcaProxyObj,pcaData,pcaSummaryProxy,pcaSummaryText,pcaXProxy,pcaXText,pcaPlot2d};
+return {continousCovariates,continousCov,pcaData,pcaProxyObj,pcaSummaryProxy,pcaSummaryText,pcaXProxy,pcaXText,pcaPlot2d};
 }});
 
 define({id: "9573c418", inputs: ["display","Inputs","creditCard"], body: (display,Inputs,creditCard) => {
@@ -187,14 +182,8 @@ display(container);
 return {container};
 }});
 
-define({id: "5d637695", inputs: ["Inputs","view"], outputs: ["inputRanges","pcCordinate"], body: (Inputs,view) => {
-const inputRanges = ["pc1", "pc2", "pc3"].map((pcaKey) => {
-  return Inputs.range([0, 100], {
-    value: 0,
-    step: 0.1,
-    label: pcaKey,
-  });
-});
+define({id: "a3c331af", inputs: ["PcaInputRange","view","Inputs"], outputs: ["inputRanges","pcCordinate"], body: (PcaInputRange,view,Inputs) => {
+const inputRanges = PcaInputRange();
 const pcCordinate = view(Inputs.form(inputRanges));
 return {inputRanges,pcCordinate};
 }});
@@ -214,13 +203,13 @@ const reConCor = add(
 return {zCor,rotationMatrix,scaleVec,centerVec,reConCor};
 }});
 
-define({id: "b2481929", inputs: ["display","pcCordinate"], body: (display,pcCordinate) => {
-display(pcCordinate)
+define({id: "a91f3ff3", inputs: ["display","pcCordinate"], body: (display,pcCordinate) => {
+display(pcCordinate);
 }});
 
-define({id: "6f5ab5d4", inputs: ["display","tex","reConCor"], body: (display,tex,reConCor) => {
-display(tex`\hat{X} = Z W^T + \mu`)
-display(reConCor)
+define({id: "0656c0ca", inputs: ["display","tex","reConCor"], body: (display,tex,reConCor) => {
+display(tex`\hat{X} = Z W^T + \mu`);
+display(reConCor);
 }});
 
 </script>
@@ -235,15 +224,16 @@ display(reConCor)
   </ol>
   <ol>
     <li class="observablehq-link observablehq-link-active"><a href="./pca">PCA example</a></li>
+    <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(Close Loop)</a></li>
     <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:0d25bf11:--></div>
+<div class="observablehq observablehq--block"><!--:51a18025:--></div>
 <div class="observablehq observablehq--block"><!--:3e3650fd:--></div>
-<div class="observablehq observablehq--block"><!--:2e341845:--></div>
+<div class="observablehq observablehq--block"><!--:c2001c16:--></div>
 <h1>PCA example</h1>
 <title>PCA example</title>
 <h2>Dataset</h2>
@@ -279,16 +269,16 @@ Use creditCard dataset, the dataset is shown as follows.
 <h3>Scatterplot of PC1, PC2 and PC3</h3>
 <div class="observablehq observablehq--block"><!--:113b3e74:--></div>
 <h3 id="reconstruct-data-from-reduced-space-to-original-space" tabindex="-1"><a class="observablehq-header-anchor" href="#reconstruct-data-from-reduced-space-to-original-space">Reconstruct Data from Reduced Space to Original Space</a></h3>
-<div class="observablehq observablehq--block"><!--:5d637695:--></div>
+<div class="observablehq observablehq--block"><!--:a3c331af:--></div>
 <div class="observablehq observablehq--block"><!--:93072d29:--></div>
 <p>Data in the reduced space is</p>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:b2481929:--></div>
+<div class="observablehq observablehq--block"><!--:a91f3ff3:--></div>
 <p>Reconstructed data is</p>
-<div class="observablehq observablehq--block"><!--:6f5ab5d4:--></div>
+<div class="observablehq observablehq--block"><!--:0656c0ca:--></div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./vcd_v0"><span>Visualizing conditional distributions(Close Loop)</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-07T23:52:32">Feb 7, 2026</a>.</div>
+<nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./vcd_pca"><span>Visualizing conditional distributions(Close Loop)</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-08T21:06:07">Feb 8, 2026</a>.</div>
 </footer>
 </div>
 </body>
