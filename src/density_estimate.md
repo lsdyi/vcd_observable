@@ -124,7 +124,6 @@ display(output);
 beta estimate 
 ```js
 display(betas);
-display(phi);
 ```
 phi estimate 
 ```js
@@ -228,3 +227,15 @@ const pdfplot = Plot.plot({
   ],
 });
 ```
+
+## Kernel Estimator
+```tex
+\hat f(x)
+=
+\frac{1}{n h_1 h_2 h_3}
+\sum_{i=1}^n
+\prod_{j=1}^3
+\phi\!\left(\frac{x_j - X_{ij}}{h_j}\right)
+```
+
+## Modified Kernel Estimator
