@@ -39,7 +39,7 @@ w_i = K(d_i)/\sum_{x=1}^{n}K(d_i)
 Kernel function ${tex`K(x) : \mathbb{R} \to \mathbb{R}`} will assign larger value to distance close to 0. ${tex`K(x)`} has a parameter ${tex`h`} specifying how values are varied.
 
 ```tex
-K(x) = e^{\frac{x^2}{h}}
+K(x) = e^{-\frac{x^2}{h^2}}
 ```
 
 Plot a weighted histogram, with the binSize height to be sum of weights, corresponded to data points fallen in this bin, divided by binSize. The area of histogram should be 1 which is expected to be compared to density curves.
