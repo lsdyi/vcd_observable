@@ -4,6 +4,7 @@ import { modelConfig } from "./modelConfig.js";
 
 const webR = new WebR();
 await webR.init();
+await webR.installPackages(["betareg"]);
 
 const regressionBy = async (family) => {
   const { continousCovariates, response } = modelConfig;
@@ -29,6 +30,19 @@ const getSummary = async () => {
   return text[0];
 };
 
+const betaRegession = async () => {
+  const rCodes = `
+    library(betareg)
+    fit <- betareg(Y ~ X1 + X2 + X3, link = "logit", data = betaData)
+  `;
 
+  await webR.evalR(rCodes);
 
-export { webR, regressionBy, getSummary };
+  // Extracting coefficients specifically
+  const result = await webR.evalR("as.data.frame(summary(fit)$coefficients)");
+  const output = await result.toJs();
+
+  return output;
+};
+
+export { webR, regressionBy, getSummary, betaRegession };
