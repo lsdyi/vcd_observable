@@ -83,7 +83,7 @@
 import {define} from "./_observablehq/client.b003f77d.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1771980075101,"size":72354});
+registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1771980455624,"size":72354});
 
 define({id: "077f600b", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
@@ -271,9 +271,8 @@ define({id: "1467316e", inputs: ["display","output"], body: (display,output) => 
 display(output);
 }});
 
-define({id: "3e9fa68d", inputs: ["display","betas","phi"], body: (display,betas,phi) => {
+define({id: "63ee9f73", inputs: ["display","betas"], body: (display,betas) => {
 display(betas);
-display(phi);
 }});
 
 define({id: "df0ee308", inputs: ["display","phi"], body: (display,phi) => {
@@ -381,6 +380,17 @@ const pdfplot = Plot.plot({
 return {_,jStat,multiply,transpose,normWeights,betaRegession,webR,conPointAr,keys,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,data_with_weights,output,betas,phi,linearCom,mu,xGrid,coordinates,pdfplot};
 }});
 
+define({id: "87951992", inputs: ["tex","display"], body: async (tex,display) => {
+display(await(
+tex.block`\hat f(x)
+=
+\frac{1}{n h_1 h_2 h_3}
+\sum_{i=1}^n
+\prod_{j=1}^3
+\phi\!\left(\frac{x_j - X_{ij}}{h_j}\right)`
+))
+}});
+
 </script>
 </head>
 <body>
@@ -432,17 +442,20 @@ return {_,jStat,multiply,transpose,normWeights,betaRegession,webR,conPointAr,key
 <p>Use R to do beta regression, there are 5 parameters to be estimated in total. They're as follows.</p>
 <div class="observablehq observablehq--block"><!--:1467316e:--></div>
 <p>beta estimate</p>
-<div class="observablehq observablehq--block"><!--:3e9fa68d:--></div>
+<div class="observablehq observablehq--block"><!--:63ee9f73:--></div>
 <p>phi estimate</p>
 <div class="observablehq observablehq--block"><!--:df0ee308:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:54cee1f8:--></div>
 <p>Conditional point is set to <observablehq-loading></observablehq-loading><!--:c1483183:-->. It should be able to change flexibly.</p>
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
 <div class="observablehq observablehq--block"><!--:0204466d:--></div>
+<h2 id="kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-estimator">Kernel Estimator</a></h2>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:87951992:--></div>
+<h2 id="modified-kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#modified-kernel-estimator">Modified Kernel Estimator</a></h2>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./pca"><span>PCA example</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-25T00:41:25">Feb 25, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-25T00:47:48">Feb 25, 2026</a>.</div>
 </footer>
 </div>
 </body>
