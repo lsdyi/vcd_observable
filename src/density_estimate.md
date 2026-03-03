@@ -13,7 +13,7 @@ This page covers
 
 It's expected to plot a histogram given a conditional datapoint. The hisogram shows conditional distribution.
 
-${tex`(X^{(1)}, X^{(2)}, X^{(1=3)},\dots,X^{(p)})`} is a random vector. A matrix ${tex`\bold{X}`} is a sample from this random vector, with sample size ${tex`N = n`}. Dataset ${tex`\bold{X}`} is minifested as n datapoints in p-dimensional dataspace.
+${tex`(X^{(1)}, X^{(2)}, X^{(1=3)},\dots,X^{(p)})`} is a random vector. A matrix ${tex`\bold{X}`} is a sample from this random vector, with sample size ${tex`N = n`}. Dataset ${tex`\bold{X}`} is manifested as n datapoints in p-dimensional dataspace.
 
 In order to give every datapoint a weight ${tex`w_i`}. Define a kernel function ${tex`K(x)`} to assign weights according to the Mahalanobis distance ${tex`d`} to a condtional datapoint ${tex`c = (c_1, c_2, c_3,...,c_p)`}.
 
@@ -33,7 +33,7 @@ s_j = \operatorname{sd}\!\left(X^{(j)}\right)
 ```
 
 ```tex
-w_i = K(d_i)/\sum_{x=1}^{n}K(d_i)
+w_i = K(d_i)/\sum_{i=1}^{n}K(d_i)
 ```
 
 Kernel function ${tex`K(x) : \mathbb{R} \to \mathbb{R}`} will assign larger value to distance close to 0. ${tex`K(x)`} has a parameter ${tex`h`} specifying how values are varied.

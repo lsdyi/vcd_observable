@@ -4,7 +4,7 @@ import { modelConfig } from "./modelConfig.js";
 
 const webR = new WebR();
 await webR.init();
-await webR.installPackages(["betareg"]);
+await webR.installPackages(["betareg", "MASS"]);
 
 const regressionBy = async (family) => {
   const { continousCovariates, response } = modelConfig;
@@ -45,4 +45,26 @@ const betaRegession = async () => {
   return output;
 };
 
-export { webR, regressionBy, getSummary, betaRegession };
+// negative binomial regression
+const NegRegession = async () => {
+  const rCodes = `
+    library(MASS)
+    fit <- glm.nb(y ~ x1 + x2 + x3, data = poiNegData)
+    summary_stats <- summary(fit)
+  `;
+
+  await webR.evalR(rCodes);
+
+  // Extracting coefficients specifically
+  const result = await webR.evalR(`
+c(
+    coef(fit), # regression coefficients
+    fit$theta # dispersion parameter
+)
+    `);
+  const output = await result.toJs();
+
+  return output;
+};
+
+export { webR, regressionBy, getSummary, betaRegession, NegRegession };
