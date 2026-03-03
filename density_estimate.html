@@ -14,14 +14,14 @@
 <link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
 <link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
 <link rel="stylesheet" type="text/css" href="./_npm/katex@0.16.33/dist/katex.min.css">
-<link rel="modulepreload" href="./_observablehq/client.b003f77d.js">
+<link rel="modulepreload" href="./_observablehq/client.cd7f4e8e.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
 <link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
 <link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
 <link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
-<link rel="modulepreload" href="./_import/components/r.a79a2b4b.js">
+<link rel="modulepreload" href="./_import/components/r.e16afef4.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/7c43807f.js">
@@ -80,10 +80,10 @@
 <link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
 <script type="module">
 
-import {define} from "./_observablehq/client.b003f77d.js";
+import {define} from "./_observablehq/client.cd7f4e8e.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1771980455624,"size":72354});
+registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1772580346547,"size":72354});
 
 define({id: "077f600b", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
@@ -152,9 +152,9 @@ tex.block`s_j = \operatorname{sd}\!\left(X^{(j)}\right)`
 ))
 }});
 
-define({id: "9cfb002a", inputs: ["tex","display"], body: async (tex,display) => {
+define({id: "786f06d7", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
-tex.block`w_i = K(d_i)/\sum_{x=1}^{n}K(d_i)`
+tex.block`w_i = K(d_i)/\sum_{i=1}^{n}K(d_i)`
 ))
 }});
 
@@ -303,7 +303,7 @@ display(pdfplot);
 }});
 
 define({id: "0204466d", inputs: ["betaData","kernal","d3","Plot"], outputs: ["_","jStat","multiply","transpose","normWeights","betaRegession","webR","conPointAr","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","data_with_weights","output","betas","phi","linearCom","mu","xGrid","coordinates","pdfplot"], body: async (betaData,kernal,d3,Plot) => {
-const [{default: _}, {default: jStat}, {multiply, transpose}, {normWeights}, {betaRegession, webR}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.a79a2b4b.js")]);
+const [{default: _}, {default: jStat}, {multiply, transpose}, {normWeights}, {betaRegession, webR}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.e16afef4.js")]);
 
 
 const conPointAr = [0, 1, 2];
@@ -404,6 +404,7 @@ tex.block`\hat f(x)
   <ol>
     <li class="observablehq-link observablehq-link-active"><a href="./density_estimate">Density Estimator</a></li>
     <li class="observablehq-link"><a href="./pca">PCA example</a></li>
+    <li class="observablehq-link"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
     <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
     <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
@@ -420,11 +421,11 @@ tex.block`\hat f(x)
 </ul>
 <h2 id="conditional-histogram" tabindex="-1"><a class="observablehq-header-anchor" href="#conditional-histogram">Conditional Histogram</a></h2>
 <p>It's expected to plot a histogram given a conditional datapoint. The hisogram shows conditional distribution.</p>
-<p><observablehq-loading></observablehq-loading><!--:077f600b:--> is a random vector. A matrix <observablehq-loading></observablehq-loading><!--:5d823891:--> is a sample from this random vector, with sample size <observablehq-loading></observablehq-loading><!--:7d6c26f9:-->. Dataset <observablehq-loading></observablehq-loading><!--:5d823891-1:--> is minifested as n datapoints in p-dimensional dataspace.</p>
+<p><observablehq-loading></observablehq-loading><!--:077f600b:--> is a random vector. A matrix <observablehq-loading></observablehq-loading><!--:5d823891:--> is a sample from this random vector, with sample size <observablehq-loading></observablehq-loading><!--:7d6c26f9:-->. Dataset <observablehq-loading></observablehq-loading><!--:5d823891-1:--> is manifested as n datapoints in p-dimensional dataspace.</p>
 <p>In order to give every datapoint a weight <observablehq-loading></observablehq-loading><!--:9be11d59:-->. Define a kernel function <observablehq-loading></observablehq-loading><!--:8282c8a8:--> to assign weights according to the Mahalanobis distance <observablehq-loading></observablehq-loading><!--:13d535b5:--> to a condtional datapoint <observablehq-loading></observablehq-loading><!--:daba0f3b:-->.</p>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:fd148670:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:0de6212a:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:9cfb002a:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:786f06d7:--></div>
 <p>Kernel function <observablehq-loading></observablehq-loading><!--:07c48bb7:--> will assign larger value to distance close to 0. <observablehq-loading></observablehq-loading><!--:8282c8a8-1:--> has a parameter <observablehq-loading></observablehq-loading><!--:de8b04bb:--> specifying how values are varied.</p>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:e5403b6a:--></div>
 <p>Plot a weighted histogram, with the binSize height to be sum of weights, corresponded to data points fallen in this bin, divided by binSize. The area of histogram should be 1 which is expected to be compared to density curves.</p>
@@ -455,7 +456,7 @@ tex.block`\hat f(x)
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./pca"><span>PCA example</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-02-25T00:47:48">Feb 25, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-03T23:26:00">Mar 3, 2026</a>.</div>
 </footer>
 </div>
 </body>

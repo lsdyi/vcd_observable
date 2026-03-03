@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.3">
+<title>Poisson &amp; Negtive Binomial Regression | VCD Project</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="preload" as="style" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="modulepreload" href="./_observablehq/client.cd7f4e8e.js">
+<link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
+<link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
+<link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
+<link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
+<link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
+<link rel="modulepreload" href="./_import/components/hook/useOption.a983f875.js">
+<link rel="modulepreload" href="./_import/components/modelList.98b739ae.js">
+<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
+<link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
+<link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
+<link rel="modulepreload" href="./_import/components/r.e16afef4.js">
+<link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
+<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.c35c3b8d.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.3f344604.js">
+<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
+<link rel="modulepreload" href="./_npm/d3@7.9.0/e324157d.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
+<link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/7c43807f.js">
+<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_node/webr@0.5.8/index.d12ac113.js">
+<link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
+<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.4.0/index.67ea870e.js">
+<link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
+<link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
+<link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
+<link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
+<link rel="modulepreload" href="./_node/decimal.js@10.6.0/index.7033d8a1.js">
+<link rel="modulepreload" href="./_node/complex.js@2.4.3/index.4529d832.js">
+<link rel="modulepreload" href="./_node/fraction.js@5.3.4/index.0a55e83c.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/defineProperty.57a30997.js">
+<link rel="modulepreload" href="./_node/javascript-natural-sort@0.7.1/index.5392e267.js">
+<link rel="modulepreload" href="./_node/escape-latex@1.2.0/index.8adbe58e.js">
+<link rel="modulepreload" href="./_node/seedrandom@3.0.5/index.d180388a.js">
+<link rel="modulepreload" href="./_node/tiny-emitter@2.1.0/index.82df77ed.js">
+<link rel="modulepreload" href="./_npm/d3-array@3.2.4/e93ca09f.js">
+<link rel="modulepreload" href="./_npm/d3-axis@3.0.0/0f2de24d.js">
+<link rel="modulepreload" href="./_npm/d3-brush@3.0.0/65eb105b.js">
+<link rel="modulepreload" href="./_npm/d3-chord@3.0.1/7ef8fb2e.js">
+<link rel="modulepreload" href="./_npm/d3-color@3.1.0/aeb57b94.js">
+<link rel="modulepreload" href="./_npm/d3-contour@4.0.2/1d2aed74.js">
+<link rel="modulepreload" href="./_npm/d3-delaunay@6.0.4/5ced1d52.js">
+<link rel="modulepreload" href="./_npm/d3-dispatch@3.0.1/9ba9c7f3.js">
+<link rel="modulepreload" href="./_npm/d3-drag@3.0.0/4202580c.js">
+<link rel="modulepreload" href="./_npm/d3-ease@3.0.1/cdd7e898.js">
+<link rel="modulepreload" href="./_npm/d3-fetch@3.0.1/b4e2ad9a.js">
+<link rel="modulepreload" href="./_npm/d3-force@3.0.0/5e804d15.js">
+<link rel="modulepreload" href="./_npm/d3-format@3.1.2/3785bf2d.js">
+<link rel="modulepreload" href="./_npm/d3-geo@3.1.1/40599fb3.js">
+<link rel="modulepreload" href="./_npm/d3-hierarchy@3.1.2/e49e792c.js">
+<link rel="modulepreload" href="./_npm/d3-interpolate@3.0.1/8d1e5425.js">
+<link rel="modulepreload" href="./_npm/d3-path@3.1.0/20d3f133.js">
+<link rel="modulepreload" href="./_npm/d3-polygon@3.0.1/7553081f.js">
+<link rel="modulepreload" href="./_npm/d3-quadtree@3.0.1/0dfd751c.js">
+<link rel="modulepreload" href="./_npm/d3-random@3.0.1/3c90ee06.js">
+<link rel="modulepreload" href="./_npm/d3-scale@4.0.2/720b7f0a.js">
+<link rel="modulepreload" href="./_npm/d3-scale-chromatic@3.1.0/ba24c2e7.js">
+<link rel="modulepreload" href="./_npm/d3-selection@3.0.0/4d94e5b7.js">
+<link rel="modulepreload" href="./_npm/d3-shape@3.2.0/6d3a6726.js">
+<link rel="modulepreload" href="./_npm/d3-time@3.1.0/9f03c579.js">
+<link rel="modulepreload" href="./_npm/d3-time-format@4.1.0/07c9626f.js">
+<link rel="modulepreload" href="./_npm/d3-timer@3.0.1/b58a267d.js">
+<link rel="modulepreload" href="./_npm/d3-transition@3.0.1/004da2ac.js">
+<link rel="modulepreload" href="./_npm/d3-zoom@3.0.0/b5786b3f.js">
+<link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/53fe8176.js">
+<link rel="modulepreload" href="./_node/htl@0.3.1/index.0caf36e7.js">
+<link rel="modulepreload" href="./_node/isoformat@0.2.1/index.0882e9d9.js">
+<link rel="modulepreload" href="./_npm/internmap@2.0.3/e08981d9.js">
+<link rel="modulepreload" href="./_npm/delaunator@5.0.1/02d43215.js">
+<link rel="modulepreload" href="./_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
+<link rel="modulepreload" href="./_npm/robust-predicates@3.0.2/aa00730b.js">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
+<script type="module">
+
+import {define} from "./_observablehq/client.cd7f4e8e.js";
+import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
+
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.a5a9a227.csv","lastModified":1772580346546,"size":30318});
+
+define({id: "a23faf5d", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","NegRegession","webR","getSummary","getCombinations","PcaInputRange","scatterPlot3d","getPcaData","matrixData"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {NegRegession, webR, getSummary}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.e16afef4.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.c35c3b8d.js"), import("./_import/components/getPcaData.3f344604.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
+
+
+return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,NegRegession,webR,getSummary,getCombinations,PcaInputRange,scatterPlot3d,getPcaData,matrixData};
+}});
+
+define({id: "a3fb517b", inputs: ["display","Inputs","poiNegData"], body: (display,Inputs,poiNegData) => {
+display(Inputs.table(poiNegData));
+}});
+
+define({id: "28b797e0", inputs: ["FileAttachment"], outputs: ["poiNegData"], body: (FileAttachment) => {
+const poiNegData = FileAttachment("./data/dgp.csv").csv({
+  typed: true,
+});
+return {poiNegData};
+}});
+
+define({id: "63f89669", inputs: ["view","Inputs","formMap"], outputs: ["conditionPointObj"], body: (view,Inputs,formMap) => {
+const conditionPointObj = view(Inputs.form(formMap));
+return {conditionPointObj};
+}});
+
+define({id: "b736fed8", mode: "inline", inputs: ["sactterAr","display"], body: async (sactterAr,display) => {
+display(await(
+sactterAr.map(scatter => {
+    return scatter
+  })
+))
+}});
+
+define({id: "de2dfaa2", inputs: ["display","pdfplot"], body: (display,pdfplot) => {
+display(pdfplot)
+}});
+
+define({id: "5bf37094", inputs: ["view","Inputs"], outputs: ["kernal"], body: (view,Inputs) => {
+const kernal = view(
+  Inputs.range([0.1, 100], {
+    value: 10,
+    step: 0.1,
+    label: "kernal weight",
+  }),
+);
+return {kernal};
+}});
+
+define({id: "d47fc37a", inputs: ["display","data_with_weights"], body: (display,data_with_weights) => {
+display(data_with_weights);
+}});
+
+define({id: "6815abba", inputs: ["view","Inputs"], outputs: ["model"], body: (view,Inputs) => {
+const model = view(
+  Inputs.select(["Poisson Regression", "Negative Binomial Regression"], {
+    unique: true,
+    label: "Select Model",
+  }),
+);
+return {model};
+}});
+
+define({id: "d454a666", inputs: ["display","summary"], body: (display,summary) => {
+display(summary);
+}});
+
+define({id: "ac6ec9bc", inputs: ["getRanges","poiNegData","Inputs"], outputs: ["keys","formMap","ranges"], body: (getRanges,poiNegData,Inputs) => {
+const keys = ["x1", "x2", "x3"];
+const formMap = {};
+const ranges = getRanges(poiNegData);
+keys.forEach((key) => {
+  const result = ranges[key];
+  if (result instanceof Set) {
+    // @todo: countable variable
+  } else {
+    const { min, max } = result;
+    formMap[key] = Inputs.range([min, max], {
+      value: (min + max) / 2,
+      step: 1,
+      label: key,
+    });
+  }
+});
+return {keys,formMap,ranges};
+}});
+
+define({id: "0495ce98", inputs: ["getCombinations","conditionPointObj","poiNegData","jStat","_","normWeights","kernal","d3","Plot"], outputs: ["dim","keys","axisAr","conditionPoint","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","data_with_weights","sactterAr"], body: (getCombinations,conditionPointObj,poiNegData,jStat,_,normWeights,kernal,d3,Plot) => {
+const dim = 2;
+const keys = ["x1", "x2", "x3"];
+const axisAr = getCombinations(keys, dim);
+const conditionPoint = Object.values(conditionPointObj);
+const temp = keys.map((key) => poiNegData.map((item) => item[key]));
+const stdevs = temp.map((item) => jStat.stdev(item));
+
+const data = poiNegData.map((item) => _.pick(item, keys));
+const unnormalizedweights = normWeights(
+  data,
+  conditionPoint,
+  stdevs,
+  undefined,
+  kernal,
+);
+const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
+const weights = unnormalizedweights.map((d) => ({
+  id: d.id,
+  w: d.w / totalunnormalizedweight,
+}));
+
+const data_with_weights = data.map((d, index) => ({
+  ...d,
+  Y: poiNegData[index].y,
+  regime: poiNegData[index].regime,
+  weight: weights.find((item) => item.id === index).w,
+}));
+
+const sactterAr = axisAr.map((item) => {
+  const [key1, key2] = item;
+  return Plot.plot({
+    color: {
+      scheme: "blues",
+      transform: (f) => Math.sqrt(f),
+    },
+    title: `${key1} vs ${key2}`,
+    marks: [
+      Plot.dot(data_with_weights, {
+        x: key1,
+        y: key2,
+        fill: "weight",
+        sort: "weight",
+      }),
+      // conditional data point with orange color
+      Plot.dot(
+        [
+          {
+            [key1]: conditionPointObj[key1],
+            [key2]: conditionPointObj[key2],
+          },
+        ],
+        {
+          x: key1,
+          y: key2,
+          fill: "orange",
+          r: 5,
+        },
+      ),
+    ],
+  });
+});
+return {dim,keys,axisAr,conditionPoint,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,data_with_weights,sactterAr};
+}});
+
+define({id: "e5987c42", inputs: ["webR","poiNegData","NegRegession","getSummary","multiply","transpose","conditionPoint","d3","jStat","Plot","data_with_weights"], outputs: ["output","estimates","summary","mean","theta","xGrid","coordinates","pdfplot"], body: async (webR,poiNegData,NegRegession,getSummary,multiply,transpose,conditionPoint,d3,jStat,Plot,data_with_weights) => {
+// R regression code
+await webR.objs.globalEnv.bind("poiNegData", poiNegData);
+const output = await NegRegession();
+const estimates = output.values;
+const summary = await getSummary();
+
+const mean = Math.exp(
+  multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 4)),
+);
+const theta = estimates[4];
+
+const xGrid = d3.range(0, 50, 1);
+const coordinates = xGrid.map((item) => {
+  return {
+    x: item,
+    y: jStat.negbin.pdf(item, theta, mean / (mean + theta)) || 0,
+  };
+});
+
+const pdfplot = Plot.plot({
+  title: "pmf",
+  color: {
+    scheme: "blues",
+    label: "Closeness in time to selected time period",
+    legend: false,
+  },
+
+  marks: [
+    Plot.ruleX([0]),
+    Plot.ruleY([0]),
+    Plot.barY(data_with_weights, {
+      x: "Y",
+      y: "weight",
+      fill: "steelblue",
+      opacity: 0.7,
+    }),
+    Plot.line(coordinates, {
+      x: "x",
+      y: "y",
+      stroke: "#F28C28",
+      strokeWidth: 2,
+      marker: "circle",
+    }),
+  ],
+});
+return {output,estimates,summary,mean,theta,xGrid,coordinates,pdfplot};
+}});
+
+</script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="./">VCD Project</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link"><a href="./density_estimate">Density Estimator</a></li>
+    <li class="observablehq-link"><a href="./pca">PCA example</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
+    <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
+    <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<main id="observablehq-main" class="observablehq">
+<div class="observablehq observablehq--block"><!--:a23faf5d:--></div>
+<h1 id="poisson-and-negtive-binomial-regression" tabindex="-1"><a class="observablehq-header-anchor" href="#poisson-and-negtive-binomial-regression">Poisson &amp; Negtive Binomial Regression</a></h1>
+<p>This document firstly fits data using poisson regression. According to lack fit in some data points, change to negtive binomial regression which is expected to have a good fit. The document briefly provides the process of checking model fit or lack fit using visulization method.</p>
+<h2 id="dataset-from-dgp" tabindex="-1"><a class="observablehq-header-anchor" href="#dataset-from-dgp">Dataset from dgp</a></h2>
+<div class="observablehq observablehq--block"><!--:a3fb517b:--></div>
+<div class="observablehq observablehq--block"><!--:28b797e0:--></div>
+<h2 id="select-conditional-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditional-data">Select Conditional Data</a></h2>
+<div class="observablehq observablehq--block"><!--:63f89669:--></div>
+<div class="grid grid-cols-4">
+  <observablehq-loading></observablehq-loading><!--:b736fed8:-->
+</div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:de2dfaa2:--></div>
+<h2 id="weight-datapoint" tabindex="-1"><a class="observablehq-header-anchor" href="#weight-datapoint">Weight Datapoint</a></h2>
+<div class="observablehq observablehq--block"><!--:5bf37094:--></div>
+<p>Every data point with weight is listed as follows.</p>
+<div class="observablehq observablehq--block"><!--:d47fc37a:--></div>
+<h2 id="generalized-linear-model" tabindex="-1"><a class="observablehq-header-anchor" href="#generalized-linear-model">Generalized linear model</a></h2>
+<div class="observablehq observablehq--block"><!--:6815abba:--></div>
+<div class="observablehq observablehq--block"><!--:d454a666:--></div>
+<!-- js logics -->
+<div class="observablehq observablehq--block"><!--:ac6ec9bc:--></div>
+<div class="observablehq observablehq--block"><!--:0495ce98:--></div>
+<div class="observablehq observablehq--block"><!--:e5987c42:--></div>
+</main>
+<footer id="observablehq-footer">
+<nav><a rel="prev" href="./pca"><span>PCA example</span></a><a rel="next" href="./vcd_pca"><span>Visualizing conditional distributions(PCA)</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-03T23:26:00">Mar 3, 2026</a>.</div>
+</footer>
+</div>
+</body>
+</html>
