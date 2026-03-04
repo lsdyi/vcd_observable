@@ -14,14 +14,14 @@
 <link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
 <link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
 <link rel="stylesheet" type="text/css" href="./_npm/katex@0.16.33/dist/katex.min.css">
-<link rel="modulepreload" href="./_observablehq/client.cd7f4e8e.js">
+<link rel="modulepreload" href="./_observablehq/client.9a73ce52.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
 <link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
 <link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
 <link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
-<link rel="modulepreload" href="./_import/components/r.e16afef4.js">
+<link rel="modulepreload" href="./_import/components/r.543c2bf4.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/7c43807f.js">
@@ -80,10 +80,10 @@
 <link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
 <script type="module">
 
-import {define} from "./_observablehq/client.cd7f4e8e.js";
+import {define} from "./_observablehq/client.9a73ce52.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1772580346547,"size":72354});
+registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1772623111122,"size":72354});
 
 define({id: "077f600b", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
@@ -303,7 +303,7 @@ display(pdfplot);
 }});
 
 define({id: "0204466d", inputs: ["betaData","kernal","d3","Plot"], outputs: ["_","jStat","multiply","transpose","normWeights","betaRegession","webR","conPointAr","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","data_with_weights","output","betas","phi","linearCom","mu","xGrid","coordinates","pdfplot"], body: async (betaData,kernal,d3,Plot) => {
-const [{default: _}, {default: jStat}, {multiply, transpose}, {normWeights}, {betaRegession, webR}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.e16afef4.js")]);
+const [{default: _}, {default: jStat}, {multiply, transpose}, {normWeights}, {betaRegession, webR}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.543c2bf4.js")]);
 
 
 const conPointAr = [0, 1, 2];
@@ -456,7 +456,7 @@ tex.block`\hat f(x)
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./pca"><span>PCA example</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-03T23:26:00">Mar 3, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-04T11:18:43">Mar 4, 2026</a>.</div>
 </footer>
 </div>
 </body>
