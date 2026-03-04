@@ -13,7 +13,12 @@ import { modelList } from "./components/modelList.js";
 import { getRanges } from "./components/getRanges.js";
 import { modelConfig } from "./components/modelConfig.js";
 import { normWeights } from "./components/normWeights.js";
-import { NegRegession, webR, getSummary } from "./components/r.js";
+import {
+  negRegession,
+  webR,
+  getSummary,
+  poissonRegession,
+} from "./components/r.js";
 import { getCombinations } from "./components/getCombinations.js";
 import { PcaInputRange } from "./components/UI/PcaInputRange.js";
 import { scatterPlot3d } from "./components/scatterPlot3d.js";
@@ -23,9 +28,12 @@ import { matrixData } from "./components/organizeData.js";
 
 # Poisson & Negtive Binomial Regression
 
-This document firstly fits data using poisson regression. According to lack fit in some data points, change to negtive binomial regression which is expected to have a good fit. The document briefly provides the process of checking model fit or lack fit using visulization method.
+This document firstly fits data using poisson regression. According to lack fit in some data points, change to negtive binomial regression which is expected to have a good fit. The document provides the process of checking model fit or lack fit using visulization method.
+
+These two regression methods model count data. In terms of histogram estimate, bar chart is used here. Each bar height equals to weight, and they sum up to one. In histogram context, the area of histogram should be one.
 
 ## Dataset from dgp
+Data generating process references [thesis paper](https://www.overleaf.com/project/696eb73c13ae0d69be0a84bd).
 
 ```js
 display(Inputs.table(poiNegData));
@@ -43,6 +51,8 @@ const poiNegData = FileAttachment("./data/dgp.csv").csv({
 const conditionPointObj = view(Inputs.form(formMap));
 ```
 
+Covariates scatterplots are shown here. They're color firstly by regime property which indicates response. And darker color points means they're closer to conidtional datapoint in terms of Mahalanobis distance.
+
 <div class="grid grid-cols-4">
   ${sactterAr.map(scatter => {
     return scatter
@@ -50,7 +60,7 @@ const conditionPointObj = view(Inputs.form(formMap));
 </div>
 
 ```js
-display(pdfplot)
+display(pdfplot);
 ```
 
 ## Weight Datapoint
@@ -100,7 +110,7 @@ keys.forEach((key) => {
     const { min, max } = result;
     formMap[key] = Inputs.range([min, max], {
       value: (min + max) / 2,
-      step: 1,
+      step: 0.1,
       label: key,
     });
   }
@@ -136,21 +146,35 @@ const data_with_weights = data.map((d, index) => ({
   weight: weights.find((item) => item.id === index).w,
 }));
 
+const wmin = d3.min(data_with_weights, (d) => d.weight);
+const wmax = d3.max(data_with_weights, (d) => d.weight);
+
 const sactterAr = axisAr.map((item) => {
   const [key1, key2] = item;
   return Plot.plot({
-    color: {
-      scheme: "blues",
-      transform: (f) => Math.sqrt(f),
-    },
     title: `${key1} vs ${key2}`,
     marks: [
       Plot.dot(data_with_weights, {
         x: key1,
         y: key2,
-        fill: "weight",
-        sort: "weight",
+        fill: (d) => {
+          const t = (d.weight - wmin) / (wmax - wmin);
+          return d3.interpolateReds(t);
+        },
+        filter: (d) => d.regime === "NegBin",
       }),
+
+      Plot.dot(data_with_weights, {
+        x: key1,
+        y: key2,
+        sort: "weight",
+        fill: (d) => {
+          const t = (d.weight - wmin) / (wmax - wmin);
+          return d3.interpolateBlues(t);
+        },
+        filter: (d) => d.regime === "Poisson",
+      }),
+
       // conditional data point with orange color
       Plot.dot(
         [
@@ -172,9 +196,11 @@ const sactterAr = axisAr.map((item) => {
 ```
 
 ```js
+const isPoissonReg = model === "Poisson Regression";
 // R regression code
 await webR.objs.globalEnv.bind("poiNegData", poiNegData);
-const output = await NegRegession();
+// const output = await negRegession();
+const output = isPoissonReg ? await poissonRegession() : await negRegession();
 const estimates = output.values;
 const summary = await getSummary();
 
@@ -185,18 +211,24 @@ const theta = estimates[4];
 
 const xGrid = d3.range(0, 50, 1);
 const coordinates = xGrid.map((item) => {
-  return {
-    x: item,
-    y: jStat.negbin.pdf(item, theta, mean / (mean + theta)) || 0,
-  };
+  if (isPoissonReg) {
+    return {
+      x: item,
+      y: jStat.jStat.poisson.pdf(item, mean) || 0,
+    };
+  } else {
+    return {
+      x: item,
+      y: jStat.negbin.pdf(item, theta, mean / (mean + theta)) || 0,
+    };
+  }
 });
 
 const pdfplot = Plot.plot({
   title: "pmf",
+
   color: {
-    scheme: "blues",
-    label: "Closeness in time to selected time period",
-    legend: false,
+    legend: true,
   },
 
   marks: [

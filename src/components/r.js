@@ -46,7 +46,7 @@ const betaRegession = async () => {
 };
 
 // negative binomial regression
-const NegRegession = async () => {
+const negRegession = async () => {
   const rCodes = `
     library(MASS)
     fit <- glm.nb(y ~ x1 + x2 + x3, data = poiNegData)
@@ -67,4 +67,32 @@ c(
   return output;
 };
 
-export { webR, regressionBy, getSummary, betaRegession, NegRegession };
+// negative binomial regression
+const poissonRegession = async () => {
+  const rCodes = `
+    fit <- glm(y ~ x1 + x2 + x3, family = poisson, data = poiNegData)
+    summary_stats <- summary(fit)
+  `;
+
+  await webR.evalR(rCodes);
+
+  // Extracting coefficients specifically
+  const result = await webR.evalR(`
+c(
+    coef(fit), # regression coefficients
+    fit$theta # dispersion parameter
+)
+    `);
+  const output = await result.toJs();
+
+  return output;
+};
+
+export {
+  webR,
+  regressionBy,
+  getSummary,
+  betaRegession,
+  negRegession,
+  poissonRegession,
+};
