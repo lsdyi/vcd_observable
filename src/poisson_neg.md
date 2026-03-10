@@ -33,6 +33,7 @@ This document firstly fits data using poisson regression. According to lack fit 
 These two regression methods model count data. In terms of histogram estimate, bar chart is used here. Each bar height equals to weight, and they sum up to one. In histogram context, the area of histogram should be one.
 
 ## Dataset from dgp
+
 Data generating process references [thesis paper](https://www.overleaf.com/project/696eb73c13ae0d69be0a84bd).
 
 ```js
@@ -187,7 +188,7 @@ const sactterAr = axisAr.map((item) => {
           x: key1,
           y: key2,
           fill: "orange",
-          r: 5,
+          r: 10,
         },
       ),
     ],
@@ -207,6 +208,7 @@ const summary = await getSummary();
 const mean = Math.exp(
   multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 4)),
 );
+
 const theta = estimates[4];
 
 const xGrid = d3.range(0, 50, 1);
@@ -222,6 +224,52 @@ const coordinates = xGrid.map((item) => {
       y: jStat.negbin.pdf(item, theta, mean / (mean + theta)) || 0,
     };
   }
+});
+
+const denCoordinates = xGrid.map((xCor) => {
+  if (isPoissonReg) {
+    const yList = data_with_weights.map((item) => {
+      const covariateObj = _.pick(item, ["x1", "x2", "x3"]);
+      const covariates = Object.values(covariateObj);
+      const mean = Math.exp(
+        multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
+      );
+      const y = jStat.jStat.poisson.pdf(xCor, mean) || 0;
+      return y * item.weight;
+    });
+
+    return {
+      x: xCor,
+      y: d3.sum(yList),
+    };
+  } else {
+    const yList = data_with_weights.map((item) => {
+      const covariateObj = _.pick(item, ["x1", "x2", "x3"]);
+      const covariates = Object.values(covariateObj);
+      const mean = Math.exp(
+        multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
+      );
+      const y = jStat.negbin.pdf(xCor, theta, mean / (mean + theta)) || 0;
+      return y * item.weight;
+    });
+
+    return {
+      x: xCor,
+      y: d3.sum(yList),
+    };
+  }
+});
+
+const h = jStat.stdev(data_with_weights.map((item) => item.Y));
+const ckdCoordinates = xGrid.map((item) => {
+  const temp = data_with_weights.map((datapoint) => {
+    const { Y, weight } = datapoint;
+    return (1 / h) * weight * jStat.normal.pdf((item - Y) / h, 0, 1);
+  });
+  return {
+    x: item,
+    y: d3.sum(temp),
+  };
 });
 
 const pdfplot = Plot.plot({
@@ -244,6 +292,20 @@ const pdfplot = Plot.plot({
       x: "x",
       y: "y",
       stroke: "#F28C28",
+      strokeWidth: 2,
+      marker: "circle",
+    }),
+    Plot.line(denCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "red",
+      strokeWidth: 2,
+      marker: "circle",
+    }),
+    Plot.line(ckdCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "green",
       strokeWidth: 2,
       marker: "circle",
     }),

@@ -4,11 +4,13 @@ toc: false
 ---
 
 # Density Estimator
+
 This page covers
+
 - conditional histogram
 - kernel estimator for conditional density
 - modified estimator
-  
+
 ## Conditional Histogram
 
 It's expected to plot a histogram given a conditional datapoint. The hisogram shows conditional distribution.
@@ -112,20 +114,27 @@ const kernal = view(
   }),
 );
 ```
+
 Every datapoint has weight as follows.
+
 ```js
 display(data_with_weights);
 ```
 
 Use R to do beta regression, there are 5 parameters to be estimated in total. They're as follows.
+
 ```js
 display(output);
 ```
-beta estimate 
+
+beta estimate
+
 ```js
 display(betas);
 ```
-phi estimate 
+
+phi estimate
+
 ```js
 display(phi);
 ```
@@ -137,7 +146,7 @@ Y \mid \mathbf{X} = \mathbf{x}
 
 \\
 
-\mu(\mathbf{x}) = 
+\mu(\mathbf{x}) =
 \frac{1}{1 + \exp\!\left(-(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3)\right)}
 ```
 
@@ -183,7 +192,7 @@ const data_with_weights = data.map((d, index) => ({
 await webR.objs.globalEnv.bind("betaData", betaData);
 const output = await betaRegession();
 const betas = output.values[0].values;
-const phi = (output.values[4].values[0]);
+const phi = output.values[4].values[0];
 
 const linearCom = multiply(transpose([1, ...conPointAr]), betas);
 const mu = 1 / (1 + Math.exp(-linearCom));
@@ -193,9 +202,33 @@ const xGrid = d3.range(0, 1, 0.01);
 const coordinates = xGrid.map((item) => {
   return {
     x: item,
-    y: jStat.beta.pdf(item, mu*phi, (1-mu)*phi),
+    y: jStat.beta.pdf(item, mu * phi, (1 - mu) * phi),
   };
 });
+
+const h = jStat.stdev(data_with_weights.map((item) => item.Y));
+console.log(h);
+console.log(
+  d3.sum(
+    coordinates.map((item) => item.y * (coordinates[1].x - coordinates[0].x)),
+  ),
+);
+const ckdCoordinates = xGrid.map((item) => {
+  const temp = data_with_weights.map((datapoint) => {
+    const { Y, weight } = datapoint;
+    return (1 / h) * weight * jStat.normal.pdf((item - Y) / h, 0, 1);
+  });
+  return {
+    x: item,
+    y: d3.sum(temp),
+  };
+});
+
+console.log(
+  d3.sum(
+    ckdCoordinates.map((item) => item.y * (ckdCoordinates[1].x - ckdCoordinates[0].x)),
+  ),
+);
 
 const pdfplot = Plot.plot({
   title: "pdf",
@@ -224,11 +257,18 @@ const pdfplot = Plot.plot({
       ),
     ),
     Plot.line(coordinates, { x: "x", y: "y", stroke: "blue", strokeWidth: 2 }),
+    Plot.line(ckdCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "red",
+      strokeWidth: 2,
+    }),
   ],
 });
 ```
 
 ## Kernel Estimator
+
 ```tex
 \hat f(x)
 =
