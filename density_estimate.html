@@ -9,12 +9,12 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
 <link rel="preload" as="style" href="./_observablehq/stdlib/inputs.ea9fd553.css">
-<link rel="preload" as="style" href="./_npm/katex@0.16.33/dist/katex.min.css">
+<link rel="preload" as="style" href="./_npm/katex@0.16.38/dist/katex.min.css">
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
 <link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
-<link rel="stylesheet" type="text/css" href="./_npm/katex@0.16.33/dist/katex.min.css">
-<link rel="modulepreload" href="./_observablehq/client.9a73ce52.js">
+<link rel="stylesheet" type="text/css" href="./_npm/katex@0.16.38/dist/katex.min.css">
+<link rel="modulepreload" href="./_observablehq/client.0546b499.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
@@ -25,14 +25,14 @@
 <link rel="modulepreload" href="./_npm/d3@7.9.0/e324157d.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/7c43807f.js">
-<link rel="modulepreload" href="./_observablehq/stdlib/tex.120bf69d.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/tex.23631ef1.js">
 <link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_node/webr@0.5.8/index.d12ac113.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
 <link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
-<link rel="modulepreload" href="./_npm/katex@0.16.33/7584160c.js">
+<link rel="modulepreload" href="./_npm/katex@0.16.38/5cecab2b.js">
 <link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
 <link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
 <link rel="modulepreload" href="./_node/decimal.js@10.6.0/index.7033d8a1.js">
@@ -80,10 +80,10 @@
 <link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
 <script type="module">
 
-import {define} from "./_observablehq/client.9a73ce52.js";
+import {define} from "./_observablehq/client.0546b499.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1772623111122,"size":72354});
+registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1773186966190,"size":72354});
 
 define({id: "077f600b", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
@@ -279,7 +279,7 @@ define({id: "df0ee308", inputs: ["display","phi"], body: (display,phi) => {
 display(phi);
 }});
 
-define({id: "54cee1f8", inputs: ["tex","display"], body: async (tex,display) => {
+define({id: "7cc08ef7", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
 tex.block`Y \mid \mathbf{X} = \mathbf{x}
 \sim
@@ -287,7 +287,7 @@ tex.block`Y \mid \mathbf{X} = \mathbf{x}
 
 \\
 
-\mu(\mathbf{x}) = 
+\mu(\mathbf{x}) =
 \frac{1}{1 + \exp\!\left(-(\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3)\right)}`
 ))
 }});
@@ -302,7 +302,7 @@ define({id: "05ced95b", inputs: ["display","pdfplot"], body: (display,pdfplot) =
 display(pdfplot);
 }});
 
-define({id: "0204466d", inputs: ["betaData","kernal","d3","Plot"], outputs: ["_","jStat","multiply","transpose","normWeights","betaRegession","webR","conPointAr","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","data_with_weights","output","betas","phi","linearCom","mu","xGrid","coordinates","pdfplot"], body: async (betaData,kernal,d3,Plot) => {
+define({id: "23c20012", inputs: ["betaData","kernal","d3","Plot"], outputs: ["_","jStat","multiply","transpose","normWeights","betaRegession","webR","conPointAr","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","data_with_weights","output","betas","phi","linearCom","mu","xGrid","coordinates","h","ckdCoordinates","pdfplot"], body: async (betaData,kernal,d3,Plot) => {
 const [{default: _}, {default: jStat}, {multiply, transpose}, {normWeights}, {betaRegession, webR}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.543c2bf4.js")]);
 
 
@@ -334,7 +334,7 @@ const data_with_weights = data.map((d, index) => ({
 await webR.objs.globalEnv.bind("betaData", betaData);
 const output = await betaRegession();
 const betas = output.values[0].values;
-const phi = (output.values[4].values[0]);
+const phi = output.values[4].values[0];
 
 const linearCom = multiply(transpose([1, ...conPointAr]), betas);
 const mu = 1 / (1 + Math.exp(-linearCom));
@@ -344,9 +344,33 @@ const xGrid = d3.range(0, 1, 0.01);
 const coordinates = xGrid.map((item) => {
   return {
     x: item,
-    y: jStat.beta.pdf(item, mu*phi, (1-mu)*phi),
+    y: jStat.beta.pdf(item, mu * phi, (1 - mu) * phi),
   };
 });
+
+const h = jStat.stdev(data_with_weights.map((item) => item.Y));
+console.log(h);
+console.log(
+  d3.sum(
+    coordinates.map((item) => item.y * (coordinates[1].x - coordinates[0].x)),
+  ),
+);
+const ckdCoordinates = xGrid.map((item) => {
+  const temp = data_with_weights.map((datapoint) => {
+    const { Y, weight } = datapoint;
+    return (1 / h) * weight * jStat.normal.pdf((item - Y) / h, 0, 1);
+  });
+  return {
+    x: item,
+    y: d3.sum(temp),
+  };
+});
+
+console.log(
+  d3.sum(
+    ckdCoordinates.map((item) => item.y * (ckdCoordinates[1].x - ckdCoordinates[0].x)),
+  ),
+);
 
 const pdfplot = Plot.plot({
   title: "pdf",
@@ -375,9 +399,15 @@ const pdfplot = Plot.plot({
       ),
     ),
     Plot.line(coordinates, { x: "x", y: "y", stroke: "blue", strokeWidth: 2 }),
+    Plot.line(ckdCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "red",
+      strokeWidth: 2,
+    }),
   ],
 });
-return {_,jStat,multiply,transpose,normWeights,betaRegession,webR,conPointAr,keys,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,data_with_weights,output,betas,phi,linearCom,mu,xGrid,coordinates,pdfplot};
+return {_,jStat,multiply,transpose,normWeights,betaRegession,webR,conPointAr,keys,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,data_with_weights,output,betas,phi,linearCom,mu,xGrid,coordinates,h,ckdCoordinates,pdfplot};
 }});
 
 define({id: "87951992", inputs: ["tex","display"], body: async (tex,display) => {
@@ -446,17 +476,17 @@ tex.block`\hat f(x)
 <div class="observablehq observablehq--block"><!--:63ee9f73:--></div>
 <p>phi estimate</p>
 <div class="observablehq observablehq--block"><!--:df0ee308:--></div>
-<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:54cee1f8:--></div>
+<div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:7cc08ef7:--></div>
 <p>Conditional point is set to <observablehq-loading></observablehq-loading><!--:c1483183:-->. It should be able to change flexibly.</p>
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
-<div class="observablehq observablehq--block"><!--:0204466d:--></div>
+<div class="observablehq observablehq--block"><!--:23c20012:--></div>
 <h2 id="kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-estimator">Kernel Estimator</a></h2>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:87951992:--></div>
 <h2 id="modified-kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#modified-kernel-estimator">Modified Kernel Estimator</a></h2>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./pca"><span>PCA example</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-04T11:18:43">Mar 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-10T23:56:22">Mar 10, 2026</a>.</div>
 </footer>
 </div>
 </body>
