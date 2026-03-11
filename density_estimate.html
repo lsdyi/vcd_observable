@@ -83,7 +83,7 @@
 import {define} from "./_observablehq/client.0546b499.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1773190205486,"size":72354});
+registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1773191217964,"size":72354});
 
 define({id: "077f600b", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
@@ -302,7 +302,7 @@ define({id: "05ced95b", inputs: ["display","pdfplot"], body: (display,pdfplot) =
 display(pdfplot);
 }});
 
-define({id: "77117678", inputs: ["betaData","kernal","d3","Plot"], outputs: ["_","jStat","multiply","transpose","normWeights","betaRegession","webR","conPointAr","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","data_with_weights","output","betas","phi","linearCom","mu","xGrid","coordinates","denCoordinates","h","ckdCoordinates","pdfplot"], body: async (betaData,kernal,d3,Plot) => {
+define({id: "9ba7262f", inputs: ["betaData","kernal","d3","Plot"], outputs: ["_","jStat","multiply","transpose","normWeights","betaRegession","webR","conPointAr","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","output","betas","phi","linearCom","mu","data_with_weights","weightedResidual","xGrid","coordinates","denCoordinates","h","ckdCoordinates","modCkdCoordinates","pdfplot"], body: async (betaData,kernal,d3,Plot) => {
 const [{default: _}, {default: jStat}, {multiply, transpose}, {normWeights}, {betaRegession, webR}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.543c2bf4.js")]);
 
 
@@ -325,11 +325,6 @@ const weights = unnormalizedweights.map((d) => ({
   id: d.id,
   w: d.w / totalunnormalizedweight,
 }));
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  Y: betaData[index].Y,
-  weight: weights.find((item) => item.id === index).w,
-}));
 
 await webR.objs.globalEnv.bind("betaData", betaData);
 const output = await betaRegession();
@@ -338,6 +333,15 @@ const phi = output.values[4].values[0];
 
 const linearCom = multiply(transpose([1, ...conPointAr]), betas);
 const mu = 1 / (1 + Math.exp(-linearCom));
+const data_with_weights = data.map((d, index) => ({
+  ...d,
+  Y: betaData[index].Y,
+  weight: weights.find((item) => item.id === index).w,
+  e: betaData[index].Y - mu,
+}));
+const weightedResidual = d3.sum(
+  data_with_weights.map((item) => item.weight * item.e),
+);
 
 const xGrid = d3.range(0, 1, 0.01);
 
@@ -383,6 +387,18 @@ const ckdCoordinates = xGrid.map((item) => {
   };
 });
 
+const modCkdCoordinates = xGrid.map((item) => {
+  const temp = data_with_weights.map((datapoint) => {
+    const { Y, weight, e } = datapoint;
+    const yStar = mu + e - weightedResidual;
+    return (1 / h) * weight * jStat.normal.pdf((item - yStar) / h, 0, 1);
+  });
+  return {
+    x: item,
+    y: d3.sum(temp),
+  };
+});
+
 console.log(
   d3.sum(
     ckdCoordinates.map(
@@ -417,13 +433,26 @@ const pdfplot = Plot.plot({
         { x: "Y", thresholds: 50, fill: "steelblue", opacity: 0.7 },
       ),
     ),
-    Plot.line(coordinates, { x: "x", y: "y", stroke: "F28C28", strokeWidth: 2 }),
+    Plot.line(coordinates, {
+      x: "x",
+      y: "y",
+      stroke: "F28C28",
+      strokeWidth: 2,
+    }),
 
     // conditional kernel estimator
     Plot.line(ckdCoordinates, {
       x: "x",
       y: "y",
       stroke: "red",
+      strokeWidth: 2,
+    }),
+
+    // conditional kernel estimator
+    Plot.line(modCkdCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "orange",
       strokeWidth: 2,
     }),
 
@@ -436,7 +465,7 @@ const pdfplot = Plot.plot({
     }),
   ],
 });
-return {_,jStat,multiply,transpose,normWeights,betaRegession,webR,conPointAr,keys,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,data_with_weights,output,betas,phi,linearCom,mu,xGrid,coordinates,denCoordinates,h,ckdCoordinates,pdfplot};
+return {_,jStat,multiply,transpose,normWeights,betaRegession,webR,conPointAr,keys,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,output,betas,phi,linearCom,mu,data_with_weights,weightedResidual,xGrid,coordinates,denCoordinates,h,ckdCoordinates,modCkdCoordinates,pdfplot};
 }});
 
 define({id: "87951992", inputs: ["tex","display"], body: async (tex,display) => {
@@ -508,14 +537,14 @@ tex.block`\hat f(x)
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:7cc08ef7:--></div>
 <p>Conditional point is set to <observablehq-loading></observablehq-loading><!--:c1483183:-->. It should be able to change flexibly.</p>
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
-<div class="observablehq observablehq--block"><!--:77117678:--></div>
+<div class="observablehq observablehq--block"><!--:9ba7262f:--></div>
 <h2 id="kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-estimator">Kernel Estimator</a></h2>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:87951992:--></div>
 <h2 id="modified-kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#modified-kernel-estimator">Modified Kernel Estimator</a></h2>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./pca"><span>PCA example</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-11T00:50:20">Mar 11, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-11T01:07:12">Mar 11, 2026</a>.</div>
 </footer>
 </div>
 </body>
