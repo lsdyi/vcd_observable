@@ -206,6 +206,23 @@ const coordinates = xGrid.map((item) => {
   };
 });
 
+const denCoordinates = xGrid.map((xCor) => {
+  const yList = data_with_weights.map((item) => {
+    const covariateObj = _.pick(item, ["X1", "X2", "X3"]);
+    const covariates = Object.values(covariateObj);
+    const linearCom = multiply(transpose([1, ...covariates]), betas);
+    const mu = 1 / (1 + Math.exp(-linearCom));
+
+    const y = jStat.beta.pdf(xCor, mu * phi, (1 - mu) * phi);
+    return y * item.weight;
+  });
+
+  return {
+    x: xCor,
+    y: d3.sum(yList),
+  };
+});
+
 const h = jStat.stdev(data_with_weights.map((item) => item.Y));
 console.log(h);
 console.log(
@@ -226,7 +243,9 @@ const ckdCoordinates = xGrid.map((item) => {
 
 console.log(
   d3.sum(
-    ckdCoordinates.map((item) => item.y * (ckdCoordinates[1].x - ckdCoordinates[0].x)),
+    ckdCoordinates.map(
+      (item) => item.y * (ckdCoordinates[1].x - ckdCoordinates[0].x),
+    ),
   ),
 );
 
@@ -253,14 +272,24 @@ const pdfplot = Plot.plot({
             return d3.sum(bindata.map((d) => d.weight)) / (bin.x2 - bin.x1);
           },
         },
-        { x: "Y", thresholds: 50, fill: "orange" },
+        { x: "Y", thresholds: 50, fill: "steelblue", opacity: 0.7 },
       ),
     ),
-    Plot.line(coordinates, { x: "x", y: "y", stroke: "blue", strokeWidth: 2 }),
+    Plot.line(coordinates, { x: "x", y: "y", stroke: "F28C28", strokeWidth: 2 }),
+
+    // conditional kernel estimator
     Plot.line(ckdCoordinates, {
       x: "x",
       y: "y",
       stroke: "red",
+      strokeWidth: 2,
+    }),
+
+    // weighted conditional density
+    Plot.line(denCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "green",
       strokeWidth: 2,
     }),
   ],

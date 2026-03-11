@@ -298,14 +298,14 @@ const pdfplot = Plot.plot({
     Plot.line(denCoordinates, {
       x: "x",
       y: "y",
-      stroke: "red",
+      stroke: "green",
       strokeWidth: 2,
       marker: "circle",
     }),
     Plot.line(ckdCoordinates, {
       x: "x",
       y: "y",
-      stroke: "green",
+      stroke: "red",
       strokeWidth: 2,
       marker: "circle",
     }),
