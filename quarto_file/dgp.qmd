@@ -1,0 +1,99 @@
+## dgp
+
+```{r}
+library(MASS) # for mvrnorm
+
+set.seed(123)
+n <- 500
+
+# correlation matrix
+Sigma <- matrix(c(
+    1, 0.5, 0.3,
+    0.5, 1, 0.4,
+    0.3, 0.4, 1
+), nrow = 3)
+
+# generate correlated covariates
+X <- mvrnorm(n, mu = c(0, 0, 0), Sigma = Sigma)
+x1 <- X[, 1]
+x2 <- X[, 2]
+x3 <- X[, 3]
+
+min(x1)
+
+# optional: transform to positive scale
+x1 <- x1 - min(x1)
+x2 <- x2 - min(x2)
+x3 <- x3 - min(x3)
+
+mean(x1)
+
+# coefficients
+beta0 <- 0.5
+beta1 <- 0.8
+beta2 <- -0.5
+beta3 <- 0.3
+
+mu <- exp(beta0 + beta1 * x1 + beta2 * x2 + beta3 * x3)
+
+# generate two-regime counts
+size <- 2
+y <- numeric(n)
+cutoff <- median(x1)
+y[x1 < cutoff] <- rpois(sum(x1 < cutoff), mu[x1 < cutoff])
+y[x1 >= cutoff] <- rnbinom(sum(x1 >= cutoff), mu = mu[x1 >= cutoff], size = size)
+
+# assemble dataframe
+data <- data.frame(x1, x2, x3, y, regime = ifelse(x1 < cutoff, "Poisson", "NegBin"))
+
+
+
+# install.packages("scatterplot3d") # if not installed
+library(scatterplot3d)
+
+# assume your data frame is `data` with columns x1, x2, x3, y, regime
+
+colors <- ifelse(data$regime == "Poisson", "blue", "red")
+
+scatterplot3d(
+    x = data$x1,
+    y = data$x2,
+    z = data$y,
+    color = colors,
+    pch = 16,
+    main = "Three covariates: Poisson (blue) vs NegBin (red)",
+    xlab = "x1",
+    ylab = "x2",
+    zlab = "Y (counts)"
+)
+legend("topright", legend = c("Poisson", "NegBin"), col = c("blue", "red"), pch = 16)
+
+# sim_data <- data.frame(
+#   Y = Y,
+#   X1 = X1,
+#   X2 = X2,
+#   X3 = X3
+#   Regime = data["Regime"]
+# )
+
+# Quick look
+head(data)
+write.csv(data, "dgp.csv", row.names = FALSE, quote = FALSE)
+```
+
+```{r}
+fit <- glm.nb(y ~ x1 + x2 + x3, data = data)
+params <- c(
+    coef(fit), # regression coefficients
+    fit$theta # dispersion parameter
+)
+params
+
+mean(y)
+
+pnbinom(3, size = 3.2628441009374476, mu = 18.17733129240771)
+```
+
+```{r}
+dnbinom(10, mu = 9.792282457144397, size = 3.2628441009374476)
+```

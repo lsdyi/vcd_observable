@@ -1,0 +1,22 @@
+```{r}
+# Install and load the package
+library(np)
+
+# 1. Generate dummy count data
+set.seed(123)
+n <- 100
+x <- runif(n, 0, 10)
+# Poisson-like response influenced by x
+y <- rpois(n, lambda = exp(0.2 * x)) 
+
+# 2. Compute Bandwidth (Automatically detects type)
+# otype = "ordered" treats y as count data
+bw <- npregbw(xdat = x, ydat = y, regtype = "lc")
+
+# 3. Fit the model
+model <- npreg(bw)
+
+# 4. Summary and Plot
+summary(model)
+plot(model, errors = TRUE)
+```
