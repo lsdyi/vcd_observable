@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - test-workflow
+  workflow_dispatch:
 
 jobs:
   build-and-sync:
@@ -12,7 +14,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout Main
+      - name: Checkout source
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -21,16 +23,39 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install and Build
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build app
+        run: npm run build
+
+      - name: Render Quarto files
         run: |
-          npm install
-          npm run build
-          # This fix ensures GH Pages doesn't ignore your assets
-          touch dist/.nojekyll
+          find quarto_file -name "*.qmd" -exec quarto render {} --to html \;
+
+      - name: Prepare deploy folder
+        run: |
+          mkdir -p deploy
+          cp -r dist/. deploy/
+
+          rsync -av quarto_file/ deploy/
+
+          touch deploy/.nojekyll
+
+      - name: Upload artifact for testing
+        if: github.ref != 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-preview
+          path: deploy
 
       - name: Deploy to docs/building_output
+        if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist           # The folder created by npm run build
-          branch: docs/building_output  # The branch where dist content will live
-          clean: true             # Ensures old files in the branch are removed
+          folder: deploy
+          branch: docs/building_output
+          clean: true
