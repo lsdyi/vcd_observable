@@ -183,11 +183,6 @@ const weights = unnormalizedweights.map((d) => ({
   id: d.id,
   w: d.w / totalunnormalizedweight,
 }));
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  Y: betaData[index].Y,
-  weight: weights.find((item) => item.id === index).w,
-}));
 
 await webR.objs.globalEnv.bind("betaData", betaData);
 const output = await betaRegession();
@@ -196,6 +191,15 @@ const phi = output.values[4].values[0];
 
 const linearCom = multiply(transpose([1, ...conPointAr]), betas);
 const mu = 1 / (1 + Math.exp(-linearCom));
+const data_with_weights = data.map((d, index) => ({
+  ...d,
+  Y: betaData[index].Y,
+  weight: weights.find((item) => item.id === index).w,
+  e: betaData[index].Y - mu,
+}));
+const weightedResidual = d3.sum(
+  data_with_weights.map((item) => item.weight * item.e),
+);
 
 const xGrid = d3.range(0, 1, 0.01);
 
@@ -241,6 +245,18 @@ const ckdCoordinates = xGrid.map((item) => {
   };
 });
 
+const modCkdCoordinates = xGrid.map((item) => {
+  const temp = data_with_weights.map((datapoint) => {
+    const { Y, weight, e } = datapoint;
+    const yStar = mu + e - weightedResidual;
+    return (1 / h) * weight * jStat.normal.pdf((item - yStar) / h, 0, 1);
+  });
+  return {
+    x: item,
+    y: d3.sum(temp),
+  };
+});
+
 console.log(
   d3.sum(
     ckdCoordinates.map(
@@ -275,13 +291,26 @@ const pdfplot = Plot.plot({
         { x: "Y", thresholds: 50, fill: "steelblue", opacity: 0.7 },
       ),
     ),
-    Plot.line(coordinates, { x: "x", y: "y", stroke: "F28C28", strokeWidth: 2 }),
+    Plot.line(coordinates, {
+      x: "x",
+      y: "y",
+      stroke: "F28C28",
+      strokeWidth: 2,
+    }),
 
     // conditional kernel estimator
     Plot.line(ckdCoordinates, {
       x: "x",
       y: "y",
       stroke: "red",
+      strokeWidth: 2,
+    }),
+
+    // conditional kernel estimator
+    Plot.line(modCkdCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "orange",
       strokeWidth: 2,
     }),
 
