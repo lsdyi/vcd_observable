@@ -91,7 +91,7 @@
 import {define} from "./_observablehq/client.0546b499.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.a5a9a227.csv","lastModified":1773191513385,"size":30318});
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.a5a9a227.csv","lastModified":1773225450660,"size":30318});
 
 define({id: "406f7c76", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","negRegession","webR","getSummary","poissonRegession","getCombinations","PcaInputRange","scatterPlot3d","getPcaData","matrixData"], body: async () => {
 const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {negRegession, webR, getSummary, poissonRegession}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.543c2bf4.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.c35c3b8d.js"), import("./_import/components/getPcaData.db04fe5e.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
@@ -256,7 +256,7 @@ const sactterAr = axisAr.map((item) => {
 return {dim,keys,axisAr,conditionPoint,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,data_with_weights,wmin,wmax,sactterAr};
 }});
 
-define({id: "c47ab2aa", inputs: ["model","webR","poiNegData","poissonRegession","negRegession","getSummary","multiply","transpose","conditionPoint","d3","jStat","data_with_weights","_","Plot"], outputs: ["isPoissonReg","output","estimates","summary","mean","theta","xGrid","coordinates","denCoordinates","h","ckdCoordinates","pdfplot"], body: async (model,webR,poiNegData,poissonRegession,negRegession,getSummary,multiply,transpose,conditionPoint,d3,jStat,data_with_weights,_,Plot) => {
+define({id: "b74dfbce", inputs: ["model","webR","poiNegData","poissonRegession","negRegession","getSummary","multiply","transpose","conditionPoint","d3","jStat","data_with_weights","_","Plot"], outputs: ["isPoissonReg","output","estimates","summary","mean","theta","xGrid","coordinates","denCoordinates","h","ckdCoordinates","pdfplot"], body: async (model,webR,poiNegData,poissonRegession,negRegession,getSummary,multiply,transpose,conditionPoint,d3,jStat,data_with_weights,_,Plot) => {
 const isPoissonReg = model === "Poisson Regression";
 // R regression code
 await webR.objs.globalEnv.bind("poiNegData", poiNegData);
@@ -322,13 +322,12 @@ const denCoordinates = xGrid.map((xCor) => {
 
 const h = jStat.stdev(data_with_weights.map((item) => item.Y));
 const ckdCoordinates = xGrid.map((item) => {
-  const temp = data_with_weights.map((datapoint) => {
-    const { Y, weight } = datapoint;
-    return (1 / h) * weight * jStat.normal.pdf((item - Y) / h, 0, 1);
-  });
+  const temp = data_with_weights.map(datapoint => {
+    return datapoint.Y === item ? datapoint.weight : 0
+  })
   return {
     x: item,
-    y: d3.sum(temp),
+    y: d3.sum(temp)
   };
 });
 
@@ -420,11 +419,11 @@ return {isPoissonReg,output,estimates,summary,mean,theta,xGrid,coordinates,denCo
 <!-- js logics -->
 <div class="observablehq observablehq--block"><!--:26789752:--></div>
 <div class="observablehq observablehq--block"><!--:9c4b75d4:--></div>
-<div class="observablehq observablehq--block"><!--:c47ab2aa:--></div>
+<div class="observablehq observablehq--block"><!--:b74dfbce:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./pca"><span>PCA example</span></a><a rel="next" href="./vcd_pca"><span>Visualizing conditional distributions(PCA)</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-11T01:12:06">Mar 11, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-11T10:37:42">Mar 11, 2026</a>.</div>
 </footer>
 </div>
 </body>
