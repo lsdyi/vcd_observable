@@ -221,7 +221,7 @@ const coordinates = xGrid.map((item) => {
   } else {
     return {
       x: item,
-      y: jStat.negbin.pdf(item, theta, mean / (mean + theta)) || 0,
+      y: jStat.negbin.pdf(item, theta, theta / (mean + theta)) || 0,
     };
   }
 });
@@ -249,7 +249,7 @@ const denCoordinates = xGrid.map((xCor) => {
       const mean = Math.exp(
         multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
       );
-      const y = jStat.negbin.pdf(xCor, theta, mean / (mean + theta)) || 0;
+      const y = jStat.negbin.pdf(xCor, theta, theta / (mean + theta)) || 0;
       return y * item.weight;
     });
 
@@ -262,12 +262,12 @@ const denCoordinates = xGrid.map((xCor) => {
 
 const h = jStat.stdev(data_with_weights.map((item) => item.Y));
 const ckdCoordinates = xGrid.map((item) => {
-  const temp = data_with_weights.map(datapoint => {
-    return datapoint.Y === item ? datapoint.weight : 0
-  })
+  const temp = data_with_weights.map((datapoint) => {
+    return datapoint.Y === item ? datapoint.weight : 0;
+  });
   return {
     x: item,
-    y: d3.sum(temp)
+    y: d3.sum(temp),
   };
 });
 
@@ -301,13 +301,13 @@ const pdfplot = Plot.plot({
       strokeWidth: 2,
       marker: "circle",
     }),
-    Plot.line(ckdCoordinates, {
-      x: "x",
-      y: "y",
-      stroke: "red",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
+    // Plot.line(ckdCoordinates, {
+    //   x: "x",
+    //   y: "y",
+    //   stroke: "red",
+    //   strokeWidth: 2,
+    //   marker: "circle",
+    // }),
   ],
 });
 ```
