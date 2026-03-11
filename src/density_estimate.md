@@ -328,12 +328,53 @@ const pdfplot = Plot.plot({
 ## Kernel Estimator
 
 ```tex
-\hat f(x)
+\hat f_{X,Y}(x,y)
 =
-\frac{1}{n h_1 h_2 h_3}
-\sum_{i=1}^n
-\prod_{j=1}^3
-\phi\!\left(\frac{x_j - X_{ij}}{h_j}\right)
+\frac{1}{n h_x h_y}
+\sum_{i=1}^{n}
+K\!\left(\frac{x-X_i}{h_x}\right)
+K\!\left(\frac{y-Y_i}{h_y}\right)
+```
+
+```tex
+\hat f(y|x)=
+\frac{\sum_{i=1}^{n} K_h(x-X_i)L_b(y-Y_i)}
+{\sum_{i=1}^{n} K_h(x-X_i)}
+```
+
+In case response data is count data, kernel estimator is the same as bin chart.
+
+```tex
+\hat P(Y=y \mid X=x) =
+\frac{\sum K_h(x-X_i) \mathbf{1}(Y_i=y)}
+{\sum K_h(x-X_i)}
 ```
 
 ## Modified Kernel Estimator
+
+Conditional kernel density estimator with residual correction (often associated with Hyndman–Yao / Fan–Yao style estimators).
+
+```tex
+\hat f_*(y|x)
+=
+\frac{1}{b}
+\sum_{j=1}^{n}
+w_j(x)
+K\!\left(
+\frac{\|y - Y_j^*(x)\|_y}{b}
+\right)
+```
+
+```tex
+Y_j^*(x)
+=
+\hat r(x)
++
+e_j
+-
+\sum_{i=1}^{n} w_i(x)e_i
+```
+
+```tex
+e_j = Y_j - \hat r(X_j)
+```

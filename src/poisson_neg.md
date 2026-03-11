@@ -262,13 +262,12 @@ const denCoordinates = xGrid.map((xCor) => {
 
 const h = jStat.stdev(data_with_weights.map((item) => item.Y));
 const ckdCoordinates = xGrid.map((item) => {
-  const temp = data_with_weights.map((datapoint) => {
-    const { Y, weight } = datapoint;
-    return (1 / h) * weight * jStat.normal.pdf((item - Y) / h, 0, 1);
-  });
+  const temp = data_with_weights.map(datapoint => {
+    return datapoint.Y === item ? datapoint.weight : 0
+  })
   return {
     x: item,
-    y: d3.sum(temp),
+    y: d3.sum(temp)
   };
 });
 
