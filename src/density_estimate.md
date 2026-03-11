@@ -294,7 +294,7 @@ const pdfplot = Plot.plot({
     Plot.line(coordinates, {
       x: "x",
       y: "y",
-      stroke: "F28C28",
+      stroke: "#F28C28",
       strokeWidth: 2,
     }),
 
@@ -310,7 +310,7 @@ const pdfplot = Plot.plot({
     Plot.line(modCkdCoordinates, {
       x: "x",
       y: "y",
-      stroke: "orange",
+      stroke: "black",
       strokeWidth: 2,
     }),
 
