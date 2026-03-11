@@ -83,7 +83,7 @@
 import {define} from "./_observablehq/client.0546b499.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1773191217964,"size":72354});
+registerFile("./data/simulated_beta_data.csv", {"name":"./data/simulated_beta_data.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data.6d0333e1.csv","lastModified":1773191513386,"size":72354});
 
 define({id: "077f600b", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
 display(await(
@@ -302,7 +302,7 @@ define({id: "05ced95b", inputs: ["display","pdfplot"], body: (display,pdfplot) =
 display(pdfplot);
 }});
 
-define({id: "9ba7262f", inputs: ["betaData","kernal","d3","Plot"], outputs: ["_","jStat","multiply","transpose","normWeights","betaRegession","webR","conPointAr","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","output","betas","phi","linearCom","mu","data_with_weights","weightedResidual","xGrid","coordinates","denCoordinates","h","ckdCoordinates","modCkdCoordinates","pdfplot"], body: async (betaData,kernal,d3,Plot) => {
+define({id: "855c0203", inputs: ["betaData","kernal","d3","Plot"], outputs: ["_","jStat","multiply","transpose","normWeights","betaRegession","webR","conPointAr","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","output","betas","phi","linearCom","mu","data_with_weights","weightedResidual","xGrid","coordinates","denCoordinates","h","ckdCoordinates","modCkdCoordinates","pdfplot"], body: async (betaData,kernal,d3,Plot) => {
 const [{default: _}, {default: jStat}, {multiply, transpose}, {normWeights}, {betaRegession, webR}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.543c2bf4.js")]);
 
 
@@ -436,7 +436,7 @@ const pdfplot = Plot.plot({
     Plot.line(coordinates, {
       x: "x",
       y: "y",
-      stroke: "F28C28",
+      stroke: "#F28C28",
       strokeWidth: 2,
     }),
 
@@ -452,7 +452,7 @@ const pdfplot = Plot.plot({
     Plot.line(modCkdCoordinates, {
       x: "x",
       y: "y",
-      stroke: "orange",
+      stroke: "black",
       strokeWidth: 2,
     }),
 
@@ -537,14 +537,14 @@ tex.block`\hat f(x)
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:7cc08ef7:--></div>
 <p>Conditional point is set to <observablehq-loading></observablehq-loading><!--:c1483183:-->. It should be able to change flexibly.</p>
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
-<div class="observablehq observablehq--block"><!--:9ba7262f:--></div>
+<div class="observablehq observablehq--block"><!--:855c0203:--></div>
 <h2 id="kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-estimator">Kernel Estimator</a></h2>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:87951992:--></div>
 <h2 id="modified-kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#modified-kernel-estimator">Modified Kernel Estimator</a></h2>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./pca"><span>PCA example</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-11T01:07:12">Mar 11, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-03-11T01:12:06">Mar 11, 2026</a>.</div>
 </footer>
 </div>
 </body>
