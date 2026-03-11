@@ -1,0 +1,285 @@
+```{r}
+
+set.seed(123)
+
+n <- 500
+x <- runif(n, -3, 3)
+
+# Heteroskedastic noise
+sigma <- 0.3 + 0.2 * abs(x)
+y <- sin(x) + rnorm(n, 0, sigma)
+
+# Define kernel and bandwidths
+K <- function(u) dnorm(u)
+
+hx <- 0.4
+hy <- 0.3
+
+# Choose evaluation grid
+x0 <- 1 # Fix X = 1
+y_grid <- seq(-2, 2, length.out = 200)
+
+# Compute conditional density at X = 1
+cond_density <- sapply(y_grid, function(y0) {
+    weights_x <- K((x0 - x) / hx)
+    numerator <- sum(weights_x * K((y0 - y) / hy))
+    denominator <- sum(weights_x)
+    numerator / (hy * denominator)
+})
+
+# Plot Conditional Density at X = 1
+plot(y_grid, cond_density,
+    type = "l",
+    lwd = 3,
+    main = "Estimated Conditional Density at X = 1",
+    xlab = "y",
+    ylab = "f(y | X = 1)"
+)
+
+# To visualize the full conditional density surface:
+x_grid <- seq(-3, 3, length.out = 50)
+y_grid <- seq(-2, 2, length.out = 100)
+
+density_matrix <- outer(x_grid, y_grid, Vectorize(function(x0, y0) {
+    weights_x <- K((x0 - x) / hx)
+    numerator <- sum(weights_x * K((y0 - y) / hy))
+    denominator <- sum(weights_x)
+    numerator / (hy * denominator)
+}))
+
+# Plot surface:
+persp(x_grid, y_grid, density_matrix,
+    theta = 30, phi = 30,
+    xlab = "X",
+    ylab = "Y",
+    zlab = "f(Y|X)"
+)
+```
+
+```{r}
+library(np)
+
+model_np <- npcdens(y ~ x)
+
+summary(model_np)
+
+newdata <- expand.grid(
+    x = seq(-3, 3, length = 50),
+    y = seq(-2, 2, length = 100)
+)
+
+pred <- predict(model_np, newdata = newdata)
+# persp(newdata.x, newdata.y, pred,
+#       theta = 30, phi = 30,
+#       xlab = "X",
+#       ylab = "Y",
+#       zlab = "f(Y|X)")
+# newdata[:, 'x']
+# reshape predictions to matrix
+z <- matrix(pred, nrow = 50, ncol = 100)
+
+x_grid <- seq(-3, 3, length = 50)
+y_grid <- seq(-2, 2, length = 100)
+
+persp(x_grid, y_grid, z,
+    theta = 30, phi = 30,
+    xlab = "X",
+    ylab = "Y",
+    zlab = "f(Y|X)",
+    main = "Conditional Density Surface"
+)
+
+image(x_grid, y_grid, z,
+    xlab = "X",
+    ylab = "Y",
+    main = "Conditional Density f(Y|X)",
+    col = terrain.colors(50)
+)
+
+contour(x_grid, y_grid, z,
+    xlab = "X",
+    ylab = "Y",
+    main = "Conditional Density Contours"
+)
+
+image(x_grid, y_grid, z,
+      col = heat.colors(50),
+      xlab="X",
+      ylab="Y",
+      main="Conditional Density")
+
+contour(x_grid, y_grid, z, add=TRUE)
+```
+
+```{r}
+x_grid <- seq(-2, 2, length = 1000)
+plot(x_grid, dnorm(x_grid, 0, 0.1), type = "l")
+```
+
+## Multinormal Distribution
+```{r}
+# ==============================
+# 1. Setup
+# ==============================
+
+set.seed(123)
+
+# Mean vector
+mu <- c(0, 0)
+
+# Covariance matrix (strong positive correlation)
+Sigma <- matrix(
+    c(
+        4, 3.2,
+        3.2, 4
+    ),
+    nrow = 2
+)
+
+# ==============================
+# 2. Simulate multivariate normal data
+# ==============================
+
+# install.packages("MASS")  # run once if needed
+library(MASS)
+
+n <- 1000
+data <- mvrnorm(n, mu = mu, Sigma = Sigma)
+
+# ==============================
+# 3. Define two comparison points
+# ==============================
+
+point_A <- c(2, 2)
+point_B <- c(2, -2)
+
+# ==============================
+# 4. Compute distances
+# ==============================
+
+# Euclidean distance
+euclidean_A <- sqrt(sum((point_A - mu)^2))
+euclidean_B <- sqrt(sum((point_B - mu)^2))
+
+# Mahalanobis distance
+mahal_A <- sqrt(mahalanobis(point_A, center = mu, cov = Sigma))
+mahal_B <- sqrt(mahalanobis(point_B, center = mu, cov = Sigma))
+
+# Print results
+cat("Euclidean distance A:", euclidean_A, "\n")
+cat("Euclidean distance B:", euclidean_B, "\n\n")
+
+cat("Mahalanobis distance A:", mahal_A, "\n")
+cat("Mahalanobis distance B:", mahal_B, "\n")
+
+# ==============================
+# 5. Plot data and tilted ellipse
+# ==============================
+
+# Basic scatter plot
+plot(data,
+    col = rgb(0, 0, 1, 0.3),
+    pch = 16,
+    xlab = "X1",
+    ylab = "X2",
+    main = "Tilted Multivariate Normal with Two Points"
+)
+
+# Add mean
+points(mu[1], mu[2], pch = 19, col = "black", cex = 1.5)
+
+# Add comparison points
+points(point_A[1], point_A[2], col = "red", pch = 19, cex = 1.5)
+points(point_B[1], point_B[2], col = "darkgreen", pch = 19, cex = 1.5)
+
+# Add lines from mean to points
+segments(mu[1], mu[2], point_A[1], point_A[2], col = "red", lwd = 2)
+segments(mu[1], mu[2], point_B[1], point_B[2], col = "darkgreen", lwd = 2)
+
+# ==============================
+# 6. Add covariance ellipse
+# ==============================
+
+# install.packages("ellipse")  # run once if needed
+library(ellipse)
+
+ell <- ellipse(Sigma, centre = mu, level = 0.95)
+lines(ell, col = "black", lwd = 2)
+
+legend("topleft",
+    legend = c(
+        "Simulated data",
+        "Mean",
+        "Point A (2,2)",
+        "Point B (2,-2)",
+        "95% Ellipse"
+    ),
+    col = c(rgb(0, 0, 1, 0.3), "black", "red", "darkgreen", "black"),
+    pch = c(16, 19, 19, 19, NA),
+    lty = c(NA, NA, NA, NA, 1),
+    lwd = c(NA, NA, NA, NA, 2)
+)
+```
+
+```{r}
+library(MASS) # for mvrnorm
+library(betareg)
+
+set.seed(123)
+
+n <- 1000 # sample size
+mu_beta <- c(0, 0, 0) # means of X1, X2, X3
+
+# Covariance matrix for correlated covariates
+Sigma <- matrix(c(
+    1, 0.5, 0.3,
+    0.5, 1, 0.4,
+    0.3, 0.4, 1
+), nrow = 3)
+
+# Generate correlated covariates
+X <- mvrnorm(n, mu = mu_beta, Sigma = Sigma)
+X1 <- X[, 1]
+X2 <- X[, 2]
+X3 <- X[, 3]
+
+# simulate response
+phi <- 5 # precision parameter
+beta <- c(0.5, 0.7, -0.3, 0.2) # beta0, beta1, beta2, beta3
+
+# Linear predictor
+eta <- beta[1] + beta[2] * X1 + beta[3] * X2 + beta[4] * X3
+
+# Inverse logit to get mean in (0,1)
+mu <- plogis(eta)
+
+# Simulate beta response
+Y <- rbeta(n, shape1 = mu * phi, shape2 = (1 - mu) * phi)
+
+
+fit <- betareg(Y ~ X1 + X2 + X3, link = "logit")
+summary(fit)
+
+cor(X) # correlation matrix of covariates
+
+# Combine response and covariates
+sim_data <- data.frame(
+    Y = Y,
+    X1 = X1,
+    X2 = X2,
+    X3 = X3
+)
+
+# Quick look
+head(sim_data)
+write.csv(sim_data, "simulated_beta_data.csv", row.names = FALSE)
+```
+
+```{r}
+
+x_new <- data.frame(X1 = 0, X2 = 1, X3 = 2)
+
+# Predict conditional mean
+mu_hat <- predict(fit, newdata = x_new, type = "response")
+mu_hat
+```
