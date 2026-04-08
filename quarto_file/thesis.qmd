@@ -1,0 +1,166 @@
+## A mix of possion data and negative binomial data
+```{r}
+
+data <- rpois(1000, lambda = 4)
+
+hist(data,
+     breaks = 30,
+     main = "Simulated Poisson Distribution",
+     xlab = "Value")
+
+lambda <- 4
+x <- 0:15
+
+y <- dpois(x, lambda)
+
+plot(x, y, type = "l", lwd = 2,
+     main = "Poisson Distribution (lambda = 4)",
+     xlab = "x",
+     ylab = "P(X = x)")
+points(x, y, pch = 16)
+
+library(ggplot2)
+
+lambda <- 4
+x <- 0:15
+df <- data.frame(x = x, prob = dpois(x, lambda))
+
+ggplot(df, aes(x, prob)) +
+  geom_col() +
+  labs(title = "Poisson Distribution (λ = 4)",
+       x = "x",
+       y = "P(X = x)")
+
+geom_col()
+
+set.seed(1)
+
+# simulate Poisson data
+data <- rpois(1000, lambda = 4)
+
+# histogram
+h <- hist(data, breaks = seq(-0.5, max(data)+0.5, 1),
+          col = "lightgray",
+          main = "Histogram with Poisson Fit",
+          xlab = "x")
+
+# x values
+x <- 0:max(data)
+
+# Poisson probabilities scaled to histogram
+y <- dpois(x, lambda = mean(data)) * length(data)
+
+# overlay points and lines
+points(x, y, col = "red", pch = 19)
+lines(x, y, col = "red", lwd = 2)
+
+x = seq(0, 15, 0.1)
+y = dnorm(x, mean = 7)
+plot(x, 2*y, type="l")
+lines(x, y, col = "red", lwd = 2)
+sum((x[2]-x[1])*y)
+sum((x[2]-x[1])*2*y)
+```
+```{r}
+set.seed(123)
+
+n <- 5000
+x <- runif(n, 0, 3)
+
+beta0 <- 0.5
+beta1 <- 0.8
+
+mu <- exp(beta0 + beta1 * x)
+
+# Left: Poisson data
+y_left <- rpois(n, lambda = mu)
+
+# Right: Negative Binomial data
+size <- 2 # dispersion parameter
+y_right <- rnbinom(n, mu = mu, size = size)
+
+data <- data.frame(
+    x = x,
+    poisson_part = y_left,
+    negbin_part = y_right
+)
+
+
+mean(y_left)
+var(y_left)
+
+mean(y_right)
+var(y_right)
+
+
+hist(y_left, main = "Poisson Data")
+hist(y_right, main = "Negative Binomial Data")
+
+print(list(
+    mean_x = mean(x),
+    mean_y_left = mean(y_left),
+    mean_y_right = mean(y_right),
+    var_x = var(x),
+    var_y_left = var(y_left),
+    var_y_right = var(y_right)
+))
+print(list(head = head(data), dim = dim(data)))
+```
+
+```{r}
+set.seed(123)
+
+n <- 500
+x <- runif(n, 0, 3)
+
+beta0 <- 0.5
+beta1 <- 0.8
+
+mu <- exp(beta0 + beta1 * x)
+
+y <- numeric(n)
+
+# Left half: Poisson
+y[1:(n / 2)] <- rpois(n / 2, lambda = mu[1:(n / 2)])
+
+# Right half: Negative Binomial
+size <- 2
+y[(n / 2 + 1):n] <- rnbinom(n / 2, mu = mu[(n / 2 + 1):n], size = size)
+
+data <- data.frame(
+    x = x,
+    y = y,
+    regime = c(rep("Poisson", n / 2), rep("NegBin", n / 2))
+)
+
+tapply(data$y, data$regime, mean)
+tapply(data$y, data$regime, var)
+
+library(ggplot2)
+
+ggplot(data, aes(x = x, y = y, color = regime)) +
+    geom_point(alpha = 0.6)
+```
+
+
+```{r}
+y <- ifelse(
+    x < 1.5,
+    rpois(n, mu),
+    rnbinom(n, mu = mu, size = size)
+)
+
+data <- data.frame(
+    x = x,
+    y = y,
+    regime = ifelse(x < 1.5, "Poisson", "NegBin")
+)
+
+tapply(data$y, data$regime, mean)
+tapply(data$y, data$regime, var)
+
+library(ggplot2)
+
+ggplot(data, aes(x = x, y = y, color = regime)) +
+    geom_point(alpha = 0.6)
+```

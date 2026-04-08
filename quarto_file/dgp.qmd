@@ -1,4 +1,27 @@
-## dgp
+---
+title: "Data Generating Process"
+author:   
+  - Jinzhe Yang
+format: 
+  html: default
+  pdf:
+    keep-tex: true
+    include-in-header: 
+       text: |
+         \usepackage{fvextra}
+         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+         \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
+toc: true
+language: 
+  title-block-author-single: " "
+toc-title-document: "Content"
+crossref-fig-title: "Figure"
+theme: lumen
+title-block-banner-color: Primary
+callout-warning-caption: "Warning"
+callout-note-caption: "Note!"
+callout-tip-caption: "Tip"
+---
 
 ```{r}
 library(MASS) # for mvrnorm
@@ -14,19 +37,10 @@ Sigma <- matrix(c(
 ), nrow = 3)
 
 # generate correlated covariates
-X <- mvrnorm(n, mu = c(0, 0, 0), Sigma = Sigma)
+X <- mvrnorm(n, mu = c(3, 3, 3), Sigma = Sigma)
 x1 <- X[, 1]
 x2 <- X[, 2]
 x3 <- X[, 3]
-
-min(x1)
-
-# optional: transform to positive scale
-x1 <- x1 - min(x1)
-x2 <- x2 - min(x2)
-x3 <- x3 - min(x3)
-
-mean(x1)
 
 # coefficients
 beta0 <- 0.5
@@ -67,14 +81,6 @@ scatterplot3d(
     zlab = "Y (counts)"
 )
 legend("topright", legend = c("Poisson", "NegBin"), col = c("blue", "red"), pch = 16)
-
-# sim_data <- data.frame(
-#   Y = Y,
-#   X1 = X1,
-#   X2 = X2,
-#   X3 = X3
-#   Regime = data["Regime"]
-# )
 
 # Quick look
 head(data)

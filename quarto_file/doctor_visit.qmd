@@ -1,0 +1,28 @@
+```{r}
+library(MASS)
+
+# Load your RData file
+load("/Users/yangjinzhe/Desktop/doctorvisits.rda")
+
+# Suppose your object is called 'df' (data.frame)
+write.csv(doctorvisits, "doctorvisits.csv", row.names = FALSE)
+
+head(doctorvisits)
+model <- glm(numvisit ~ reform + badh + age + educ + loginc, family = poisson, doctorvisits)
+
+model_nb <- glm.nb(numvisit ~ reform + badh + age + educ + loginc, doctorvisits)
+
+# model result for poisson regression
+model
+p_res <- residuals(model, type = "pearson")
+sum(abs(p_res) > 3)
+
+# model result for negtive binomial regression
+model_nb
+p_res <- residuals(model_nb, type = "pearson")
+sum(abs(p_res) > 3)
+
+theta = 0.9978731512246424
+mu = 3.742388660271744
+dnbinom(0, size = theta, mu = mu  )
+```
