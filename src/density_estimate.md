@@ -162,7 +162,7 @@ import jStat from "jstat";
 import { multiply, transpose } from "mathjs";
 
 import { normWeights } from "./components/normWeights.js";
-import { betaRegession, webR } from "./components/r.js";
+import { betaRegession, webR, loess } from "./components/r.js";
 
 const conPointAr = [0, 1, 2];
 const keys = ["X1", "X2", "X3"];
@@ -190,12 +190,17 @@ const betas = output.values[0].values;
 const phi = output.values[4].values[0];
 
 const linearCom = multiply(transpose([1, ...conPointAr]), betas);
-const mu = 1 / (1 + Math.exp(-linearCom));
+const mu = 1 / (1 + Math.exp(-linearCom));$$  $$
+
+const loessRes = await loess()
+const loessMu = loessRes.values[0]
+console.log(mu, loessRes.values[0])
+
 const data_with_weights = data.map((d, index) => ({
   ...d,
   Y: betaData[index].Y,
   weight: weights.find((item) => item.id === index).w,
-  e: betaData[index].Y - mu,
+  e: betaData[index].Y - loessMu,
 }));
 const weightedResidual = d3.sum(
   data_with_weights.map((item) => item.weight * item.e),
@@ -245,10 +250,11 @@ const ckdCoordinates = xGrid.map((item) => {
   };
 });
 
+
 const modCkdCoordinates = xGrid.map((item) => {
   const temp = data_with_weights.map((datapoint) => {
     const { Y, weight, e } = datapoint;
-    const yStar = mu + e - weightedResidual;
+    const yStar = loessMu + e - weightedResidual;
     return (1 / h) * weight * jStat.normal.pdf((item - yStar) / h, 0, 1);
   });
   return {

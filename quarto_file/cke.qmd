@@ -7,11 +7,13 @@ set.seed(123)
 n <- 100
 x <- runif(n, 0, 10)
 # Poisson-like response influenced by x
-y <- rpois(n, lambda = exp(0.2 * x)) 
+y <- rpois(n, lambda = exp(0.2 * x))
 
 # 2. Compute Bandwidth (Automatically detects type)
 # otype = "ordered" treats y as count data
 bw <- npregbw(xdat = x, ydat = y, regtype = "lc")
+
+summary(bw)
 
 # 3. Fit the model
 model <- npreg(bw)
@@ -19,4 +21,237 @@ model <- npreg(bw)
 # 4. Summary and Plot
 summary(model)
 plot(model, errors = TRUE)
+```
+
+
+```{r}
+library(np)
+set.seed(1)
+x <- runif(200)
+y <- sin(2 * pi * x) + rnorm(200, sd = 0.2)
+bw <- npregbw(y ~ x, regtype = "ll", bwmethod = "cv.ls")
+fit <- npreg(bws = bw)
+summary(fit)
+plot(fit)
+```
+
+```{r}
+# 1. Load the library
+# install.packages("np")
+library(np)
+
+# 2. Generate Synthetic Multivariate Data
+set.seed(123)
+n <- 300
+
+# Continuous predictor
+x1 <- runif(n, -2, 2)
+
+# Categorical predictor (e.g., 'Group A' or 'Group B')
+x2 <- factor(sample(c("A", "B"), n, replace = TRUE))
+
+# Generate a Count Response (y)
+# We'll use a Poisson-like structure where the mean changes with x1 and x2
+lambda <- exp(0.5 + 1.2 * sin(x1) + as.numeric(x2 == "B") * 0.5)
+y_numeric <- rpois(n, lambda)
+
+# CRITICAL STEP: Convert count to an ORDERED FACTOR for discrete kernel estimation
+y_count <- ordered(y_numeric)
+
+my_data <- data.frame(y_count, x1, x2)
+
+head(my_data)
+# 3. Bandwidth Selection (Cross-Validation)
+# This step is computationally intensive as it finds the optimal
+# smoothing for the count (lambda) and the predictors (h).
+bw_cond <- npcdensbw(y_count ~ x1 + x2,
+    data = my_data,
+    bwmethod = "cv.ml"
+) # Maximum Likelihood CV
+
+# 4. Estimate the Conditional Density
+fit_cond <- npcdens(bw_cond)
+
+# conditional_mean <- npreg(bw_cond)
+# conditional_mean
+
+# 5. Summary of the Model
+# Look for the 'Lambda' value for y_count (the Wang-van Ryzin parameter)
+summary(bw_cond)
+
+# 6. Prediction / Visualization
+# Let's see the probability distribution of counts for a specific case:
+# x1 = 0.5 and x2 = "A"
+test_data <- data.frame(
+    x1 = rep(0.5, 11),
+    x2 = factor(rep("A", 11), levels = c("A", "B")),
+    y_count = ordered(0:10, levels = levels(y_count))
+)
+
+# Calculate probabilities P(Y=y | x1=0.5, x2="A")
+probs <- predict(fit_cond, newdata = test_data)
+
+# Combine into a result table
+result <- data.frame(Count = 0:10, Probability = round(probs, 4))
+print(result)
+
+# 7. Plotting the Conditional PMF
+plot(0:10, probs,
+    type = "h", lwd = 5, col = "steelblue",
+    main = "Conditional PMF: P(Y | x1=0.5, x2='A')",
+    xlab = "Count (y)", ylab = "Probability"
+)
+```
+
+```{r}
+# Sample data (two clusters)
+x <- c(1.8, 2.0, 2.1, 2.2, 4.8, 5.0, 5.1, 5.2)
+
+# Create grid of points to evaluate density
+x_grid <- seq(1, 6, length.out = 200)
+
+# -----------------------------
+# 1. Histogram (density)
+# -----------------------------
+hist_info <- hist(x, breaks = seq(1, 6, by = 1), plot = FALSE)
+
+# Convert histogram to density values
+hist_density <- hist_info$density
+hist_mids <- hist_info$mids
+
+# -----------------------------
+# 2. Naive estimator function
+# -----------------------------
+naive_density <- function(x_grid, data, h) {
+    n <- length(data)
+    sapply(x_grid, function(x0) {
+        sum(abs(data - x0) < h / 2) / (n * h)
+    })
+}
+
+# Compute naive estimator
+h <- 1
+naive_vals <- naive_density(x_grid, x, h)
+
+# -----------------------------
+# Plot
+# -----------------------------
+plot(x_grid, naive_vals,
+    type = "l", lwd = 2,
+    xlab = "x", ylab = "Density",
+    main = "Histogram vs Naive Density Estimator"
+)
+
+# Add histogram as step function
+for (i in 1:length(hist_mids)) {
+    segments(hist_info$breaks[i], hist_density[i],
+        hist_info$breaks[i + 1], hist_density[i],
+        lwd = 2, lty = 2
+    )
+}
+
+legend("topright",
+    legend = c("Naive estimator", "Histogram"),
+    lty = c(1, 2),
+    lwd = 2
+)
+```
+
+
+## final
+```{r}
+
+# # Load the library
+# library(np)
+
+# # --- Step 1: Data Generating Process (DGP) ---
+# set.seed(123)
+# n <- 200
+
+# Three covariates: one normal, one uniform, one binary factor
+x1 <- rnorm(n)
+x2 <- runif(n, -2, 2)
+x3 <- rbinom(n, 1, 0.5) # Categorical covariate (0 or 1)
+
+# # Non-linear response: Y = sin(x1) + 0.5*x2^2 + x3 + noise
+error <- rnorm(n, sd = 0.5)
+y <- sin(x1) + 0.5*(x2^2) + x3 + error
+
+# # Combine into a data frame
+df <- data.frame(y, x1, x2, x3 = factor(x3))
+
+# # --- Step 2: Bandwidth Selection ---
+# # This looks for the best 'h' for each variable
+# bw_reg <- npregbw(formula = y ~ x1 + x2 + x3, 
+#                   regtype = "ll", 
+#                   data = df)
+
+# # --- Step 3: Fit and Summarize ---
+# model_reg <- npreg(bw_reg)
+# summary(model_reg)
+
+# Visualizing the partial effects
+# It will plot Y vs each X while holding others at their mean/median
+# plot(model_reg)
+# dev.off()
+
+# bw_dens <- npudensbw(dat = y ~ x1 + x2 + x3, data = df)
+
+# # --- Step 2: Estimate Density ---
+# fit_dens <- npudens(bw_dens)
+
+# # --- Step 3: Results ---
+# summary(fit_dens)
+
+# # This shows the univariate 'marginal' densities
+# plot(fit_dens)
+
+# # --- Step 4: Extracting Density Values ---
+# # If you want the actual density value for each observation:
+# est_density <- fit_dens$dens
+# head(data.frame(df, density = est_density))
+
+
+
+
+
+
+
+# 1. Compute bandwidths for Y given X1, X2, X3
+bw_cond <- npcdensbw(y ~ x1 + x2 + x3, data = df)
+
+# Note: This is usually slower than joint density because it 
+# optimizes for the relationship between the variables.
+
+# 2. Fit the conditional density model
+fit_cond <- npcdens(bw_cond)
+
+# 3. Summary
+summary(fit_cond)
+
+# Visualizing the density of Y across the range of X1
+plot(fit_cond)
+```
+
+```{r}
+df <- data.frame(
+  x1 = runif(100),
+  x2 = runif(100),
+  x3 = runif(100)
+)
+
+# simulate response
+df$y <- with(df, sin(x1*3) + x2^2 - x3 + rnorm(100, sd = 0.1))
+
+# fit loess model
+fit <- loess(y ~ x1 + x2 + x3, data = df, span = 0.5)
+summary_stats <- summary(fit)
+summary_stats
+new_df <- data.frame(
+  x1 = c(0.2, 0.5),
+  x2 = c(0.3, 0.6),
+  x3 = c(0.4, 0.7)
+)
+
+predict(fit, newdata = new_df)
 ```

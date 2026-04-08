@@ -196,7 +196,7 @@ display(conditionPoint);
 display(ranges);
 ```
 
-### Select Kernal Weight
+### Select smoothing parameter
 
 To give every data point a weight.
 
@@ -205,7 +205,7 @@ const kernal = view(
   Inputs.range([0, 100], {
     value: 10,
     step: 0.1,
-    label: "kernal weight",
+    label: "smoothing parameter",
   }),
 );
 ```
@@ -251,7 +251,7 @@ const distance_type = "euclidean";
 const dim = 2;
 const axisAr = getCombinations(keys, dim);
 
-const sactterAr = axisAr.map((item) => {
+const scatterList = axisAr.map((item) => {
   const [key1, key2] = item;
   return Plot.plot({
     color: {
@@ -319,7 +319,7 @@ const sactterAr = axisAr.map((item) => {
 ```
 
 <div class="grid grid-cols-4">
-  ${sactterAr.map(scatter => {
+  ${scatterList.map(scatter => {
     return scatter
   })}
 </div>

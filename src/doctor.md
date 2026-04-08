@@ -1,5 +1,5 @@
 ---
-title: Poisson & Negtive Binomial Regression
+title: Doctor Visit
 toc: false
 ---
 
@@ -13,39 +13,28 @@ import { modelList } from "./components/modelList.js";
 import { getRanges } from "./components/getRanges.js";
 import { modelConfig } from "./components/modelConfig.js";
 import { normWeights } from "./components/normWeights.js";
-import {
-  negRegession,
-  webR,
-  getSummary,
-  poissonRegession,
-  cke,
-  loess
-} from "./components/r.js";
 import { getCombinations } from "./components/getCombinations.js";
 import { PcaInputRange } from "./components/UI/PcaInputRange.js";
 import { scatterPlot3d } from "./components/scatterPlot3d.js";
-import { getPcaData } from "./components/getPcaData.js";
 import { matrixData } from "./components/organizeData.js";
+import { Mutable } from "observablehq:stdlib";
 ```
 
-# Poisson & Negtive Binomial Regression
-
-This document firstly fits data using poisson regression. According to lack fit in some data points, change to negtive binomial regression which is expected to have a good fit. The document provides the process of checking model fit or lack fit using visulization method.
-
-These two regression methods model count data. In terms of histogram estimate, bar chart is used here. Each bar height equals to weight, and they sum up to one. In histogram context, the area of histogram should be one.
-
-## Dataset from dgp
-
-Data generating process references [thesis paper](https://www.overleaf.com/project/696eb73c13ae0d69be0a84bd).
+# Real Dataset: Doctor Visit
 
 ```js
-display(Inputs.table(poiNegData));
+display(Inputs.table(doctorvisits));
 ```
 
+## Select Model
+
 ```js
-const poiNegData = FileAttachment("./data/dgp.csv").csv({
-  typed: true,
-});
+const model = view(
+  Inputs.select(["Poisson Regression", "Negative Binomial Regression"], {
+    unique: true,
+    label: "Select Model",
+  }),
+);
 ```
 
 ## Select Conditional Data
@@ -54,19 +43,7 @@ const poiNegData = FileAttachment("./data/dgp.csv").csv({
 const conditionPointObj = view(Inputs.form(formMap));
 ```
 
-Covariates scatterplots are shown here. They're color firstly by regime property which indicates response. And darker color points means they're closer to conidtional datapoint in terms of Mahalanobis distance.
-
-<div class="grid grid-cols-4">
-  ${scatterList.map(scatter => {
-    return scatter
-  })}
-</div>
-
-```js
-display(pdfplot);
-```
-
-## Weight Datapoint
+## Select bandwidth
 
 ```js
 const kernal = view(
@@ -84,15 +61,14 @@ Every data point with weight is listed as follows.
 display(data_with_weights);
 ```
 
-## Generalized linear model
+<div class="grid grid-cols-4">
+  ${scatterList.map(scatter => {
+    return scatter
+  })}
+</div>
 
 ```js
-const model = view(
-  Inputs.select(["Poisson Regression", "Negative Binomial Regression"], {
-    unique: true,
-    label: "Select Model",
-  }),
-);
+display(pdfplot);
 ```
 
 ```js
@@ -102,9 +78,15 @@ display(summary);
 <!-- js logics -->
 
 ```js
-const keys = ["x1", "x2", "x3"];
+const doctorvisits = FileAttachment("./data/doctorvisits.csv").csv({
+  typed: true,
+});
+```
+
+```js
+const keys = ["reform", "badh", "age", "educ", "loginc"];
 const formMap = {};
-const ranges = getRanges(poiNegData);
+const ranges = getRanges(doctorvisits);
 keys.forEach((key) => {
   const result = ranges[key];
   if (result instanceof Set) {
@@ -113,7 +95,7 @@ keys.forEach((key) => {
     const { min, max } = result;
     formMap[key] = Inputs.range([min, max], {
       value: (min + max) / 2,
-      step: 0.1,
+      step: 0.5,
       label: key,
     });
   }
@@ -122,13 +104,12 @@ keys.forEach((key) => {
 
 ```js
 const dim = 2;
-const keys = ["x1", "x2", "x3"];
 const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
-const temp = keys.map((key) => poiNegData.map((item) => item[key]));
+const temp = keys.map((key) => doctorvisits.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
 
-const data = poiNegData.map((item) => _.pick(item, keys));
+const data = doctorvisits.map((item) => _.pick(item, keys));
 const unnormalizedweights = normWeights(
   data,
   conditionPoint,
@@ -144,38 +125,46 @@ const weights = unnormalizedweights.map((d) => ({
 
 const data_with_weights = data.map((d, index) => ({
   ...d,
-  Y: poiNegData[index].y,
-  regime: poiNegData[index].regime,
+  numvisit: doctorvisits[index].numvisit,
   weight: weights.find((item) => item.id === index).w,
 }));
 
+const dataState = Mutable(data_with_weights);
+const count = Mutable(0);
+
+console.log(count.value);
+
+display(count.value);
+const resetDataState = (newData) => {
+  dataState.value = newData;
+};
+// setTimeout(() => {
+//   count.value += 1;
+//   console.log("dsads");
+//   dataState.value = [];
+// }, 3000);
+
+console.log(count.value);
+
 const wmin = d3.min(data_with_weights, (d) => d.weight);
 const wmax = d3.max(data_with_weights, (d) => d.weight);
+```
 
+```js
 const scatterList = axisAr.map((item) => {
   const [key1, key2] = item;
   return Plot.plot({
     title: `${key1} vs ${key2}`,
     marks: [
-      Plot.dot(data_with_weights, {
+      Plot.dot(dataState, {
         x: key1,
         y: key2,
         fill: (d) => {
           const t = (d.weight - wmin) / (wmax - wmin);
-          return d3.interpolateReds(t);
+          return d.r > 2 || d.r < -2
+            ? d3.interpolateReds(t)
+            : d3.interpolateBlues(t);
         },
-        filter: (d) => d.regime === "NegBin",
-      }),
-
-      Plot.dot(data_with_weights, {
-        x: key1,
-        y: key2,
-        sort: "weight",
-        fill: (d) => {
-          const t = (d.weight - wmin) / (wmax - wmin);
-          return d3.interpolateBlues(t);
-        },
-        filter: (d) => d.regime === "Poisson",
       }),
 
       // conditional data point with orange color
@@ -190,7 +179,7 @@ const scatterList = axisAr.map((item) => {
           x: key1,
           y: key2,
           fill: "orange",
-          r: 10,
+          r: 5,
         },
       ),
     ],
@@ -198,20 +187,61 @@ const scatterList = axisAr.map((item) => {
 });
 ```
 
+Count is: ${html`<span class="flash">${count}</span>`}.
+
+```js
+display(dataState);
+```
+
+```js
+import {
+  negRegession,
+  webR,
+  getSummary,
+  poissonRegession,
+  cke,
+  loess,
+  getPearsonResiduals,
+} from "./components/r.js";
+import { getPcaData } from "./components/getPcaData.js";
+```
+
 ```js
 const isPoissonReg = model === "Poisson Regression";
 // R regression code
-await webR.objs.globalEnv.bind("poiNegData", poiNegData);
-// const output = await negRegession();
-const output = isPoissonReg ? await poissonRegession() : await negRegession();
+await webR.objs.globalEnv.bind("doctorvisits", doctorvisits);
+
+const output = isPoissonReg
+  ? await poissonRegession(
+      "doctorvisits",
+      "numvisit ~ reform + badh + age + educ +  loginc",
+    )
+  : await negRegession(
+      "doctorvisits",
+      "numvisit ~ reform + badh + age + educ +  loginc",
+    );
 const estimates = output.values;
 const summary = await getSummary();
 
-const mean = Math.exp(
-  multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 4)),
+const residuals = await getPearsonResiduals();
+resetDataState(
+  dataState.map((item, index) => {
+    return {
+      ...item,
+      r: residuals.values[index],
+    };
+  }),
 );
+const mean = Math.exp(
+  multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 6)),
+);
+const theta = estimates[6];
 
-const theta = estimates[4];
+function negBinomialPMF(k, r, p) {
+  if (k < 0) return 0;
+  const coef = jStat.gammafn(k + r) / (jStat.gammafn(r) * jStat.gammafn(k + 1));
+  return coef * Math.pow(p, r) * Math.pow(1 - p, k);
+}
 
 const xGrid = d3.range(0, 50, 1);
 const coordinates = xGrid.map((item) => {
@@ -223,7 +253,7 @@ const coordinates = xGrid.map((item) => {
   } else {
     return {
       x: item,
-      y: jStat.negbin.pdf(item, theta, theta / (mean + theta)) || 0,
+      y: negBinomialPMF(item, theta, theta / (mean + theta)) || 0,
     };
   }
 });
@@ -231,10 +261,10 @@ const coordinates = xGrid.map((item) => {
 const weightedDen = xGrid.map((xCor) => {
   if (isPoissonReg) {
     const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, ["x1", "x2", "x3"]);
+      const covariateObj = _.pick(item, keys);
       const covariates = Object.values(covariateObj);
       const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
+        multiply(transpose([1, ...covariates]), estimates.slice(0, 6)),
       );
       const y = jStat.jStat.poisson.pdf(xCor, mean) || 0;
       return y * item.weight;
@@ -246,12 +276,12 @@ const weightedDen = xGrid.map((xCor) => {
     };
   } else {
     const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, ["x1", "x2", "x3"]);
+      const covariateObj = _.pick(item, keys);
       const covariates = Object.values(covariateObj);
       const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
+        multiply(transpose([1, ...covariates]), estimates.slice(0, 6)),
       );
-      const y = jStat.negbin.pdf(xCor, theta, theta / (mean + theta)) || 0;
+      const y = negBinomialPMF(xCor, theta, theta / (mean + theta)) || 0;
       return y * item.weight;
     });
 
@@ -262,10 +292,10 @@ const weightedDen = xGrid.map((xCor) => {
   }
 });
 
-const h = jStat.stdev(data_with_weights.map((item) => item.Y));
+const h = jStat.stdev(data_with_weights.map((item) => item.numvisit));
 const ckdCoordinates = xGrid.map((item) => {
   const temp = data_with_weights.map((datapoint) => {
-    return datapoint.Y === item ? datapoint.weight : 0;
+    return datapoint.numvisit === item ? datapoint.weight : 0;
   });
   return {
     x: item,
@@ -284,7 +314,7 @@ const pdfplot = Plot.plot({
     Plot.ruleX([0]),
     Plot.ruleY([0]),
     Plot.barY(data_with_weights, {
-      x: "Y",
+      x: "numvisit",
       y: "weight",
       fill: "steelblue",
       opacity: 0.7,

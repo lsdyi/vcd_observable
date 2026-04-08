@@ -1,3 +1,38 @@
+---
+title: "Kernel Estimator"
+author:   
+  - Jinzhe Yang
+format: 
+  html: default
+  pdf:
+    keep-tex: true
+    include-in-header: 
+       text: |
+         \usepackage{fvextra}
+         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+         \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
+toc: true
+language: 
+  title-block-author-single: " "
+toc-title-document: "Content"
+crossref-fig-title: "Figure"
+theme: lumen
+title-block-banner-color: Primary
+callout-warning-caption: "Warning"
+callout-note-caption: "Note!"
+callout-tip-caption: "Tip"
+---
+
+## Product Kernel Estimator
+$$
+\hat f_{X,Y}(x,y)
+=
+\frac{1}{n h_x h_y}
+\sum_{i=1}^{n}
+K\!\left(\frac{x-X_i}{h_x}\right)
+K\!\left(\frac{y-Y_i}{h_y}\right)
+$$
+
 ```{r}
 
 set.seed(123)
@@ -56,6 +91,7 @@ persp(x_grid, y_grid, density_matrix,
 )
 ```
 
+## Non-parametric Estimate Package
 ```{r}
 library(np)
 
@@ -103,12 +139,13 @@ contour(x_grid, y_grid, z,
 )
 
 image(x_grid, y_grid, z,
-      col = heat.colors(50),
-      xlab="X",
-      ylab="Y",
-      main="Conditional Density")
+    col = heat.colors(50),
+    xlab = "X",
+    ylab = "Y",
+    main = "Conditional Density"
+)
 
-contour(x_grid, y_grid, z, add=TRUE)
+contour(x_grid, y_grid, z, add = TRUE)
 ```
 
 ```{r}
