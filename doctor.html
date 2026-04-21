@@ -12,7 +12,7 @@
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
 <link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
-<link rel="modulepreload" href="./_observablehq/client.3aa2c62e.js">
+<link rel="modulepreload" href="./_observablehq/client.48e27f80.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
@@ -23,21 +23,23 @@
 <link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
+<link rel="modulepreload" href="./_import/components/kernel.b7337fd3.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
 <link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
 <link rel="modulepreload" href="./_import/components/scatterPlot3d.95fe92c3.js">
 <link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
-<link rel="modulepreload" href="./_import/components/r.fa3a19ed.js">
-<link rel="modulepreload" href="./_import/components/getPcaData.43635550.js">
+<link rel="modulepreload" href="./_import/components/util.7d3fd3e7.js">
+<link rel="modulepreload" href="./_import/components/r.e25cff1d.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.01bbfa2a.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
-<link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
 <link rel="modulepreload" href="./_node/plotly.js-dist-min@3.5.0/index.96ab480f.js">
-<link rel="modulepreload" href="./_node/webr@0.5.8/index.d12ac113.js">
+<link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
+<link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
 <link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
 <link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
@@ -88,16 +90,16 @@
 <link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
 <script type="module">
 
-import {define} from "./_observablehq/client.3aa2c62e.js";
+import {define} from "./_observablehq/client.48e27f80.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1775612423890,"size":97292});
+registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1776814856840,"size":97292});
 
-define({id: "6b0edda6", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","PcaInputRange","scatterPlot3d","matrixData","Mutable"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {matrixData}, {Mutable}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_observablehq/stdlib.73a8ec5a.js")]);
+define({id: "1fa831e6", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","computeWeightsMixed","poissonKernel","getCombinations","PcaInputRange","scatterPlot3d","matrixData","selectFromKeys","getCardinalityFromMatrix","Mutable"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {computeWeightsMixed, poissonKernel}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {matrixData}, {selectFromKeys, getCardinalityFromMatrix}, {Mutable}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/kernel.b7337fd3.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_import/components/util.7d3fd3e7.js"), import("./_observablehq/stdlib.73a8ec5a.js")]);
 
 
-return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations,PcaInputRange,scatterPlot3d,matrixData,Mutable};
+return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,computeWeightsMixed,poissonKernel,getCombinations,PcaInputRange,scatterPlot3d,matrixData,selectFromKeys,getCardinalityFromMatrix,Mutable};
 }});
 
 define({id: "96836a7f", inputs: ["display","Inputs","doctorvisits"], body: (display,Inputs,doctorvisits) => {
@@ -119,11 +121,11 @@ const conditionPointObj = view(Inputs.form(formMap));
 return {conditionPointObj};
 }});
 
-define({id: "a8ed1892", inputs: ["view","Inputs"], outputs: ["kernal"], body: (view,Inputs) => {
+define({id: "26f8f53e", inputs: ["view","Inputs"], outputs: ["kernal"], body: (view,Inputs) => {
 const kernal = view(
-  Inputs.range([0.1, 100], {
-    value: 10,
-    step: 0.1,
+  Inputs.range([0.01, 3], {
+    value: 1,
+    step: 0.01,
     label: "smoothing parameter",
   }),
 );
@@ -157,7 +159,8 @@ const doctorvisits = FileAttachment("./data/doctorvisits.csv").csv({
 return {doctorvisits};
 }});
 
-define({id: "1271bcc1", inputs: ["getRanges","doctorvisits","Inputs"], outputs: ["keys","formMap","ranges"], body: (getRanges,doctorvisits,Inputs) => {
+define({id: "bcb6b711", inputs: ["getRanges","doctorvisits","Inputs"], outputs: ["keys","formMap","ranges"], body: (getRanges,doctorvisits,Inputs) => {
+// reform + badh + age + educ + loginc
 const keys = ["reform", "badh", "age", "educ", "loginc"];
 const formMap = {};
 const ranges = getRanges(doctorvisits);
@@ -177,7 +180,7 @@ keys.forEach((key) => {
 return {keys,formMap,ranges};
 }});
 
-define({id: "6ab7aa86", inputs: ["getCombinations","keys","conditionPointObj","doctorvisits","jStat","_","normWeights","kernal","d3","Mutable","display"], outputs: ["dim","axisAr","conditionPoint","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","data_with_weights","dataState","count","resetDataState","wmin","wmax"], body: (getCombinations,keys,conditionPointObj,doctorvisits,jStat,_,normWeights,kernal,d3,Mutable,display) => {
+define({id: "4b478da8", inputs: ["getCombinations","keys","conditionPointObj","doctorvisits","jStat","_","selectFromKeys","getCardinalityFromMatrix","kernal","computeWeightsMixed","Mutable","d3"], outputs: ["dim","axisAr","conditionPoint","temp","stdevs","data","categoricalKeys","continousKeys","XCont","XCat","XOrd","x0","bwCont","lambdaCat","lambdaOrd","Ccat","externlH","weights","data_with_weights","dataState","resetDataState","wmin","wmax"], body: (getCombinations,keys,conditionPointObj,doctorvisits,jStat,_,selectFromKeys,getCardinalityFromMatrix,kernal,computeWeightsMixed,Mutable,d3) => {
 const dim = 2;
 const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
@@ -185,59 +188,76 @@ const temp = keys.map((key) => doctorvisits.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
 
 const data = doctorvisits.map((item) => _.pick(item, keys));
-const unnormalizedweights = normWeights(
-  data,
-  conditionPoint,
-  stdevs,
-  undefined,
-  kernal,
-);
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+// const unnormalizedweights = normWeights(
+//   data,
+//   conditionPoint,
+//   stdevs,
+//   undefined,
+//   kernal,
+// );
+// const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
+// const weights2 = unnormalizedweights.map((d) => ({
+//   id: d.id,
+//   w: d.w / totalunnormalizedweight,
+// }));
+
+const categoricalKeys = ["reform", "badh"];
+const continousKeys = ["age", "educ", "loginc"];
+const XCont = selectFromKeys(data, continousKeys);
+const XCat = selectFromKeys(data, categoricalKeys);
+const XOrd = [];
+const x0 = {
+  cont: selectFromKeys([conditionPointObj], continousKeys).flat(),
+  cat: selectFromKeys([conditionPointObj], categoricalKeys).flat(),
+  ord: selectFromKeys([conditionPointObj], []).flat(),
+};
+const bwCont = [13.91312, 2.417221, 124196.4];
+const lambdaCat = [0.3210706, 0.01451098];
+const lambdaOrd = [];
+const Ccat = getCardinalityFromMatrix(XCat);
+const externlH = kernal;
+
+const weights = computeWeightsMixed({
+  XCont,
+  XCat,
+  XOrd,
+  x0,
+  bwCont,
+  lambdaCat,
+  lambdaOrd,
+  Ccat,
+  externlH,
+});
 
 const data_with_weights = data.map((d, index) => ({
   ...d,
   numvisit: doctorvisits[index].numvisit,
-  weight: weights.find((item) => item.id === index).w,
+  weight: weights[index],
 }));
 
 const dataState = Mutable(data_with_weights);
-const count = Mutable(0);
-
-console.log(count.value);
-
-display(count.value);
 const resetDataState = (newData) => {
   dataState.value = newData;
 };
-// setTimeout(() => {
-//   count.value += 1;
-//   console.log("dsads");
-//   dataState.value = [];
-// }, 3000);
 
-console.log(count.value);
 
 const wmin = d3.min(data_with_weights, (d) => d.weight);
 const wmax = d3.max(data_with_weights, (d) => d.weight);
-return {dim,axisAr,conditionPoint,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,data_with_weights,dataState,count,resetDataState,wmin,wmax};
+return {dim,axisAr,conditionPoint,temp,stdevs,data,categoricalKeys,continousKeys,XCont,XCat,XOrd,x0,bwCont,lambdaCat,lambdaOrd,Ccat,externlH,weights,data_with_weights,dataState,resetDataState,wmin,wmax};
 }});
 
-define({id: "394247cb", inputs: ["axisAr","Plot","dataState","wmin","wmax","d3","conditionPointObj"], outputs: ["scatterList"], body: (axisAr,Plot,dataState,wmin,wmax,d3,conditionPointObj) => {
+define({id: "9e452890", inputs: ["axisAr","Plot","data_with_weights","wmin","wmax","residuals","d3","conditionPointObj"], outputs: ["scatterList"], body: (axisAr,Plot,data_with_weights,wmin,wmax,residuals,d3,conditionPointObj) => {
 const scatterList = axisAr.map((item) => {
   const [key1, key2] = item;
   return Plot.plot({
     title: `${key1} vs ${key2}`,
     marks: [
-      Plot.dot(dataState, {
+      Plot.dot(data_with_weights, {
         x: key1,
         y: key2,
-        fill: (d) => {
+        fill: (d, i) => {
           const t = (d.weight - wmin) / (wmax - wmin);
-          return d.r > 2 || d.r < -2
+          return residuals.values[i] > 2 || residuals.values[i] < -2
             ? d3.interpolateReds(t)
             : d3.interpolateBlues(t);
         },
@@ -264,23 +284,17 @@ const scatterList = axisAr.map((item) => {
 return {scatterList};
 }});
 
-define({id: "e326cce4", mode: "inline", inputs: ["html","count","display"], body: async (html,count,display) => {
-display(await(
-html`<span class="flash">${count}</span>`
-))
-}});
+define({id: "33b3fcc7", inputs: ["data_with_weights"], outputs: ["negRegession","webR","getSummary","poissonRegession","cke","loess","getPearsonResiduals","getPcaData"], body: async (data_with_weights) => {
+const [{negRegession, webR, getSummary, poissonRegession, cke, loess, getPearsonResiduals}, {getPcaData}] = await Promise.all([import("./_import/components/r.e25cff1d.js"), import("./_import/components/getPcaData.01bbfa2a.js")]);
 
-define({id: "f2e32ccc", inputs: ["display","dataState"], body: (display,dataState) => {
-display(dataState);
-}});
-
-define({id: "62699b6d", outputs: ["negRegession","webR","getSummary","poissonRegession","cke","loess","getPearsonResiduals","getPcaData"], body: async () => {
-const [{negRegession, webR, getSummary, poissonRegession, cke, loess, getPearsonResiduals}, {getPcaData}] = await Promise.all([import("./_import/components/r.fa3a19ed.js"), import("./_import/components/getPcaData.43635550.js")]);
+console.log('1', data_with_weights)
 
 return {negRegession,webR,getSummary,poissonRegession,cke,loess,getPearsonResiduals,getPcaData};
 }});
 
-define({id: "dc877aa6", inputs: ["model","webR","doctorvisits","poissonRegession","negRegession","getSummary","getPearsonResiduals","resetDataState","dataState","multiply","transpose","conditionPoint","jStat","d3","data_with_weights","_","keys","Plot"], outputs: ["isPoissonReg","output","estimates","summary","residuals","mean","theta","negBinomialPMF","xGrid","coordinates","weightedDen","h","ckdCoordinates","pdfplot"], body: async (model,webR,doctorvisits,poissonRegession,negRegession,getSummary,getPearsonResiduals,resetDataState,dataState,multiply,transpose,conditionPoint,jStat,d3,data_with_weights,_,keys,Plot) => {
+define({id: "c18bb8f8", inputs: ["data_with_weights","model","webR","doctorvisits","poissonRegession","negRegession","getSummary","getPearsonResiduals","multiply","transpose","conditionPoint","jStat","d3","_","keys","poissonKernel"], outputs: ["isPoissonReg","output","estimates","summary","residuals","mean","theta","negBinomialPMF","xGrid","coordinates","weightedDen","h","hy","ckdCoordinates"], body: async (data_with_weights,model,webR,doctorvisits,poissonRegession,negRegession,getSummary,getPearsonResiduals,multiply,transpose,conditionPoint,jStat,d3,_,keys,poissonKernel) => {
+console.log('0', data_with_weights)
+
 const isPoissonReg = model === "Poisson Regression";
 // R regression code
 await webR.objs.globalEnv.bind("doctorvisits", doctorvisits);
@@ -298,14 +312,8 @@ const estimates = output.values;
 const summary = await getSummary();
 
 const residuals = await getPearsonResiduals();
-resetDataState(
-  dataState.map((item, index) => {
-    return {
-      ...item,
-      r: residuals.values[index],
-    };
-  }),
-);
+
+
 const mean = Math.exp(
   multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 6)),
 );
@@ -367,16 +375,24 @@ const weightedDen = xGrid.map((xCor) => {
 });
 
 const h = jStat.stdev(data_with_weights.map((item) => item.numvisit));
+
+const hy = 0.7228501;
+
 const ckdCoordinates = xGrid.map((item) => {
   const temp = data_with_weights.map((datapoint) => {
-    return datapoint.numvisit === item ? datapoint.weight : 0;
+    const { numvisit, weight } = datapoint;
+
+    return weight * poissonKernel(item, numvisit, h);
   });
   return {
     x: item,
     y: d3.sum(temp),
   };
 });
+return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPMF,xGrid,coordinates,weightedDen,h,hy,ckdCoordinates};
+}});
 
+define({id: "4f7a77d6", inputs: ["Plot","data_with_weights","coordinates","weightedDen","ckdCoordinates"], outputs: ["pdfplot"], body: (Plot,data_with_weights,coordinates,weightedDen,ckdCoordinates) => {
 const pdfplot = Plot.plot({
   title: "pmf",
 
@@ -407,16 +423,16 @@ const pdfplot = Plot.plot({
       strokeWidth: 2,
       marker: "circle",
     }),
-    // Plot.line(ckdCoordinates, {
-    //   x: "x",
-    //   y: "y",
-    //   stroke: "red",
-    //   strokeWidth: 2,
-    //   marker: "circle",
-    // }),
+    Plot.line(ckdCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "red",
+      strokeWidth: 2,
+      marker: "circle",
+    }),
   ],
 });
-return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPMF,xGrid,coordinates,weightedDen,h,ckdCoordinates,pdfplot};
+return {pdfplot};
 }});
 
 </script>
@@ -434,6 +450,7 @@ return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPM
     <li class="observablehq-link observablehq-link-active"><a href="./doctor">Doctor Visit</a></li>
     <li class="observablehq-link"><a href="./pca">PCA example</a></li>
     <li class="observablehq-link"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
+    <li class="observablehq-link"><a href="./test">Test Page</a></li>
     <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
     <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
@@ -441,7 +458,7 @@ return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPM
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:6b0edda6:--></div>
+<div class="observablehq observablehq--block"><!--:1fa831e6:--></div>
 <h1 id="real-dataset-doctor-visit" tabindex="-1"><a class="observablehq-header-anchor" href="#real-dataset-doctor-visit">Real Dataset: Doctor Visit</a></h1>
 <div class="observablehq observablehq--block"><!--:96836a7f:--></div>
 <h2 id="select-model" tabindex="-1"><a class="observablehq-header-anchor" href="#select-model">Select Model</a></h2>
@@ -449,7 +466,7 @@ return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPM
 <h2 id="select-conditional-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditional-data">Select Conditional Data</a></h2>
 <div class="observablehq observablehq--block"><!--:63f89669:--></div>
 <h2 id="select-bandwidth" tabindex="-1"><a class="observablehq-header-anchor" href="#select-bandwidth">Select bandwidth</a></h2>
-<div class="observablehq observablehq--block"><!--:a8ed1892:--></div>
+<div class="observablehq observablehq--block"><!--:26f8f53e:--></div>
 <p>Every data point with weight is listed as follows.</p>
 <div class="observablehq observablehq--block"><!--:d47fc37a:--></div>
 <div class="grid grid-cols-4">
@@ -459,17 +476,16 @@ return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPM
 <div class="observablehq observablehq--block"><!--:d454a666:--></div>
 <!-- js logics -->
 <div class="observablehq observablehq--block"><!--:9104b024:--></div>
-<div class="observablehq observablehq--block"><!--:1271bcc1:--></div>
-<div class="observablehq observablehq--block"><!--:6ab7aa86:--></div>
-<div class="observablehq observablehq--block"><!--:394247cb:--></div>
-<p>Count is: <observablehq-loading></observablehq-loading><!--:e326cce4:-->.</p>
-<div class="observablehq observablehq--block"><!--:f2e32ccc:--></div>
-<div class="observablehq observablehq--block"><!--:62699b6d:--></div>
-<div class="observablehq observablehq--block"><!--:dc877aa6:--></div>
+<div class="observablehq observablehq--block"><!--:bcb6b711:--></div>
+<div class="observablehq observablehq--block"><!--:4b478da8:--></div>
+<div class="observablehq observablehq--block"><!--:9e452890:--></div>
+<div class="observablehq observablehq--block"><!--:33b3fcc7:--></div>
+<div class="observablehq observablehq--block"><!--:c18bb8f8:--></div>
+<div class="observablehq observablehq--block"><!--:4f7a77d6:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./density_estimate"><span>Density Estimator</span></a><a rel="next" href="./pca"><span>PCA example</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-08T01:53:08">Apr 8, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-21T23:51:50">Apr 21, 2026</a>.</div>
 </footer>
 </div>
 </body>

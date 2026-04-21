@@ -1,0 +1,201 @@
+```{r}
+library(MASS) # for mvrnorm
+library(betareg)
+library(ggplot2)
+library(ggsci)
+```
+
+```{r}
+set.seed(123)
+
+n <- 1000 # sample size
+mu_beta <- c(0, 0, 0) # means of X1, X2, X3
+
+# Covariance matrix for correlated covariates
+Sigma <- matrix(c(
+    1, 0.5, 0.3,
+    0.5, 1, 0.4,
+    0.3, 0.4, 1
+), nrow = 3)
+
+# Generate correlated covariates
+X <- mvrnorm(n, mu = mu_beta, Sigma = Sigma)
+X1 <- X[, 1]
+X2 <- X[, 2]
+X3 <- X[, 3]
+
+# simulate response
+beta <- c(0.5, 0.7, -0.3, 0.2) # beta0, beta1, beta2, beta3
+
+# Linear predictor
+eta <- beta[1] + beta[2] * X1 + beta[3] * X2 + beta[4] * X3
+
+# Inverse logit to get mean in (0,1)
+mu <- plogis(eta)
+phi <- exp(1 + 2 * X1) # precision parameter
+
+# phi = 5
+
+# Simulate beta response
+Y <- rbeta(n, shape1 = mu * phi, shape2 = (1 - mu) * phi)
+
+
+# fit <- betareg(Y ~ X1 + X2 + X3 | X1)
+fit <- betareg(Y ~ X1 + X2 + X3)
+summary(fit)
+
+cor(X) # correlation matrix of covariates
+
+# Combine response and covariates
+sim_data <- data.frame(
+    Y = Y,
+    X1 = X1,
+    X2 = X2,
+    X3 = X3
+)
+
+# Quick look
+head(sim_data)
+write.csv(sim_data, "simulated_beta_data.csv", row.names = FALSE)
+```
+
+```{r}
+x_new <- data.frame(X1 = 0, X2 = 1, X3 = 2)
+
+# Predict conditional mean
+mu_hat <- predict(fit, newdata = x_new, type = "response")
+mu_hat
+
+
+plot(X1, Y,
+    pch = 16, col = rgb(0, 0, 0, 0.4),
+    main = "Heteroskedastic Beta response",
+    xlab = "X1", ylab = "Y"
+)
+
+
+ord <- order(X1)
+
+plot(X1, Y, pch = 16, col = rgb(0, 0, 0, 0.3))
+
+lines(X1[ord], mu[ord], col = "blue", lwd = 2)
+
+# add ±2 sd bands
+
+sd_y <- sqrt(mu * (1 - mu) / (1 + phi))
+
+lines(X1[ord], (mu + 2 * sd_y)[ord], col = "red", lty = 2)
+
+lines(X1[ord], (mu - 2 * sd_y)[ord], col = "red", lty = 2)
+
+
+x_vals <- c(-1, 0, 1)
+
+curve_list <- lapply(x_vals, function(x) {
+    phi_x <- exp(1 + 2 * x)
+
+    mu_x <- plogis(x) # or your eta mapping
+
+    y <- seq(0.001, 0.999, length = 200)
+
+    d <- dbeta(y, mu_x * phi_x, (1 - mu_x) * phi_x)
+
+    data.frame(y, d, x = x)
+})
+
+df <- do.call(rbind, curve_list)
+
+ggplot(df, aes(y, d, color = factor(x))) +
+    geom_line() +
+    labs(color = "X1", title = "Beta densities at different X1")
+```
+
+```{r}
+# y_grid <- seq(min(Y), max(Y), length.out = 200)
+y_grid <- seq(0.001, 0.999, length.out = 200)
+min(Y)
+max(Y)
+# Get predicted means (mu) and the estimated shape (dispersion)
+mu_hat <- predict(fit, type = "response")
+# For Gamma GLM, shape = 1 / dispersion
+phi_hat <- predict(fit, type = "precision")
+
+# Calculate the mean density across all observations for each point in the grid
+marginal_dens <- sapply(y_grid, function(yi) {
+    mean(dbeta(yi,
+        shape1 = mu_hat * phi_hat,
+        shape2 = (1 - mu_hat) * phi_hat
+    ))
+})
+# empirical KDE data
+emp <- density(Y)
+df_emp <- data.frame(x = emp$x, y = emp$y)
+
+# analytical marginal data
+df_ana <- data.frame(x = y_grid, y = marginal_dens)
+
+# combined plot
+p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+    geom_line(
+        data = df_ana, aes(x = x, y = y, color = "Analytical Marginal"),
+        linetype = "dashed", linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Empirical KDE" = "black",
+        "Analytical Marginal" = "blue"
+    )) +
+    labs(
+        title = "Empirical vs. Analytical Marginal Density",
+        x = "y",
+        y = "Density",
+        color = NULL
+    ) +
+    theme_bw() +
+    scale_color_npg() + # Nature Publishing Group style
+    theme(
+        legend.position = "top",
+        panel.grid = element_blank(),
+        axis.text = element_text(color = "grey30"),
+        axis.title = element_text(color = "grey40"),
+        plot.title = element_text(color = "grey10"),
+        legend.text = element_text(color = "grey10"),
+        legend.title = element_text(color = "grey10"),
+        legend.margin = margin(b = -5) # pull legend closer
+    )
+p
+```
+
+```{r}
+x_grid <- quantile(X1, probs = c(0.1, 0.5, 0.9))
+
+y_seq <- seq(0.001, 0.999, length = 200)
+
+mu_hat  <- fitted(fit)
+phi_hat <- predict(fit, type = "precision")
+
+plot(NULL,
+     xlim = c(0, 1),
+     ylim = c(0, 8),
+     xlab = "y",
+     ylab = "Density",
+     main = "Misspecified model: identical spread across X1")
+
+cols <- c("red", "blue", "darkgreen")
+
+for (j in 1:3) {
+  
+  idx <- which.min(abs(X1 - x_grid[j]))
+  
+  dens <- dbeta(y_seq,
+                shape1 = mu_hat[idx] * phi_hat[idx],
+                shape2 = (1 - mu_hat[idx]) * phi_hat[idx])
+  
+  lines(y_seq, dens, col = cols[j], lwd = 2)
+}
+
+legend("topright",
+       legend = paste0("X1 ≈ ", round(x_grid, 2)),
+       col = cols,
+       lwd = 2)
+```

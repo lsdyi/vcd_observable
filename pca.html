@@ -14,7 +14,7 @@
 <link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
 <link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
 <link rel="stylesheet" type="text/css" href="./_npm/katex@0.16.45/dist/katex.min.css">
-<link rel="modulepreload" href="./_observablehq/client.3aa2c62e.js">
+<link rel="modulepreload" href="./_observablehq/client.48e27f80.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
@@ -26,16 +26,16 @@
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
-<link rel="modulepreload" href="./_import/components/r.fa3a19ed.js">
+<link rel="modulepreload" href="./_import/components/r.e25cff1d.js">
 <link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
-<link rel="modulepreload" href="./_import/components/getPcaData.43635550.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.01bbfa2a.js">
 <link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
 <link rel="modulepreload" href="./_import/components/scatterPlot3d.95fe92c3.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/tex.526342cc.js">
 <link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
-<link rel="modulepreload" href="./_node/webr@0.5.8/index.d12ac113.js">
+<link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
 <link rel="modulepreload" href="./_node/plotly.js-dist-min@3.5.0/index.96ab480f.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
@@ -92,13 +92,13 @@
 <link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
 <script type="module">
 
-import {define} from "./_observablehq/client.3aa2c62e.js";
+import {define} from "./_observablehq/client.48e27f80.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1775612423890,"size":73250});
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1776814856839,"size":73250});
 
 define({id: "51a18025", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","webR","regressionBy","getSummary","matrixData","getPcaData","PcaInputRange","scatterPlot3d"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {webR, regressionBy, getSummary}, {matrixData}, {getPcaData}, {PcaInputRange}, {scatterPlot3d}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/r.fa3a19ed.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_import/components/getPcaData.43635550.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js")]);
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {webR, regressionBy, getSummary}, {matrixData}, {getPcaData}, {PcaInputRange}, {scatterPlot3d}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/r.e25cff1d.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_import/components/getPcaData.01bbfa2a.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js")]);
 
 
 return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations,webR,regressionBy,getSummary,matrixData,getPcaData,PcaInputRange,scatterPlot3d};
@@ -227,6 +227,7 @@ display(reConCor);
     <li class="observablehq-link"><a href="./doctor">Doctor Visit</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./pca">PCA example</a></li>
     <li class="observablehq-link"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
+    <li class="observablehq-link"><a href="./test">Test Page</a></li>
     <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
     <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
@@ -281,7 +282,7 @@ Use creditCard dataset, the dataset is shown as follows.
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./doctor"><span>Doctor Visit</span></a><a rel="next" href="./poisson_neg"><span>Poisson &amp; Negtive Binomial Regression</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-08T01:53:08">Apr 8, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-21T23:51:50">Apr 21, 2026</a>.</div>
 </footer>
 </div>
 </body>

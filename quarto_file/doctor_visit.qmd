@@ -1,5 +1,6 @@
 ```{r}
 library(MASS)
+library(np)
 
 # Load your RData file
 load("/Users/yangjinzhe/Desktop/doctorvisits.rda")
@@ -22,7 +23,19 @@ model_nb
 p_res <- residuals(model_nb, type = "pearson")
 sum(abs(p_res) > 3)
 
-theta = 0.9978731512246424
-mu = 3.742388660271744
-dnbinom(0, size = theta, mu = mu  )
+theta <- 0.9978731512246424
+mu <- 3.742388660271744
+dnbinom(0, size = theta, mu = mu)
+```
+
+
+```{r}
+summary(model_nb)
+
+bw_cond <- npcdensbw(numvisit ~ factor(reform) + factor(badh) + age + educ + loginc,
+    data = doctorvisits,
+    wmethod = "cv.ml"
+)
+
+bw_cond
 ```

@@ -1,0 +1,492 @@
+
+```{r}
+library(haven)
+library(ggplot2)
+library(ggsci)
+
+affairs <- read_dta("./affairs.dta")
+# data(affairs, package = "AER")
+
+head(affairs)
+affmodel <- glm(naffairs ~ kids + age + yrsmarr,
+    family = poisson(link = "log"),
+    data = affairs
+)
+
+y_obs <- affairs$naffairs
+n <- length(y_obs)
+
+mu <- fitted(affmodel)
+
+head(mu)
+dim(affairs)
+length(mu)
+affmodel
+exp(0.25388 + 0.01003 * 0 - 0.02904 * 37 + 0.11599 * 10)
+exp(0.25388 + 0.01003 * 0 - 0.02904 * 27 + 0.11599 * 4)
+set.seed(123)
+
+# simulate one replicated dataset
+y_rep <- rpois(n, lambda = mu)
+
+
+B <- 500 # number of simulated datasets
+
+y_rep_all <- unlist(
+    replicate(B, rpois(n, lambda = mu))
+)
+
+
+hist(y_obs,
+    probability = TRUE,
+    breaks = 30,
+    col = rgb(0, 0, 1, 0.3),
+    xlim = range(c(y_obs, y_rep_all)),
+    main = "Empirical vs Marginal Predicted Distribution",
+    xlab = "Y (number of affairs)"
+)
+
+hist(y_rep_all,
+    probability = TRUE,
+    breaks = 30,
+    col = rgb(1, 0, 0, 0.3),
+    add = TRUE
+)
+
+legend("topright",
+    legend = c("Empirical Y", "Marginal predicted Y"),
+    fill = c(rgb(0, 0, 1, 0.3), rgb(1, 0, 0, 0.3))
+)
+
+
+dens_obs <- density(y_obs)
+dens_rep <- density(y_rep_all)
+
+plot(dens_obs,
+    col = "blue",
+    lwd = 2,
+    main = "Empirical vs Marginal Predicted Density",
+    xlab = "Y"
+)
+
+lines(dens_rep,
+    col = "red",
+    lwd = 2
+)
+
+legend("topright",
+    legend = c("Empirical", "Model-implied"),
+    col = c("blue", "red"),
+    lwd = 2
+)
+
+# QQ-style comparison
+qqplot(y_rep_all, y_obs,
+    main = "QQ: Marginal predicted vs empirical"
+)
+abline(0, 1, col = "red")
+```
+
+
+```{r}
+# Load libraries
+library(DHARMa)
+library(MASS)
+
+# 1. Simulate some overdispersed count data
+set.seed(123)
+x <- rnorm(200)
+# Data is generated with Negative Binomial (overdispersed)
+# but we will fit a Poisson to see the "misfit"
+y <- rnbinom(200, mu = exp(1 + 0.5 * x), size = 1)
+
+# 2. Fit a Poisson GLM (potentially misspecified)
+model <- glm(y ~ x, family = poisson)
+
+# 3. Create simulated residuals (Model-implied vs. Empirical)
+# This simulates the model-implied distribution 250 times
+sim_res <- simulateResiduals(fittedModel = model, n = 250)
+
+# 4. Plot the comparison
+# The QQ plot shows the PIT (Probability Integral Transform) check
+# The Residual vs Predicted shows if the variance matches
+plot(sim_res)
+```
+
+```{r}
+# Setup sample data (Gamma GLM)
+set.seed(42)
+x <- runif(500, 1, 10)
+y <- rgamma(500, shape = 2, scale = x / 2)
+
+# Fit the model
+model <- glm(y ~ x, family = Gamma)
+
+
+# 1. Empirical Density (The Real Data)
+plot(density(y),
+    main = "KDE vs. Model-Implied Marginal",
+    lwd = 2, col = "black", ylim = c(0, 0.4)
+)
+
+# 2. Model-Implied Density (Simulation)
+# We generate 100 simulated datasets from our model's predictions
+y_sim <- simulate(model, nsim = 100)
+
+dim(y_sim)
+# Overlay the simulated densities in light gray
+for (i in 1:1) {
+    lines(density(y_sim[[i]]), col = rgb(1, 0, 0, alpha = 1))
+}
+
+legend("topright",
+    legend = c("Empirical KDE", "Model Simulations"),
+    col = c("black", "red"), lwd = c(2, 1)
+)
+```
+
+```{r}
+# Create a grid of y values
+y_grid <- seq(0, max(y), length.out = 200)
+
+# Get predicted means (mu) and the estimated shape (dispersion)
+mu_vals <- predict(model, type = "response")
+# For Gamma GLM, shape = 1 / dispersion
+shape_est <- 1 / summary(model)$dispersion
+
+# Calculate the mean density across all observations for each point in the grid
+marginal_dens <- sapply(y_grid, function(yi) {
+    mean(dgamma(yi, shape = shape_est, scale = mu_vals / shape_est))
+})
+# empirical KDE data
+emp <- density(y)
+df_emp <- data.frame(x = emp$x, y = emp$y)
+
+# analytical marginal data
+df_ana <- data.frame(x = y_grid, y = marginal_dens)
+
+# combined plot
+p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+    geom_line(
+        data = df_ana, aes(x = x, y = y, color = "Analytical Marginal"),
+        linetype = "dashed", linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Empirical KDE" = "black",
+        "Analytical Marginal" = "blue"
+    )) +
+    labs(
+        title = "Empirical vs. Analytical Marginal Density",
+        x = "y",
+        y = "Density",
+        color = NULL
+    ) +
+    theme_bw() +
+    scale_color_npg() + # Nature Publishing Group style
+    theme(
+        legend.position = "top",
+        panel.grid = element_blank(),
+        axis.text = element_text(color = "grey30"),
+        axis.title = element_text(color = "grey40"),
+        plot.title = element_text(color = "grey10"),
+        legend.text = element_text(color = "grey10"),
+        legend.title = element_text(color = "grey10"),
+        legend.margin = margin(b = -5) # pull legend closer
+    )
+p
+ggsave("./figures/ggplot_gamma_fit_gamma_data.svg", plot = p, width = 6, height = 4)
+ggsave("./figures/ggplot_gamma_fit_gamma_data.pdf", plot = p, width = 6, height = 4)
+
+pdf("./figures/gamma_fit_gamma_data.pdf", width = 6, height = 4)
+ylim_range <- range(c(marginal_dens))
+plot(density(y), ylim = ylim_range, lwd = 2, main = "Empirical vs. Analytical Marginal Density")
+lines(y_grid, marginal_dens, col = "blue", lwd = 2, lty = 2)
+legend("topright",
+    legend = c("Empirical KDE", "Analytical Marginal"),
+    col = c("black", "blue"), lty = c(1, 2), lwd = 2
+)
+dev.off()
+
+model <- glm(y ~ x, family = gaussian())
+# Get predicted means (mu) and the estimated shape (dispersion)
+mu_vals <- predict(model, type = "response")
+
+# For Gamma GLM, shape = 1 / dispersion
+sigma_est <- 1 / summary(model)$dispersion
+
+# Calculate the mean density across all observations for each point in the grid
+marginal_dens <- sapply(y_grid, function(yi) {
+    mean(dnorm(yi, mean = mu_vals, sd = sqrt(sigma_est)))
+})
+
+# empirical KDE data
+emp <- density(y)
+df_emp <- data.frame(x = emp$x, y = emp$y)
+
+# analytical marginal data
+df_ana <- data.frame(x = y_grid, y = marginal_dens)
+
+# combined plot
+p <- ggplot() +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+    geom_line(
+        data = df_ana, aes(x = x, y = y, color = "Analytical Marginal"),
+        linetype = "dashed", linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Empirical KDE" = "black",
+        "Analytical Marginal" = "blue"
+    )) +
+    labs(
+        title = "Empirical vs. Analytical Marginal Density",
+        x = "y",
+        y = "Density",
+        color = NULL
+    ) +
+    theme_bw() +
+    scale_color_npg() + # Nature Publishing Group style
+    theme(
+        legend.position = "top",
+        panel.grid = element_blank(),
+        axis.text = element_text(color = "grey30"),
+        axis.title = element_text(color = "grey40"),
+        plot.title = element_text(color = "grey10"),
+        legend.text = element_text(color = "grey10"),
+        legend.title = element_text(color = "grey10"),
+        legend.margin = margin(b = -5) # pull legend closer
+    )
+p
+ggsave("./figures/ggplot_gaussian_fit_gamma_data.svg", plot = p, width = 6, height = 4)
+ggsave("./figures/ggplot_gaussian_fit_gamma_data.pdf", plot = p, width = 6, height = 4)
+
+
+pdf("./figures/gaussian_fit_gamma_data.pdf", width = 6, height = 4)
+ylim_range <- range(c(marginal_dens))
+plot(density(y), lwd = 2, main = "Empirical vs. Analytical Marginal Density")
+lines(y_grid, marginal_dens, col = "blue", lwd = 2, lty = 2)
+legend("topright",
+    legend = c("Empirical KDE", "Analytical Marginal"),
+    col = c("black", "blue"), lty = c(1, 2), lwd = 2
+)
+dev.off()
+```
+
+```{r}
+library(ggplot2)
+library(patchwork)
+
+set.seed(123)
+
+# Data (mixture distribution)
+n <- 1500
+# x <- c(rnorm(n / 3, -2, 1), rnorm(n / 3, 2, 0.5), runif(n / 3, -3, 3))
+x <- c(rnorm(n / 3, -2, 1), rnorm(n / 3, 2, 0.5))
+
+x_grid <- seq(-5, 5, length.out = 500)
+
+true_density <- dnorm(x_grid, -2, 1) +
+    dnorm(x_grid, 2, 0.5)
+
+# true_density <- dnorm(x_grid, -2, 1) +
+#     dnorm(x_grid, 2, 0.5) + dunif(x_grid, -3, 3)
+
+binSize <- x_grid[2] - x_grid[1]
+normalizer <- sum(binSize * true_density)
+normalizer
+
+true_density <- true_density / normalizer
+sum(binSize * true_density)
+
+bw_small <- 0.05
+bw_large <- 3
+bw_best <- bw.SJ(x)
+
+dens_small <- density(x, bw = bw_small, from = -5, to = 5, n = 500)
+dens_large <- density(x, bw = bw_large, from = -5, to = 5, n = 500)
+dens_best <- density(x, bw = bw_best, from = -5, to = 5, n = 500)
+
+# Helper to make a single plot
+make_plot <- function(dens, title) {
+    ggplot() +
+        # geom_density(aes(x, fill = "Empirical"), alpha = 0.2, color = NA) +
+        geom_histogram(
+            aes(x = x, y = after_stat(density)),
+            fill = "grey90",
+            color = NA,
+        ) +
+        geom_line(aes(dens$x, dens$y, color = "Density estimator"), linewidth = 1) +
+        geom_line(aes(x_grid, true_density, color = "True density"), linewidth = 1, linetype = "dashed") +
+        labs(title = title, x = "x", y = "Density", color = NULL) +
+        theme_bw() +
+        scale_color_npg() + # Nature Publishing Group style
+        theme(
+            panel.grid = element_blank(),
+            axis.text = element_text(color = "grey30"),
+            axis.title = element_text(color = "grey40"),
+            plot.title = element_text(color = "grey10"),
+            legend.text = element_text(color = "grey10"),
+            legend.title = element_text(color = "grey10"),
+            legend.margin = margin(b = -5) # pull legend closer
+        )
+}
+
+p1 <- make_plot(dens_small, paste0("Small bw = ", bw_small))
+p2 <- make_plot(dens_best, paste0("Best bw = ", round(bw_best, 3)))
+p3 <- make_plot(dens_large, paste0("Large bw = ", bw_large))
+
+# Arrange in one row
+p = p1 + p2 + p3 + plot_layout(ncol = 3, guides = "collect") &
+    theme(legend.position = "top")
+p
+ggsave("./figures/ggplot_bw.svg", plot = p, width = 6, height = 4)
+ggsave("./figures/ggplot_bw.pdf", plot = p, width = 6, height = 4)
+```
+
+```{r}
+library(ggplot2)
+
+set.seed(123)
+
+# -----------------------------
+# 1. Simulate data (mixture)
+# -----------------------------
+n <- 500
+x <- c(
+    rnorm(n / 2, mean = -2, sd = 0.8),
+    rnorm(n / 2, mean = 2, sd = 1.0)
+)
+
+df <- data.frame(x = x)
+
+# -----------------------------
+# 2. Grid for evaluation
+# -----------------------------
+grid <- seq(min(x) - 3, max(x) + 3, length.out = 500)
+
+# True density (mixture)
+true_density <- 0.5 * dnorm(grid, -2, 0.8) +
+    0.5 * dnorm(grid, 2, 1.0)
+
+true_df <- data.frame(x = grid, y = true_density)
+
+# -----------------------------
+# 3. KDE with different bandwidths
+# -----------------------------
+kde_small <- density(x, bw = 0.2, from = min(grid), to = max(grid))
+kde_large <- density(x, bw = 1.2, from = min(grid), to = max(grid))
+
+kde_df <- rbind(
+    data.frame(x = kde_small$x, y = kde_small$y, type = "Small bandwidth"),
+    data.frame(x = kde_large$x, y = kde_large$y, type = "Large bandwidth")
+)
+
+# -----------------------------
+# 4. Plot
+# -----------------------------
+ggplot() +
+    # true density
+    geom_line(
+        data = true_df,
+        aes(x = x, y = y),
+        color = "black", linewidth = 1.2
+    ) +
+
+    # KDEs
+    geom_line(
+        data = kde_df,
+        aes(x = x, y = y, color = type),
+        linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Small bandwidth" = "blue",
+        "Large bandwidth" = "red"
+    )) +
+    labs(
+        title = "Effect of Bandwidth on Kernel Density Estimation",
+        x = "x",
+        y = "Density",
+        color = "Estimator"
+    ) +
+    theme_minimal(base_size = 13)
+```
+
+```{r}
+library(ggplot2)
+
+set.seed(123)
+
+# -----------------------------
+# 1. Mixture parameters
+# -----------------------------
+n <- 600
+
+pi1 <- 0.4
+pi2 <- 0.4
+pi3 <- 0.2
+
+a <- -5
+b <- 5
+
+# -----------------------------
+# 2. Sample from mixture
+# -----------------------------
+z <- sample(1:3, size = n, replace = TRUE, prob = c(pi1, pi2, pi3))
+
+x <- numeric(n)
+
+x[z == 1] <- rnorm(sum(z == 1), mean = -2, sd = 0.8)
+x[z == 2] <- rnorm(sum(z == 2), mean = 2, sd = 1.0)
+x[z == 3] <- runif(sum(z == 3), min = a, max = b)
+
+df <- data.frame(x = x)
+
+# -----------------------------
+# 3. Grid for densities
+# -----------------------------
+grid <- seq(min(x) - 2, max(x) + 2, length.out = 600)
+
+# True density
+true_density <- 0.4 * dnorm(grid, -2, 0.8) +
+    0.4 * dnorm(grid, 2, 1.0) +
+    0.2 * dunif(grid, a, b)
+
+true_df <- data.frame(x = grid, y = true_density)
+
+# -----------------------------
+# 4. KDE with two bandwidths
+# -----------------------------
+kde_small <- density(x, bw = 0.25, from = min(grid), to = max(grid))
+kde_large <- density(x, bw = 1.5, from = min(grid), to = max(grid))
+
+kde_df <- rbind(
+    data.frame(x = kde_small$x, y = kde_small$y, type = "Small bandwidth (0.25)"),
+    data.frame(x = kde_large$x, y = kde_large$y, type = "Large bandwidth (1.5)")
+)
+
+# -----------------------------
+# 5. Plot
+# -----------------------------
+ggplot() +
+    geom_line(
+        data = true_df,
+        aes(x = x, y = y),
+        color = "black", linewidth = 1.2
+    ) +
+    geom_line(
+        data = kde_df,
+        aes(x = x, y = y, color = type),
+        linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Small bandwidth (0.25)" = "blue",
+        "Large bandwidth (1.5)" = "red"
+    )) +
+    labs(
+        title = "KDE vs True Density: Gaussian Mixture + Uniform Component",
+        x = "x",
+        y = "Density",
+        color = "Estimator"
+    ) +
+    theme_minimal(base_size = 13)
+```

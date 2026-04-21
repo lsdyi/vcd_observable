@@ -1,11 +1,11 @@
-import { WebR } from "../../_node/webr@0.5.8/index.d12ac113.js";
+import { WebR } from "../../_node/webr@0.5.9/index.1cb224c9.js";
 import jStat from "../../_node/jstat@1.9.6/index.bc60a888.js";
 
 import { modelConfig } from "./modelConfig.6feb3b8c.js";
 
 const webR = new WebR();
 await webR.init();
-await webR.installPackages(["betareg", "MASS", "np"]);
+await webR.installPackages(["betareg", "statmod", "numDeriv", "MASS", "np"]);
 
 const regressionBy = async (family) => {
   const { continousCovariates, response } = modelConfig;
