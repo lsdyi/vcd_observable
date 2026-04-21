@@ -69,7 +69,7 @@ await webR.objs.globalEnv.bind("df_raw", creditCard);
 const output = await regressionBy(option);
 const params = output.values[0].values;
 const { dist } = modelList.find((item) => item.family === option);
-const mean = multiply(transpose([1, ...conPointAr]), params);
+const mean = multiply(transpose([1, ...conditionPoint]), params);
 
 const xGrid = d3.range(1, 40, 0.1);
 
@@ -212,7 +212,7 @@ const kernal = view(
 
 ```js
 const keys = continousCovariates;
-const conPointAr = Object.values(conditionPoint);
+const conditionPoint = Object.values(conditionPoint);
 
 const temp = keys.map((key) => creditCard.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
@@ -220,7 +220,7 @@ const stdevs = temp.map((item) => jStat.stdev(item));
 const data = creditCard.map((item) => _.pick(item, keys));
 const unnormalizedweights = normWeights(
   data,
-  conPointAr,
+  conditionPoint,
   stdevs,
   undefined,
   kernal,

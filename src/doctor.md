@@ -13,10 +13,12 @@ import { modelList } from "./components/modelList.js";
 import { getRanges } from "./components/getRanges.js";
 import { modelConfig } from "./components/modelConfig.js";
 import { normWeights } from "./components/normWeights.js";
+import { computeWeightsMixed, poissonKernel } from "./components/kernel.js";
 import { getCombinations } from "./components/getCombinations.js";
 import { PcaInputRange } from "./components/UI/PcaInputRange.js";
 import { scatterPlot3d } from "./components/scatterPlot3d.js";
 import { matrixData } from "./components/organizeData.js";
+import { selectFromKeys, getCardinalityFromMatrix } from "./components/util.js";
 import { Mutable } from "observablehq:stdlib";
 ```
 
@@ -47,9 +49,9 @@ const conditionPointObj = view(Inputs.form(formMap));
 
 ```js
 const kernal = view(
-  Inputs.range([0.1, 100], {
-    value: 10,
-    step: 0.1,
+  Inputs.range([0.01, 3], {
+    value: 1,
+    step: 0.01,
     label: "smoothing parameter",
   }),
 );
@@ -84,6 +86,7 @@ const doctorvisits = FileAttachment("./data/doctorvisits.csv").csv({
 ```
 
 ```js
+// reform + badh + age + educ + loginc
 const keys = ["reform", "badh", "age", "educ", "loginc"];
 const formMap = {};
 const ranges = getRanges(doctorvisits);
@@ -110,41 +113,58 @@ const temp = keys.map((key) => doctorvisits.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
 
 const data = doctorvisits.map((item) => _.pick(item, keys));
-const unnormalizedweights = normWeights(
-  data,
-  conditionPoint,
-  stdevs,
-  undefined,
-  kernal,
-);
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+// const unnormalizedweights = normWeights(
+//   data,
+//   conditionPoint,
+//   stdevs,
+//   undefined,
+//   kernal,
+// );
+// const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
+// const weights2 = unnormalizedweights.map((d) => ({
+//   id: d.id,
+//   w: d.w / totalunnormalizedweight,
+// }));
+
+const categoricalKeys = ["reform", "badh"];
+const continousKeys = ["age", "educ", "loginc"];
+const XCont = selectFromKeys(data, continousKeys);
+const XCat = selectFromKeys(data, categoricalKeys);
+const XOrd = [];
+const x0 = {
+  cont: selectFromKeys([conditionPointObj], continousKeys).flat(),
+  cat: selectFromKeys([conditionPointObj], categoricalKeys).flat(),
+  ord: selectFromKeys([conditionPointObj], []).flat(),
+};
+const bwCont = [13.91312, 2.417221, 124196.4];
+const lambdaCat = [0.3210706, 0.01451098];
+const lambdaOrd = [];
+const Ccat = getCardinalityFromMatrix(XCat);
+const externlH = kernal;
+
+const weights = computeWeightsMixed({
+  XCont,
+  XCat,
+  XOrd,
+  x0,
+  bwCont,
+  lambdaCat,
+  lambdaOrd,
+  Ccat,
+  externlH,
+});
 
 const data_with_weights = data.map((d, index) => ({
   ...d,
   numvisit: doctorvisits[index].numvisit,
-  weight: weights.find((item) => item.id === index).w,
+  weight: weights[index],
 }));
 
 const dataState = Mutable(data_with_weights);
-const count = Mutable(0);
-
-console.log(count.value);
-
-display(count.value);
 const resetDataState = (newData) => {
   dataState.value = newData;
 };
-// setTimeout(() => {
-//   count.value += 1;
-//   console.log("dsads");
-//   dataState.value = [];
-// }, 3000);
 
-console.log(count.value);
 
 const wmin = d3.min(data_with_weights, (d) => d.weight);
 const wmax = d3.max(data_with_weights, (d) => d.weight);
@@ -156,12 +176,12 @@ const scatterList = axisAr.map((item) => {
   return Plot.plot({
     title: `${key1} vs ${key2}`,
     marks: [
-      Plot.dot(dataState, {
+      Plot.dot(data_with_weights, {
         x: key1,
         y: key2,
-        fill: (d) => {
+        fill: (d, i) => {
           const t = (d.weight - wmin) / (wmax - wmin);
-          return d.r > 2 || d.r < -2
+          return residuals.values[i] > 2 || residuals.values[i] < -2
             ? d3.interpolateReds(t)
             : d3.interpolateBlues(t);
         },
@@ -187,12 +207,6 @@ const scatterList = axisAr.map((item) => {
 });
 ```
 
-Count is: ${html`<span class="flash">${count}</span>`}.
-
-```js
-display(dataState);
-```
-
 ```js
 import {
   negRegession,
@@ -204,9 +218,14 @@ import {
   getPearsonResiduals,
 } from "./components/r.js";
 import { getPcaData } from "./components/getPcaData.js";
+
+console.log('1', data_with_weights)
+
 ```
 
 ```js
+console.log('0', data_with_weights)
+
 const isPoissonReg = model === "Poisson Regression";
 // R regression code
 await webR.objs.globalEnv.bind("doctorvisits", doctorvisits);
@@ -224,14 +243,8 @@ const estimates = output.values;
 const summary = await getSummary();
 
 const residuals = await getPearsonResiduals();
-resetDataState(
-  dataState.map((item, index) => {
-    return {
-      ...item,
-      r: residuals.values[index],
-    };
-  }),
-);
+
+
 const mean = Math.exp(
   multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 6)),
 );
@@ -293,16 +306,23 @@ const weightedDen = xGrid.map((xCor) => {
 });
 
 const h = jStat.stdev(data_with_weights.map((item) => item.numvisit));
+
+const hy = 0.7228501;
+
 const ckdCoordinates = xGrid.map((item) => {
   const temp = data_with_weights.map((datapoint) => {
-    return datapoint.numvisit === item ? datapoint.weight : 0;
+    const { numvisit, weight } = datapoint;
+
+    return weight * poissonKernel(item, numvisit, h);
   });
   return {
     x: item,
     y: d3.sum(temp),
   };
 });
+```
 
+```js
 const pdfplot = Plot.plot({
   title: "pmf",
 
@@ -333,13 +353,13 @@ const pdfplot = Plot.plot({
       strokeWidth: 2,
       marker: "circle",
     }),
-    // Plot.line(ckdCoordinates, {
-    //   x: "x",
-    //   y: "y",
-    //   stroke: "red",
-    //   strokeWidth: 2,
-    //   marker: "circle",
-    // }),
+    Plot.line(ckdCoordinates, {
+      x: "x",
+      y: "y",
+      stroke: "red",
+      strokeWidth: 2,
+      marker: "circle",
+    }),
   ],
 });
 ```

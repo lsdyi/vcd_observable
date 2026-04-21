@@ -3,6 +3,23 @@ title: Density Estimator
 toc: false
 ---
 
+```js
+import _ from "lodash";
+import jStat from "jstat";
+import { multiply, transpose, dotMultiply, add } from "mathjs";
+
+import { useOption } from "./components/hook/useOption.js";
+import { modelList } from "./components/modelList.js";
+import { getRanges } from "./components/getRanges.js";
+import { modelConfig } from "./components/modelConfig.js";
+import { normWeights } from "./components/normWeights.js";
+import { getCombinations } from "./components/getCombinations.js";
+import { PcaInputRange } from "./components/UI/PcaInputRange.js";
+import { scatterPlot3d } from "./components/scatterPlot3d.js";
+import { matrixData } from "./components/organizeData.js";
+import { Mutable } from "observablehq:stdlib";
+```
+
 # Density Estimator
 
 This page covers
@@ -51,7 +68,11 @@ Plot a weighted histogram, with the binSize height to be sum of weights, corresp
 ```
 
 ```js
-const betaData = FileAttachment("./data/simulated_beta_data.csv").csv({
+// const betaData = FileAttachment("./data/simulated_beta_data.csv").csv({
+//   typed: true,
+// });
+
+const betaData = FileAttachment("./data/simulated_beta_data_phix.csv").csv({
   typed: true,
 });
 ```
@@ -106,6 +127,10 @@ display(Inputs.table(betaData));
 ```
 
 ```js
+const conditionPointObj = view(Inputs.form(formMap));
+```
+
+```js
 const kernal = view(
   Inputs.range([0.1, 100], {
     value: 10,
@@ -156,15 +181,31 @@ Conditional point is set to ${tex`c = (0, 1, 2)`}. It should be able to change f
 display(pdfplot);
 ```
 
+<!-- js logics -->
 ```js
-import _ from "lodash";
-import jStat from "jstat";
-import { multiply, transpose } from "mathjs";
+const keys = ["X1", "X2", "X3"];
+const formMap = {};
+const ranges = getRanges(betaData);
+keys.forEach((key) => {
+  const result = ranges[key];
+  if (result instanceof Set) {
+    // @todo: countable variable
+  } else {
+    const { min, max } = result;
+    formMap[key] = Inputs.range([min, max], {
+      value: (min + max) / 2,
+      step: 0.5,
+      label: key,
+    });
+  }
+});
+```
 
-import { normWeights } from "./components/normWeights.js";
+```js
 import { betaRegession, webR, loess } from "./components/r.js";
 
-const conPointAr = [0, 1, 2];
+const conditionPoint = Object.values(conditionPointObj);
+
 const keys = ["X1", "X2", "X3"];
 const temp = keys.map((key) => betaData.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
@@ -172,7 +213,7 @@ const stdevs = temp.map((item) => jStat.stdev(item));
 const data = betaData.map((item) => _.pick(item, keys));
 const unnormalizedweights = normWeights(
   data,
-  conPointAr,
+  conditionPoint,
   stdevs,
   undefined,
   kernal,
@@ -189,8 +230,8 @@ const output = await betaRegession();
 const betas = output.values[0].values;
 const phi = output.values[4].values[0];
 
-const linearCom = multiply(transpose([1, ...conPointAr]), betas);
-const mu = 1 / (1 + Math.exp(-linearCom));$$  $$
+const linearCom = multiply(transpose([1, ...conditionPoint]), betas);
+const mu = 1 / (1 + Math.exp(-linearCom));
 
 const loessRes = await loess()
 const loessMu = loessRes.values[0]
