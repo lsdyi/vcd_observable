@@ -218,14 +218,9 @@ import {
   getPearsonResiduals,
 } from "./components/r.js";
 import { getPcaData } from "./components/getPcaData.js";
-
-console.log('1', data_with_weights)
-
 ```
 
 ```js
-console.log('0', data_with_weights)
-
 const isPoissonReg = model === "Poisson Regression";
 // R regression code
 await webR.objs.globalEnv.bind("doctorvisits", doctorvisits);

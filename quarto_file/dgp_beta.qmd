@@ -3,6 +3,7 @@ library(MASS) # for mvrnorm
 library(betareg)
 library(ggplot2)
 library(ggsci)
+library(np)
 ```
 
 ```{r}
@@ -198,4 +199,30 @@ legend("topright",
        legend = paste0("X1 ≈ ", round(x_grid, 2)),
        col = cols,
        lwd = 2)
+```
+
+```{r}
+# bw_cond <- npcdensbw(Y ~ X1 + X2 + X3,
+#     data = sim_data,
+#     wmethod = "cv.ml"
+# )
+
+# bw_cond
+
+# Conditional density data (1000 observations, 4 variable(s))
+# (1 dependent variable(s), and 3 explanatory variable(s))
+
+#                                   Y
+# Dep. Var. Bandwidth(s): 0.004129468
+#                                X1       X2       X3
+# Exp. Var. Bandwidth(s): 0.4163451 2.120657 1.909542
+
+# Bandwidth Selection Method: Maximum Likelihood Cross-Validation
+# Formula: Y ~ X1 + X2 + X3
+# Bandwidth Type: Fixed
+# Objective Function Value: 779.5153 (achieved on multistart 2)
+
+# Continuous Kernel Type: Second-Order Gaussian 
+# No. Continuous Dependent Vars.: 1 
+# No. Continuous Explanatory Vars.: 3
 ```

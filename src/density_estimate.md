@@ -235,7 +235,6 @@ const mu = 1 / (1 + Math.exp(-linearCom));
 
 const loessRes = await loess()
 const loessMu = loessRes.values[0]
-console.log(mu, loessRes.values[0])
 
 const data_with_weights = data.map((d, index) => ({
   ...d,
@@ -274,12 +273,7 @@ const denCoordinates = xGrid.map((xCor) => {
 });
 
 const h = jStat.stdev(data_with_weights.map((item) => item.Y));
-console.log(h);
-console.log(
-  d3.sum(
-    coordinates.map((item) => item.y * (coordinates[1].x - coordinates[0].x)),
-  ),
-);
+
 const ckdCoordinates = xGrid.map((item) => {
   const temp = data_with_weights.map((datapoint) => {
     const { Y, weight } = datapoint;
@@ -303,14 +297,6 @@ const modCkdCoordinates = xGrid.map((item) => {
     y: d3.sum(temp),
   };
 });
-
-console.log(
-  d3.sum(
-    ckdCoordinates.map(
-      (item) => item.y * (ckdCoordinates[1].x - ckdCoordinates[0].x),
-    ),
-  ),
-);
 
 const pdfplot = Plot.plot({
   title: "pdf",

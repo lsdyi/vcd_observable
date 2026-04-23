@@ -19,7 +19,16 @@ import { PcaInputRange } from "./components/UI/PcaInputRange.js";
 import { scatterPlot3d } from "./components/scatterPlot3d.js";
 import { matrixData } from "./components/organizeData.js";
 import { selectFromKeys, getCardinalityFromMatrix } from "./components/util.js";
-import { DATASET } from "./components/config.js";
+import {
+  DATASET,
+  MODEL,
+  DEFAULT_DATASET_INDEX,
+  DEFAULT_MODEL_INDEX,
+} from "./components/config.js";
+import { getEstimate } from "./components/getEstimate.js";
+import { chart } from "./components/scatterPlot.js";
+import { pageCache } from "./components/pageCache.js";
+
 import { Mutable } from "observablehq:stdlib";
 ```
 
@@ -27,7 +36,10 @@ import { Mutable } from "observablehq:stdlib";
 
 ```js
 const selectedDataset = view(
-  Inputs.radio(DATASET, { format: (x) => x.name, value: DATASET[2] }),
+  Inputs.radio(DATASET, {
+    format: (x) => x.name,
+    value: DATASET[DEFAULT_DATASET_INDEX],
+  }),
 );
 ```
 
@@ -44,10 +56,11 @@ const datasets = [
 ## Select Model
 
 ```js
-const model = view(
-  Inputs.select(["Poisson Regression", "Negative Binomial Regression"], {
+const selectedModel = view(
+  Inputs.select(MODEL, {
     unique: true,
-    label: "Select Model",
+    format: (x) => x.family,
+    value: MODEL[DEFAULT_MODEL_INDEX],
   }),
 );
 ```
@@ -57,6 +70,12 @@ const model = view(
 ```js
 const conditionPointObj = view(Inputs.form(formMap));
 ```
+
+<div class="grid grid-cols-4">
+  ${
+    scatterPlotList
+  }
+</div>
 
 ## Select bandwidth
 
@@ -74,12 +93,11 @@ Every data point with weight is listed as follows.
 
 ```js
 display(data_with_weights);
+display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 5));
 ```
 
 <div class="grid grid-cols-4">
-  ${scatterList.map(scatter => {
-    return scatter
-  })}
+  ${scatterPlotList}
 </div>
 
 ```js
@@ -104,6 +122,7 @@ const {
   index,
   keys,
   responseKey,
+  name,
 } = selectedDataset;
 
 const data = datasets[index];
@@ -131,20 +150,6 @@ const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
 const temp = keys.map((key) => data.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
-
-// const unnormalizedweights = normWeights(
-//   data,
-//   conditionPoint,
-//   stdevs,
-//   undefined,
-//   kernal,
-// );
-// const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-// const weights = unnormalizedweights.map((d) => ({
-//   id: d.id,
-//   w: d.w / totalunnormalizedweight,
-// }));
-// console.log(weights, data)
 
 const XCont = selectFromKeys(data, continousKeys);
 const XCat = selectFromKeys(data, categoricalKeys);
@@ -186,39 +191,30 @@ const wmax = d3.max(data_with_weights, (d) => d.weight);
 ```
 
 ```js
-const scatterList = axisAr.map((item) => {
+const scatterPlotList = axisAr.map((item) => {
   const [key1, key2] = item;
-  return Plot.plot({
-    title: `${key1} vs ${key2}`,
-    marks: [
-      Plot.dot(data_with_weights, {
-        x: key1,
-        y: key2,
-        fill: (d, i) => {
-          const t = (d.weight - wmin) / (wmax - wmin);
-          return residuals.values[i] > 2 || residuals.values[i] < -2
-            ? d3.interpolateReds(t)
-            : d3.interpolateBlues(t);
-        },
-      }),
 
-      // conditional data point with orange color
-      Plot.dot(
-        [
-          {
-            [key1]: conditionPointObj[key1],
-            [key2]: conditionPointObj[key2],
-          },
-        ],
-        {
-          x: key1,
-          y: key2,
-          fill: "orange",
-          r: 5,
-        },
-      ),
+  return chart(
+    [
+      ...data_with_weights.map((item, index) => {
+        return {
+          group: "observation", // group key
+          x: item[key1],
+          y: item[key2],
+          weight: item.weight,
+          residual: residuals.values[index],
+        };
+      }),
+      {
+        group: "conditional", // group key
+        x: conditionPointObj[key1],
+        y: conditionPointObj[key2],
+        weight: item.weight,
+      },
     ],
-  });
+    width,
+    width,
+  );
 });
 ```
 
@@ -236,24 +232,36 @@ import { getPcaData } from "./components/getPcaData.js";
 ```
 
 ```js
-const isPoissonReg = model === "Poisson Regression";
 // R regression code
 await webR.objs.globalEnv.bind("data", data);
 
-const output = isPoissonReg
-  ? await poissonRegession("data", `${responseKey} ~ ${keys.join(" + ")}`)
-  : await negRegession("data", "data ~ reform + badh + age + educ +  loginc");
-const estimates = output.values;
+const { rFun, family } = selectedModel;
+
+const newModelOrData = pageCache.data !== data || pageCache.family !== family;
+
+if (newModelOrData) {
+  const output =
+    (await rFun?.("data", `${responseKey} ~ ${keys.join(" + ")}`)) ||
+    (await poissonRegession("data", `${responseKey} ~ ${keys.join(" + ")}`));
+  pageCache.output = output;
+  pageCache.data = data;
+  pageCache.family = family;
+}
+
+const { output } = pageCache;
+
+const { coordinates, weightedGLM, ckCoordinates, modCkdCoordinates } =
+  await getEstimate(
+    family,
+    output,
+    conditionPoint,
+    data_with_weights,
+    keys,
+    responseKey,
+  );
+
 const summary = await getSummary();
-
 const residuals = await getPearsonResiduals();
-
-const mean = Math.exp(
-  multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 6)),
-);
-const theta = estimates[6];
-
-console.log(estimates, theta);
 
 function negBinomialPMF(k, r, p) {
   if (k < 0) return 0;
@@ -261,110 +269,101 @@ function negBinomialPMF(k, r, p) {
   return coef * Math.pow(p, r) * Math.pow(1 - p, k);
 }
 
-const xGrid = d3.range(0, 50, 1);
-const coordinates = xGrid.map((item) => {
-  if (isPoissonReg) {
-    return {
-      x: item,
-      y: jStat.jStat.poisson.pdf(item, mean) || 0,
-    };
-  } else {
-    return {
-      x: item,
-      y: negBinomialPMF(item, theta, theta / (mean + theta)) || 0,
-    };
-  }
-});
-
-const weightedGLM = xGrid.map((xCor) => {
-  if (isPoissonReg) {
-    const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, keys);
-      const covariates = Object.values(covariateObj);
-      const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 6)),
-      );
-      const y = jStat.jStat.poisson.pdf(xCor, mean) || 0;
-      return y * item.weight;
-    });
-
-    return {
-      x: xCor,
-      y: d3.sum(yList),
-    };
-  } else {
-    const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, keys);
-      const covariates = Object.values(covariateObj);
-      const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 6)),
-      );
-      const y = negBinomialPMF(xCor, theta, theta / (mean + theta)) || 0;
-      return y * item.weight;
-    });
-
-    return {
-      x: xCor,
-      y: d3.sum(yList),
-    };
-  }
-});
-
 const h = jStat.stdev(data_with_weights.map((item) => item[responseKey[0]]));
 
 const hy = 0.7228501;
-
-const ckCoordinates = xGrid.map((item) => {
-  const temp = data_with_weights.map((datapoint) => {
-    const { numvisit, weight } = datapoint;
-    const response = datapoint[responseKey[0]];
-    return weight * poissonKernel(item, response, h);
-  });
-  return {
-    x: item,
-    y: d3.sum(temp),
-  };
-});
 ```
 
 ```js
+const marks =
+  name === "Continous Response"
+    ? [
+        Plot.ruleX([0]),
+        Plot.ruleY([0]),
+        Plot.rectY(
+          data_with_weights.map((item, index) => ({
+            ...item,
+            active: true,
+          })),
+          Plot.binX(
+            {
+              y: (bindata, bin) => {
+                return d3.sum(bindata.map((d) => d.weight)) / (bin.x2 - bin.x1);
+              },
+            },
+            { x: "Y", thresholds: 50, fill: "steelblue", opacity: 0.7 },
+          ),
+        ),
+        Plot.line(coordinates, {
+          x: "x",
+          y: "y",
+          stroke: "#F28C28",
+          strokeWidth: 2,
+        }),
+
+        // conditional kernel estimator
+        Plot.line(ckCoordinates, {
+          x: "x",
+          y: "y",
+          stroke: "red",
+          strokeWidth: 2,
+        }),
+
+        // conditional kernel estimator
+        Plot.line(modCkdCoordinates || [], {
+          x: "x",
+          y: "y",
+          stroke: "black",
+          strokeWidth: 2,
+        }),
+
+        // weighted conditional density
+        Plot.line(weightedGLM, {
+          x: "x",
+          y: "y",
+          stroke: "green",
+          strokeWidth: 2,
+        }),
+      ]
+    : [
+        Plot.ruleX([0]),
+        Plot.ruleY([0]),
+        Plot.barY(data_with_weights, {
+          x: responseKey[0],
+          y: "weight",
+          fill: "steelblue",
+          opacity: 0.7,
+        }),
+        Plot.line(coordinates, {
+          x: "x",
+          y: "y",
+          stroke: "#F28C28",
+          strokeWidth: 2,
+          marker: "circle",
+        }),
+        Plot.line(weightedGLM, {
+          x: "x",
+          y: "y",
+          stroke: "green",
+          strokeWidth: 2,
+          marker: "circle",
+        }),
+        Plot.line(ckCoordinates, {
+          x: "x",
+          y: "y",
+          stroke: "red",
+          strokeWidth: 2,
+          marker: "circle",
+        }),
+      ];
+
 const pdfplot = Plot.plot({
-  title: "pmf",
+  title: name === "Continous Response" ? "pdf" : "pmf",
 
   color: {
     legend: true,
   },
 
-  marks: [
-    Plot.ruleX([0]),
-    Plot.ruleY([0]),
-    Plot.barY(data_with_weights, {
-      x: responseKey[0],
-      y: "weight",
-      fill: "steelblue",
-      opacity: 0.7,
-    }),
-    Plot.line(coordinates, {
-      x: "x",
-      y: "y",
-      stroke: "#F28C28",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-    Plot.line(weightedGLM, {
-      x: "x",
-      y: "y",
-      stroke: "green",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-    Plot.line(ckCoordinates, {
-      x: "x",
-      y: "y",
-      stroke: "red",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-  ],
+  marks,
 });
 ```
