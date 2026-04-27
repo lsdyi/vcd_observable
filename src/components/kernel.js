@@ -3,7 +3,7 @@ import jStat from "jstat";
 // Gaussian kernel (continuous)
 function kContinuous(x, xi, bw) {
   const z = (x - xi) / bw;
-  return Math.exp(-0.5 * z * z);
+  return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * z * z);
 }
 
 // Aitchison–Aitken kernel (unordered categorical)
@@ -67,4 +67,4 @@ const poissonKernel = (y, yi, h) => {
   const lambda = yi + h;
   return jStat.poisson.pdf(y, lambda);
 };
-export { computeWeightsMixed, poissonKernel };
+export { computeWeightsMixed, poissonKernel, kContinuous };

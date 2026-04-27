@@ -10,9 +10,10 @@ const DATASET = [
     continousKeys: ["X1", "X2", "X3"],
     keys: ["X1", "X2", "X3"],
     responseKey: ["Y"],
-    bwCont: [13.91312, 2.417221, 124196.4], // continous covariate bandwidth
+    bwCont: [0.09691224, 0.5892781, 1.02301], // continous covariate bandwidth
     lambdaCat: [0.3210706, 0.01451098], // categorical covariate bandwidth
     lambdaOrd: [], // ordinal covariate bandwidth
+    responseBw: 1.081108,
   },
 
   {
@@ -23,9 +24,12 @@ const DATASET = [
     continousKeys: ["X1", "X2", "X3"],
     keys: ["X1", "X2", "X3"],
     responseKey: ["Y"],
+    // bwCont: [0.3980219, 0.5821581, 1.292169], // not fixed phi dataset
     bwCont: [0.4163451, 2.120657, 1.909542], // continous covariate bandwidth
     lambdaCat: [], // categorical covariate bandwidth
     lambdaOrd: [], // ordinal covariate bandwidth
+    // responseBw: 0.04209059, // not fixed phi dataset
+    responseBw: 0.004129468,
   },
 
   {
@@ -36,9 +40,10 @@ const DATASET = [
     continousKeys: ["age", "educ", "loginc"],
     keys: ["reform", "badh", "age", "educ", "loginc"],
     responseKey: ["numvisit"],
-    bwCont: [13.91312, 2.417221, 124196.4], // continous covariate bandwidth
-    lambdaCat: [0.3210706, 0.01451098], // categorical covariate bandwidth
+    bwCont: [5.786841, 0.4327276, 213813.7], // continous covariate bandwidth
+    lambdaCat: [0.4845307, 0.01094098], // categorical covariate bandwidth
     lambdaOrd: [], // ordinal covariate bandwidth
+    responseBw: 1.257102,
   },
 ];
 
@@ -80,7 +85,23 @@ const MODEL = [
   },
 ];
 
-const DEFAULT_DATASET_INDEX = 0;
-const DEFAULT_MODEL_INDEX = 4;
+const ESTIMATORS = [
+  { id: 0, name: "GLM", color: "orange" },
+  { id: 1, name: "weighted-GLM", color: "green" },
+  { id: 4, name: "weighted-histogram", color: "blue" },
+  { id: 2, name: "conditional kernel", color: "red" },
+  { id: 3, name: "modified conditional kernel", color: "black" },
+];
 
-export { DATASET, MODEL, DEFAULT_DATASET_INDEX, DEFAULT_MODEL_INDEX };
+const DEFAULT_DATASET_INDEX = 1;
+const DEFAULT_MODEL_INDEX = MODEL.length - 1;
+const DEFAULT_ESTIMATOR_LIST = [0, 1, 2, 3];
+
+export {
+  DATASET,
+  MODEL,
+  DEFAULT_DATASET_INDEX,
+  DEFAULT_MODEL_INDEX,
+  ESTIMATORS,
+  DEFAULT_ESTIMATOR_LIST,
+};

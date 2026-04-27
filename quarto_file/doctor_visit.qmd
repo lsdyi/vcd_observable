@@ -8,7 +8,7 @@ load("/Users/yangjinzhe/Desktop/doctorvisits.rda")
 # Suppose your object is called 'df' (data.frame)
 write.csv(doctorvisits, "doctorvisits.csv", row.names = FALSE)
 
-head(doctorvisits)
+tail(doctorvisits)
 model <- glm(numvisit ~ reform + badh + age + educ + loginc, family = poisson, doctorvisits)
 
 model_nb <- glm.nb(numvisit ~ reform + badh + age + educ + loginc, doctorvisits)
@@ -32,10 +32,44 @@ dnbinom(0, size = theta, mu = mu)
 ```{r}
 summary(model_nb)
 
-bw_cond <- npcdensbw(numvisit ~ factor(reform) + factor(badh) + age + educ + loginc,
+bw_cond <- npcdistbw(numvisit ~ factor(reform) + factor(badh) + age + educ + loginc,
     data = doctorvisits,
     wmethod = "cv.ml"
 )
 
 bw_cond
 ```
+
+```{r}
+tail(predict(model_nb), )
+
+c(1, 1, 0, 38, 7, 7.72323894500732) %*% c(-0.407475, -0.137408, 1.131247, 0.005570, -0.005320, 0.137129)
+```
+
+```{r}
+model
+tail(predict(model, type = "response"))
+linearCom <- c(1, 1, 0, 38, 7, 7.72323894500732) %*% c(-0.421508, -0.139884, 1.132628, 0.004885, -0.011814, 0.152025)
+linearCom
+exp(linearCom)
+```
+
+<!-- Conditional distribution data (2227 observations, 6 variable(s))
+(1 dependent variable(s), and 5 explanatory variable(s))
+
+                        numvisit
+Dep. Var. Bandwidth(s): 1.257102
+                        factor(reform) factor(badh)      age      educ   loginc
+Exp. Var. Bandwidth(s):      0.4845307   0.01094098 5.786841 0.4327276 213813.7
+
+Bandwidth Selection Method: Least Squares Cross-Validation
+Formula: numvisit ~ factor(reform) + factor(badh) + age + educ + loginc
+Bandwidth Type: Fixed
+Objective Function Value: 0.1854022 (achieved on multistart 2)
+
+Continuous Kernel Type: Second-Order Gaussian 
+No. Continuous Dependent Vars.: 1 
+No. Continuous Explanatory Vars.: 3 
+
+Unordered Categorical Kernel Type: Aitchison and Aitken  
+No. Unordered Categorical Explanatory Vars.: 2 -->

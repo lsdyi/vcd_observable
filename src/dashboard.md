@@ -24,6 +24,8 @@ import {
   MODEL,
   DEFAULT_DATASET_INDEX,
   DEFAULT_MODEL_INDEX,
+  ESTIMATORS,
+  DEFAULT_ESTIMATOR_LIST,
 } from "./components/config.js";
 import { getEstimate } from "./components/getEstimate.js";
 import { chart } from "./components/scatterPlot.js";
@@ -71,12 +73,6 @@ const selectedModel = view(
 const conditionPointObj = view(Inputs.form(formMap));
 ```
 
-<div class="grid grid-cols-4">
-  ${
-    scatterPlotList
-  }
-</div>
-
 ## Select bandwidth
 
 ```js
@@ -93,12 +89,27 @@ Every data point with weight is listed as follows.
 
 ```js
 display(data_with_weights);
-display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 5));
+display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
 ```
 
 <div class="grid grid-cols-4">
-  ${scatterPlotList}
+  ${
+    scatterPlotList
+  }
 </div>
+
+```js
+const selectedEstimators = view(
+  Inputs.checkbox(ESTIMATORS, {
+    format: (item) => item.name,
+    value: ESTIMATORS,
+  }),
+);
+```
+
+```js
+display(selectedEstimators);
+```
 
 ```js
 display(pdfplot);
@@ -123,6 +134,7 @@ const {
   keys,
   responseKey,
   name,
+  responseBw,
 } = selectedDataset;
 
 const data = datasets[index];
@@ -258,7 +270,19 @@ const { coordinates, weightedGLM, ckCoordinates, modCkdCoordinates } =
     data_with_weights,
     keys,
     responseKey,
+    responseBw,
   );
+
+console.log(
+  "sum",
+  responseBw,
+  d3.sum(
+    ckCoordinates.map(
+      (item) => item.y * (ckCoordinates[1].x - ckCoordinates[0].x),
+    ),
+  ),
+  d3.sum(data_with_weights.map((item) => item.weight)),
+);
 
 const summary = await getSummary();
 const residuals = await getPearsonResiduals();
@@ -268,23 +292,35 @@ function negBinomialPMF(k, r, p) {
   const coef = jStat.gammafn(k + r) / (jStat.gammafn(r) * jStat.gammafn(k + 1));
   return coef * Math.pow(p, r) * Math.pow(1 - p, k);
 }
-
-const h = jStat.stdev(data_with_weights.map((item) => item[responseKey[0]]));
-
-const hy = 0.7228501;
 ```
 
 ```js
+const showGLMEstimator =
+  selectedEstimators.findIndex((item) => item.id === 0) !== -1;
+
+const showWeightedGLMEstimator =
+  selectedEstimators.findIndex((item) => item.id === 1) !== -1;
+
+const showWeightedHist =
+  selectedEstimators.findIndex((item) => item.id === 4) !== -1;
+
+const showCKE = selectedEstimators.findIndex((item) => item.id === 2) !== -1;
+
+const showModifiedCKE =
+  selectedEstimators.findIndex((item) => item.id === 3) !== -1;
+
+const ssum = d3.sum(data_with_weights.map((item) => item[responseKey[0]]));
 const marks =
   name === "Continous Response"
     ? [
         Plot.ruleX([0]),
         Plot.ruleY([0]),
         Plot.rectY(
-          data_with_weights.map((item, index) => ({
-            ...item,
-            active: true,
-          })),
+          showWeightedHist &&
+            data_with_weights.map((item, index) => ({
+              ...item,
+              active: true,
+            })),
           Plot.binX(
             {
               y: (bindata, bin) => {
@@ -294,7 +330,22 @@ const marks =
             { x: "Y", thresholds: 50, fill: "steelblue", opacity: 0.7 },
           ),
         ),
-        Plot.line(coordinates, {
+        // Plot.rectY(
+        //   data_with_weights,
+        //   Plot.binX(
+        //     {
+        //       y: (bin, b) =>
+        //         bin.length / ((b.x2 - b.x1) * data_with_weights.length),
+        //     },
+        //     {
+        //       x: "Y",
+        //       thresholds: 50,
+        //       fill: "purple",
+        //       opacity: 0.5,
+        //     },
+        //   ),
+        // ),   // response density
+        Plot.line(showGLMEstimator && coordinates, {
           x: "x",
           y: "y",
           stroke: "#F28C28",
@@ -302,7 +353,7 @@ const marks =
         }),
 
         // conditional kernel estimator
-        Plot.line(ckCoordinates, {
+        Plot.line(showCKE && ckCoordinates, {
           x: "x",
           y: "y",
           stroke: "red",
@@ -310,7 +361,7 @@ const marks =
         }),
 
         // conditional kernel estimator
-        Plot.line(modCkdCoordinates || [], {
+        Plot.line((showModifiedCKE && modCkdCoordinates) || [], {
           x: "x",
           y: "y",
           stroke: "black",
@@ -318,7 +369,7 @@ const marks =
         }),
 
         // weighted conditional density
-        Plot.line(weightedGLM, {
+        Plot.line(showWeightedGLMEstimator && weightedGLM, {
           x: "x",
           y: "y",
           stroke: "green",
@@ -328,27 +379,27 @@ const marks =
     : [
         Plot.ruleX([0]),
         Plot.ruleY([0]),
-        Plot.barY(data_with_weights, {
+        Plot.barY(showWeightedHist && data_with_weights, {
           x: responseKey[0],
           y: "weight",
           fill: "steelblue",
           opacity: 0.7,
         }),
-        Plot.line(coordinates, {
+        Plot.line(showGLMEstimator && coordinates, {
           x: "x",
           y: "y",
           stroke: "#F28C28",
           strokeWidth: 2,
           marker: "circle",
         }),
-        Plot.line(weightedGLM, {
+        Plot.line(showWeightedGLMEstimator && weightedGLM, {
           x: "x",
           y: "y",
           stroke: "green",
           strokeWidth: 2,
           marker: "circle",
         }),
-        Plot.line(ckCoordinates, {
+        Plot.line(showCKE && ckCoordinates, {
           x: "x",
           y: "y",
           stroke: "red",

@@ -43,7 +43,7 @@ function chart(data, width, height, topNresidual = 10) {
   );
 
   const getColor = (d) => {
-    if (!d.weight) {
+    if (d.weight === undefined) {
       return z(d.group);
     }
     const base = d3.color(z(d.group));
@@ -110,16 +110,6 @@ function chart(data, width, height, topNresidual = 10) {
 
   const defs = svg.append("defs");
 
-  // const glow = defs.append("filter").attr("id", "red-glow");
-
-  // glow
-  //   .append("feDropShadow")
-  //   .attr("dx", 0)
-  //   .attr("dy", 0)
-  //   .attr("stdDeviation", 1)
-  //   .attr("flood-color", "red")
-  //   .attr("flood-opacity", 1);
-
   const glow = defs
     .append("filter")
     .attr("id", "red-glow")
@@ -170,7 +160,7 @@ function chart(data, width, height, topNresidual = 10) {
     .join("circle")
     .attr("cx", (d) => x(d.x))
     .attr("cy", (d) => y(d.y))
-    .attr("r", (d) => (d.weight ? 5 : 8))
+    .attr("r", (d) => (d.weight === undefined ? 8 : 5))
     .attr("fill", (d) => getColor(d))
     .attr("style", (_, index) =>
       dataSortedByResidual.findIndex((item) => item.idx === index) !== -1

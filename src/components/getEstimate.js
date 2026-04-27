@@ -1,12 +1,11 @@
 import _ from "lodash";
-
-import { loess } from "./r.js";
-
-import { multiply, transpose, dotMultiply, add } from "mathjs";
+import { multiply, transpose } from "mathjs";
 import * as d3 from "npm:d3";
 import jStat from "jstat";
 
-import { poissonKernel } from "./kernel.js";
+import { loess } from "./r.js";
+import { negBinomialPMF } from "./util.js";
+import { poissonKernel, kContinuous } from "./kernel.js";
 
 const getEstimate = async (
   family,
@@ -15,6 +14,7 @@ const getEstimate = async (
   data_with_weights,
   keys,
   responseKey,
+  responseBw,
 ) => {
   if (family === "beta regression") {
     const betas = modelOutput.values[0].values;
@@ -48,13 +48,15 @@ const getEstimate = async (
         y: d3.sum(yList),
       };
     });
-
-    const h = 1;
-
+    
     const ckCoordinates = xGrid.map((item) => {
       const temp = data_with_weights.map((datapoint) => {
         const { Y, weight } = datapoint;
-        return (1 / h) * weight * jStat.normal.pdf((item - Y) / h, 0, 1);
+        return (
+          (1 / responseBw) *
+          weight *
+          kContinuous(item, Y, responseBw)
+        );
       });
       return {
         x: item,
@@ -101,6 +103,7 @@ const getEstimate = async (
     );
 
     const xGrid = d3.range(0, 50, 1);
+    // const xGrid = d3.range(data_with_weights[responseKey]);
     const coordinates = xGrid.map((item) => {
       return {
         x: item,
@@ -128,28 +131,29 @@ const getEstimate = async (
       };
     });
 
-    const h = jStat.stdev(
-      data_with_weights.map((item) => item[responseKey[0]]),
-    );
-
-    const hy = 0.7228501;
-
     const ckCoordinates = xGrid.map((item) => {
       const temp = data_with_weights.map((datapoint) => {
         const { weight } = datapoint;
         const response = datapoint[responseKey[0]];
-        return weight * poissonKernel(item, response, h);
+        return weight * poissonKernel(item, response, responseBw);
       });
       return {
         x: item,
         y: d3.sum(temp),
       };
     });
+    const normalizer = d3.sum(ckCoordinates.map((item) => item.y));
 
     return {
       coordinates,
       weightedGLM,
-      ckCoordinates,
+      ckCoordinates: ckCoordinates.map((item) => {
+        const { y } = item;
+        return {
+          ...item,
+          y: y / normalizer,
+        };
+      }),
     };
   } else if (family === `negative binomial regression`) {
     const estimates = modelOutput.values;
@@ -162,17 +166,32 @@ const getEstimate = async (
     );
     const theta = estimates[estimates.length - 1];
 
+    // const response = data_with_weights.map(item => item[responseKey])
+    // const minRes = d3.min(response)
+    // const maxRes = d3.max(response)
+    // const xGrid = d3.range(minRes, maxRes);
     const xGrid = d3.range(0, 50, 1);
+
     const coordinates = xGrid.map((item) => {
       return {
         x: item,
-        y: jStat.negbin.pdf(item, theta, theta / (mean + theta)) || 0,
+        y: negBinomialPMF(item, theta, theta / (mean + theta)) || 0,
       };
     });
 
     const weightedGLM = xGrid.map((xCor) => {
       const yList = data_with_weights.map((item) => {
-        const y = jStat.negbin.pdf(xCor, theta, theta / (mean + theta)) || 0;
+        const covariateObj = _.pick(item, keys);
+        const covariates = Object.values(covariateObj);
+
+        const mean = Math.exp(
+          multiply(
+            transpose([1, ...covariates]),
+            estimates.slice(0, keys.length + 1),
+          ),
+        );
+
+        const y = negBinomialPMF(xCor, theta, theta / (mean + theta)) || 0;
         return y * item.weight;
       });
 
@@ -182,17 +201,11 @@ const getEstimate = async (
       };
     });
 
-    const h = jStat.stdev(
-      data_with_weights.map((item) => item[responseKey[0]]),
-    );
-
-    const hy = 0.7228501;
-
     const ckCoordinates = xGrid.map((item) => {
       const temp = data_with_weights.map((datapoint) => {
         const { weight } = datapoint;
         const response = datapoint[responseKey[0]];
-        return weight * poissonKernel(item, response, h);
+        return weight * poissonKernel(item, response, responseBw);
       });
       return {
         x: item,
@@ -200,10 +213,18 @@ const getEstimate = async (
       };
     });
 
+    const normalizer = d3.sum(ckCoordinates.map((item) => item.y));
+
     return {
       coordinates,
       weightedGLM,
-      ckCoordinates,
+      ckCoordinates: ckCoordinates.map((item) => {
+        const { y } = item;
+        return {
+          ...item,
+          y: y / normalizer,
+        };
+      }),
     };
   }
 };

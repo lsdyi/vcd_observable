@@ -310,6 +310,11 @@ sim_data <- data.frame(
 # Quick look
 head(sim_data)
 write.csv(sim_data, "simulated_beta_data.csv", row.names = FALSE)
+
+
+hist(Y, freq=FALSE)
+min(Y)
+max(Y)
 ```
 
 ```{r}

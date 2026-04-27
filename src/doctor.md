@@ -113,18 +113,6 @@ const temp = keys.map((key) => doctorvisits.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
 
 const data = doctorvisits.map((item) => _.pick(item, keys));
-// const unnormalizedweights = normWeights(
-//   data,
-//   conditionPoint,
-//   stdevs,
-//   undefined,
-//   kernal,
-// );
-// const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-// const weights2 = unnormalizedweights.map((d) => ({
-//   id: d.id,
-//   w: d.w / totalunnormalizedweight,
-// }));
 
 const categoricalKeys = ["reform", "badh"];
 const continousKeys = ["age", "educ", "loginc"];
@@ -301,8 +289,6 @@ const weightedDen = xGrid.map((xCor) => {
 });
 
 const h = jStat.stdev(data_with_weights.map((item) => item.numvisit));
-
-const hy = 0.7228501;
 
 const ckdCoordinates = xGrid.map((item) => {
   const temp = data_with_weights.map((datapoint) => {

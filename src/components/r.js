@@ -4,7 +4,7 @@ import { modelConfig } from "./modelConfig.js";
 
 const webR = new WebR();
 await webR.init();
-await webR.installPackages(["betareg", "statmod", "numDeriv", "MASS", "np"]);
+await webR.installPackages(["betareg", "statmod", "numDeriv", "MASS"]);
 
 const regressionBy = async (family) => {
   const { continousCovariates, response } = modelConfig;
