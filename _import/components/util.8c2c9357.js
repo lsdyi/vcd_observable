@@ -1,3 +1,5 @@
+import jStat from "../../_node/jstat@1.9.6/index.bc60a888.js";
+
 const selectFromKeys = (data, keys = []) => {
   const matrix = data.map((row) =>
     keys
@@ -25,4 +27,10 @@ const getCardinalityFromMatrix = (matrix) => {
   return result;
 };
 
-export { selectFromKeys, getCardinalityFromMatrix };
+function negBinomialPMF(k, r, p) {
+  if (k < 0) return 0;
+  const coef = jStat.gammafn(k + r) / (jStat.gammafn(r) * jStat.gammafn(k + 1));
+  return coef * Math.pow(p, r) * Math.pow(1 - p, k);
+}
+
+export { selectFromKeys, getCardinalityFromMatrix, negBinomialPMF };

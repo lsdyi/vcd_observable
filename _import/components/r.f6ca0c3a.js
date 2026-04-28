@@ -1,11 +1,10 @@
 import { WebR } from "../../_node/webr@0.5.9/index.1cb224c9.js";
-import jStat from "../../_node/jstat@1.9.6/index.bc60a888.js";
 
 import { modelConfig } from "./modelConfig.6feb3b8c.js";
 
 const webR = new WebR();
 await webR.init();
-await webR.installPackages(["betareg", "statmod", "numDeriv", "MASS", "np"]);
+await webR.installPackages(["betareg", "statmod", "numDeriv", "MASS"]);
 
 const regressionBy = async (family) => {
   const { continousCovariates, response } = modelConfig;
@@ -31,10 +30,11 @@ const getSummary = async () => {
   return text[0];
 };
 
-const betaRegession = async () => {
+const betaRegession = async (dataName = "data", setup = "Y ~ X1 + X2 + X3", family = "beta regression") => {
   const rCodes = `
     library(betareg)
-    fit <- betareg(Y ~ X1 + X2 + X3, link = "logit", data = betaData)
+    fit <- betareg(${setup}, link = "logit", data = ${dataName})
+    summary_stats <- summary(fit)
   `;
 
   await webR.evalR(rCodes);
@@ -47,10 +47,7 @@ const betaRegession = async () => {
 };
 
 // negative binomial regression
-const negRegession = async (
-  dataName = "poiNegData",
-  setup = "y ~ x1 + x2 + x3",
-) => {
+const negRegession = async (dataName = "data", setup = "Y ~ X1 + X2 + X3") => {
   const rCodes = `
     library(MASS)
     fit <- glm.nb(${setup}, data = ${dataName})
@@ -61,10 +58,10 @@ const negRegession = async (
 
   // Extracting coefficients specifically
   const result = await webR.evalR(`
-c(
-    coef(fit), # regression coefficients
-    fit$theta # dispersion parameter
-)
+    c(
+        coef(fit), # regression coefficients
+        fit$theta # dispersion parameter
+    )
     `);
   const output = await result.toJs();
 
@@ -73,11 +70,12 @@ c(
 
 // poisson regression
 const poissonRegession = async (
-  dataName = "poiNegData",
-  setup = "y ~ x1 + x2 + x3",
+  dataName = "data",
+  setup = "Y ~ X1 + X2 + X3",
+  family = "poisson",
 ) => {
   const rCodes = `
-    fit <- glm(${setup}, family = poisson, data = ${dataName})
+    fit <- glm(${setup}, family = ${family}, data = ${dataName})
     summary_stats <- summary(fit)
   `;
 
@@ -85,10 +83,10 @@ const poissonRegession = async (
 
   // Extracting coefficients specifically
   const result = await webR.evalR(`
-c(
-    coef(fit), # regression coefficients
-    fit$theta # dispersion parameter
-)
+    c(
+        coef(fit), # regression coefficients
+        fit$theta # dispersion parameter
+    )
     `);
   const output = await result.toJs();
 
@@ -107,43 +105,17 @@ const getPearsonResiduals = async () => {
   return output;
 };
 
-const cke = async () => {
-  const rCodes = `
-    library(np)
-    y_count <- ordered(poiNegData['y'])
-    x1 <- poiNegData['x1']
-    x2 <- poiNegData['x2']
-    x3 <- poiNegData['x3']
-    new_data <- data.frame(y_count, x1, x2,x3)
-    
-    bw_cond <- npcdensbw(y_count ~ x1 + x2 + x3,
-    data = new_data,
-    bwmethod = "cv.ml")
-
-    summary_stats <- summary(bw_cond)
-  `;
-
-  await webR.evalR(rCodes);
-
-  const result = await webR.evalR(
-    'paste(capture.output(summary_stats), collapse = "\n")',
-  );
-  const text = await result.toArray();
-  return text[0];
-};
-
 const loess = async () => {
   const rCodes = `
-    # fit loess model
-    fit <- loess(Y ~ X1 + X2 + X3, data = betaData, span = 0.5)
-    summary_stats <- summary(fit)
+    loessFit <- loess(Y ~ X1 + X2 + X3, data = data, span = 0.5)
+    summary_stats <- summary(loessFit)
     new_df <- data.frame(
       X1 = c(0),
       X2 = c(1),
       X3 = c(2)
     )
 
-    mu = predict(fit, newdata = new_df)
+    mu = predict(loessFit, newdata = new_df)
     `;
   await webR.evalR(rCodes);
 
@@ -155,11 +127,6 @@ const loess = async () => {
   const output = await result.toJs();
 
   return output;
-  // const result = await webR.evalR(
-  //   'paste(capture.output(summary_stats), collapse = "\n")',
-  // );
-  // const text = await result.toArray();
-  // return text[0];
 };
 
 export {
@@ -169,7 +136,6 @@ export {
   betaRegession,
   negRegession,
   poissonRegession,
-  cke,
   loess,
-  getPearsonResiduals
+  getPearsonResiduals,
 };

@@ -29,7 +29,7 @@
 <link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
 <link rel="modulepreload" href="./_import/components/scatterPlot3d.95fe92c3.js">
 <link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
-<link rel="modulepreload" href="./_import/components/r.e25cff1d.js">
+<link rel="modulepreload" href="./_import/components/r.f6ca0c3a.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
@@ -94,7 +94,7 @@
 import {define} from "./_observablehq/client.48e27f80.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.606330f7.csv","lastModified":1776814856841,"size":72475});
+registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.606330f7.csv","lastModified":1777369192755,"size":72475});
 
 define({id: "6b0edda6", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","PcaInputRange","scatterPlot3d","matrixData","Mutable"], body: async () => {
 const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {matrixData}, {Mutable}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_observablehq/stdlib.73a8ec5a.js")]);
@@ -349,8 +349,8 @@ keys.forEach((key) => {
 return {keys,formMap,ranges};
 }});
 
-define({id: "e915f657", inputs: ["conditionPointObj","betaData","jStat","_","normWeights","kernal","d3","multiply","transpose","Plot"], outputs: ["betaRegession","webR","loess","conditionPoint","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","output","betas","phi","linearCom","mu","loessRes","loessMu","data_with_weights","weightedResidual","xGrid","coordinates","denCoordinates","h","ckdCoordinates","modCkdCoordinates","pdfplot"], body: async (conditionPointObj,betaData,jStat,_,normWeights,kernal,d3,multiply,transpose,Plot) => {
-const {betaRegession, webR, loess} = await import("./_import/components/r.e25cff1d.js");
+define({id: "233c46b7", inputs: ["conditionPointObj","betaData","jStat","_","normWeights","kernal","d3","multiply","transpose","Plot"], outputs: ["betaRegession","webR","loess","conditionPoint","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","output","betas","phi","linearCom","mu","loessRes","loessMu","data_with_weights","weightedResidual","xGrid","coordinates","denCoordinates","h","ckdCoordinates","modCkdCoordinates","pdfplot"], body: async (conditionPointObj,betaData,jStat,_,normWeights,kernal,d3,multiply,transpose,Plot) => {
+const {betaRegession, webR, loess} = await import("./_import/components/r.f6ca0c3a.js");
 
 const conditionPoint = Object.values(conditionPointObj);
 
@@ -383,7 +383,6 @@ const mu = 1 / (1 + Math.exp(-linearCom));
 
 const loessRes = await loess()
 const loessMu = loessRes.values[0]
-console.log(mu, loessRes.values[0])
 
 const data_with_weights = data.map((d, index) => ({
   ...d,
@@ -422,12 +421,7 @@ const denCoordinates = xGrid.map((xCor) => {
 });
 
 const h = jStat.stdev(data_with_weights.map((item) => item.Y));
-console.log(h);
-console.log(
-  d3.sum(
-    coordinates.map((item) => item.y * (coordinates[1].x - coordinates[0].x)),
-  ),
-);
+
 const ckdCoordinates = xGrid.map((item) => {
   const temp = data_with_weights.map((datapoint) => {
     const { Y, weight } = datapoint;
@@ -451,14 +445,6 @@ const modCkdCoordinates = xGrid.map((item) => {
     y: d3.sum(temp),
   };
 });
-
-console.log(
-  d3.sum(
-    ckdCoordinates.map(
-      (item) => item.y * (ckdCoordinates[1].x - ckdCoordinates[0].x),
-    ),
-  ),
-);
 
 const pdfplot = Plot.plot({
   title: "pdf",
@@ -590,11 +576,11 @@ tex.block`e_j = Y_j - \hat r(X_j)`
     <li class="observablehq-link"><a href="./">VCD Project</a></li>
   </ol>
   <ol>
+    <li class="observablehq-link"><a href="./dashboard">Dashboard</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./density_estimate">Density Estimator</a></li>
     <li class="observablehq-link"><a href="./doctor">Doctor Visit</a></li>
     <li class="observablehq-link"><a href="./pca">PCA example</a></li>
     <li class="observablehq-link"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
-    <li class="observablehq-link"><a href="./test">Test Page</a></li>
     <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
     <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
@@ -643,7 +629,7 @@ tex.block`e_j = Y_j - \hat r(X_j)`
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
 <!-- js logics -->
 <div class="observablehq observablehq--block"><!--:5dd2562a:--></div>
-<div class="observablehq observablehq--block"><!--:e915f657:--></div>
+<div class="observablehq observablehq--block"><!--:233c46b7:--></div>
 <h2 id="kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-estimator">Kernel Estimator</a></h2>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:2beead3a:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:9f8c74d5:--></div>
@@ -656,8 +642,8 @@ tex.block`e_j = Y_j - \hat r(X_j)`
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:a75d57d8:--></div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./doctor"><span>Doctor Visit</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-21T23:51:50">Apr 21, 2026</a>.</div>
+<nav><a rel="prev" href="./dashboard"><span>Dashboard</span></a><a rel="next" href="./doctor"><span>Doctor Visit</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-28T10:03:32">Apr 28, 2026</a>.</div>
 </footer>
 </div>
 </body>

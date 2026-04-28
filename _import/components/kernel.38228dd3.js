@@ -3,7 +3,7 @@ import jStat from "../../_node/jstat@1.9.6/index.bc60a888.js";
 // Gaussian kernel (continuous)
 function kContinuous(x, xi, bw) {
   const z = (x - xi) / bw;
-  return Math.exp(-0.5 * z * z);
+  return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * z * z);
 }
 
 // Aitchison–Aitken kernel (unordered categorical)
@@ -41,17 +41,17 @@ const computeWeightsMixed = ({
 
     // --- continuous part ---
     for (let j = 0; j < XCont[i]?.length; j++) {
-      k1 *= kContinuous(x0.cont[j], XCont[i][j], bwCont[j] / externlH);
+      k1 *= kContinuous(x0.cont[j], XCont[i][j], bwCont[j] * externlH);
     }
 
     // --- categorical part ---
     for (let j = 0; j < XCat[i]?.length; j++) {
-      k2 *= kUnordered(x0.cat[j], XCat[i][j], lambdaCat[j], Ccat[j] / externlH);
+      k2 *= kUnordered(x0.cat[j], XCat[i][j], lambdaCat[j], Ccat[j] * externlH);
     }
 
     // --- ordered part ---
     for (let j = 0; j < XOrd[i]?.length; j++) {
-      k3 *= kOrdered(x0.ord[j], XOrd[i][j], lambdaOrd[j] / externlH);
+      k3 *= kOrdered(x0.ord[j], XOrd[i][j], lambdaOrd[j] * externlH);
     }
 
     weights[i] = k1 * k2 * k3;
@@ -67,4 +67,4 @@ const poissonKernel = (y, yi, h) => {
   const lambda = yi + h;
   return jStat.poisson.pdf(y, lambda);
 };
-export { computeWeightsMixed, poissonKernel };
+export { computeWeightsMixed, poissonKernel, kContinuous };

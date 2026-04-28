@@ -2,15 +2,6 @@
 title: "Data Generating Process"
 author:   
   - Jinzhe Yang
-format: 
-  html: default
-  pdf:
-    keep-tex: true
-    include-in-header: 
-       text: |
-         \usepackage{fvextra}
-         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
-         \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
 toc: true
 language: 
   title-block-author-single: " "
@@ -25,6 +16,8 @@ callout-tip-caption: "Tip"
 
 ```{r}
 library(MASS) # for mvrnorm
+library(np)
+
 
 set.seed(123)
 n <- 500
@@ -42,6 +35,7 @@ x1 <- X[, 1]
 x2 <- X[, 2]
 x3 <- X[, 3]
 
+mean(x1)
 # coefficients
 beta0 <- 0.5
 beta1 <- 0.8
@@ -58,8 +52,7 @@ y[x1 < cutoff] <- rpois(sum(x1 < cutoff), mu[x1 < cutoff])
 y[x1 >= cutoff] <- rnbinom(sum(x1 >= cutoff), mu = mu[x1 >= cutoff], size = size)
 
 # assemble dataframe
-data <- data.frame(x1, x2, x3, y, regime = ifelse(x1 < cutoff, "Poisson", "NegBin"))
-
+data <- data.frame(X1 = x1, X2 = x2, X3 = x3, Y = y, REGIME = ifelse(x1 < cutoff, "Poisson", "NegBin"))
 
 
 # install.packages("scatterplot3d") # if not installed
@@ -67,12 +60,12 @@ library(scatterplot3d)
 
 # assume your data frame is `data` with columns x1, x2, x3, y, regime
 
-colors <- ifelse(data$regime == "Poisson", "blue", "red")
+colors <- ifelse(data$REGIME == "Poisson", "blue", "red")
 
 scatterplot3d(
-    x = data$x1,
-    y = data$x2,
-    z = data$y,
+    x = data$X1,
+    y = data$X2,
+    z = data$Y,
     color = colors,
     pch = 16,
     main = "Three covariates: Poisson (blue) vs NegBin (red)",
@@ -84,7 +77,7 @@ legend("topright", legend = c("Poisson", "NegBin"), col = c("blue", "red"), pch 
 
 # Quick look
 head(data)
-write.csv(data, "dgp.csv", row.names = FALSE, quote = FALSE)
+write.csv(data, "../src/data/dgp.csv", row.names = FALSE, quote = FALSE)
 ```
 
 ```{r}
@@ -102,4 +95,46 @@ pnbinom(3, size = 3.2628441009374476, mu = 18.17733129240771)
 
 ```{r}
 dnbinom(10, mu = 9.792282457144397, size = 3.2628441009374476)
+```
+
+```{r}
+# bw_dist <- npcdistbw(
+#     formula = Y ~ X1 + X2 + X3,
+#     data = data, bwmethod = "cv.ls"
+# )
+
+# bw_dist
+```
+
+```{r}
+mu_hat = predict(fit, newdata = data.frame(x1 =4.80695990758092, x2 = 2.33195514680647, x3 = 2.747928665946 ), type = "response")
+
+theta <- fit$theta
+
+yGrid = seq(0, 100, 1)
+pmf = rep(NA, length(yGrid))
+for (i in yGrid) {
+  pmf[i] <- dnbinom(i, mu = mu_hat, size = theta)
+}
+plot(yGrid, pmf)
+```
+
+
+```{r}
+# Conditional distribution data (500 observations, 4 variable(s))
+# (1 dependent variable(s), and 3 explanatory variable(s))
+
+#                                Y
+# Dep. Var. Bandwidth(s): 1.081108
+#                                X1        X2        X3
+# Exp. Var. Bandwidth(s): 0.3020034 0.3666998 0.7729395
+
+# Bandwidth Selection Method: Least Squares Cross-Validation
+# Formula: Y ~ X1 + X2 + X3
+# Bandwidth Type: Fixed
+# Objective Function Value: 0.1160094 (achieved on multistart 3)
+
+# Continuous Kernel Type: Second-Order Gaussian 
+# No. Continuous Dependent Vars.: 1 
+# No. Continuous Explanatory Vars.: 3
 ```

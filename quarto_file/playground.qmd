@@ -1,0 +1,70 @@
+```{r}
+library(np)
+
+set.seed(123)
+n <- 200
+
+# Continuous covariate (e.g., Age)
+x_cont <- rnorm(n, mean = 50, sd = 10)
+
+# Categorical covariate (e.g., Group A or B)
+x_cat <- factor(sample(c("Control", "Treatment"), n, replace = TRUE))
+
+# Count response (y) influenced by covariates
+# We use a Poisson-like structure where the mean depends on x_cont and x_cat
+lambda <- exp(0.5 + 0.01 * x_cont + ifelse(x_cat == "Treatment", 0.5, 0))
+y <- rpois(n, lambda = lambda)
+
+# Combine into a data frame
+df <- data.frame(y = y, x_cont = x_cont, x_cat = x_cat)
+
+# -------------------------------------------------------------------------
+# 2. Bandwidth Selection (Conditional Distribution)
+# -------------------------------------------------------------------------
+# This step finds the optimal smoothing parameters for the mixed types.
+# 'cv.ls' stands for Least Squares Cross-Validation.
+cat("Starting bandwidth selection (this may take a moment)...\n")
+
+bw_dist <- npcdistbw(formula = y ~ x_cont + x_cat, 
+                     data = df, 
+                     bwmethod = "cv.ls")
+
+# Print the selected bandwidths
+print(bw_dist)
+
+# -------------------------------------------------------------------------
+# 3. Estimate Conditional CDF
+# -------------------------------------------------------------------------
+# Using the bandwidths calculated above to create the model object
+model_cdf <- npcdist(bws = bw_dist)
+
+# Display a summary of the model
+summary(model_cdf)
+
+# -------------------------------------------------------------------------
+# 4. Prediction and Visualization
+# -------------------------------------------------------------------------
+# Create a grid for prediction: Hold x_cat constant and vary x_cont
+test_data <- data.frame(
+  x_cont = seq(min(df$x_cont), max(df$x_cont), length.out = 10),
+  x_cat = factor(rep("Treatment", 10), levels = levels(df$x_cat))
+)
+
+# Predict the probability that y <= 5 given our test data
+# This returns F(y | x) evaluated at y = 5
+prob_le_5 <- predict(model_cdf, edat = test_data, eyat = rep(5, 10))
+
+cat("\nPredicted P(Y <= 5 | x_cont, x_cat='Treatment'):\n")
+print(prob_le_5)
+
+# Plot the conditional distribution
+# This will show the CDF surface relative to the covariates
+# Open a PDF file device
+pdf("np_plots.pdf", width = 10, height = 8)
+
+# Run the plot command
+plot(bw_dist)
+
+# Turn off the device (this actually saves the file)
+dev.off()
+```

@@ -3,6 +3,8 @@ library(MASS) # for mvrnorm
 library(betareg)
 library(ggplot2)
 library(ggsci)
+library(np)
+library(mvtnorm)
 ```
 
 ```{r}
@@ -38,11 +40,16 @@ phi <- exp(1 + 2 * X1) # precision parameter
 
 # Simulate beta response
 Y <- rbeta(n, shape1 = mu * phi, shape2 = (1 - mu) * phi)
+Y_fixed_phi <- rbeta(n, shape1 = mu * 5, shape2 = (1 - mu) * 5)
 
 
-# fit <- betareg(Y ~ X1 + X2 + X3 | X1)
+fit_x1 <- betareg(Y ~ X1 + X2 + X3 | X1)
 fit <- betareg(Y ~ X1 + X2 + X3)
 summary(fit)
+summary(fit_x1)
+
+hist(Y, freq=FALSE, breaks = seq(min(Y), max(Y), by = 0.02))
+hist(Y_fixed_phi, freq=FALSE, breaks = seq(min(Y), max(Y), by = 0.02))
 
 cor(X) # correlation matrix of covariates
 
@@ -54,9 +61,17 @@ sim_data <- data.frame(
     X3 = X3
 )
 
+sim_data_fixed_phi <- data.frame(
+    Y = Y_fixed_phi,
+    X1 = X1,
+    X2 = X2,
+    X3 = X3
+)
+
 # Quick look
 head(sim_data)
-write.csv(sim_data, "simulated_beta_data.csv", row.names = FALSE)
+write.csv(sim_data, "../src/data/simulated_beta_data_phix.csv", row.names = FALSE)
+write.csv(sim_data_fixed_phi, "../src/data/simulated_beta_data.csv", row.names = FALSE)
 ```
 
 ```{r}
@@ -198,4 +213,48 @@ legend("topright",
        legend = paste0("X1 ≈ ", round(x_grid, 2)),
        col = cols,
        lwd = 2)
+```
+
+```{r}
+# bw_cond <- npcdensbw(Y ~ X1 + X2 + X3,
+#     data = sim_data_fixed_phi,
+#     wmethod = "cv.ml"
+# )
+
+# bw_cond
+
+# Conditional density data (1000 observations, 4 variable(s))
+# (1 dependent variable(s), and 3 explanatory variable(s))
+
+#                                  Y
+# Dep. Var. Bandwidth(s): 0.04209059
+#                                X1        X2       X3
+# Exp. Var. Bandwidth(s): 0.3980219 0.5821581 1.292169
+
+# Bandwidth Selection Method: Maximum Likelihood Cross-Validation
+# Formula: Y ~ X1 + X2 + X3
+# Bandwidth Type: Fixed
+# Objective Function Value: 284.2563 (achieved on multistart 2)
+
+# Continuous Kernel Type: Second-Order Gaussian 
+# No. Continuous Dependent Vars.: 1 
+# No. Continuous Explanatory Vars.: 3
+
+
+# Conditional density data (1000 observations, 4 variable(s))
+# (1 dependent variable(s), and 3 explanatory variable(s))
+
+#                                   Y
+# Dep. Var. Bandwidth(s): 0.004129468
+#                                X1       X2       X3
+# Exp. Var. Bandwidth(s): 0.4163451 2.120657 1.909542
+
+# Bandwidth Selection Method: Maximum Likelihood Cross-Validation
+# Formula: Y ~ X1 + X2 + X3
+# Bandwidth Type: Fixed
+# Objective Function Value: 779.5153 (achieved on multistart 2)
+
+# Continuous Kernel Type: Second-Order Gaussian 
+# No. Continuous Dependent Vars.: 1 
+# No. Continuous Explanatory Vars.: 3
 ```

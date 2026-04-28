@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="generator" content="Observable Framework v1.13.3">
+<title>Dashboard | VCD Project</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="preload" as="style" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
+<link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
+<link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
+<link rel="modulepreload" href="./_observablehq/client.48e27f80.js">
+<link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
+<link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
+<link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
+<link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
+<link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
+<link rel="modulepreload" href="./_import/components/hook/useOption.a983f875.js">
+<link rel="modulepreload" href="./_import/components/modelList.98b739ae.js">
+<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
+<link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
+<link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
+<link rel="modulepreload" href="./_import/components/kernel.38228dd3.js">
+<link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
+<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.95fe92c3.js">
+<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
+<link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
+<link rel="modulepreload" href="./_import/components/config.c99a965d.js">
+<link rel="modulepreload" href="./_import/components/getEstimate.a89ea39e.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot.73bf6fe4.js">
+<link rel="modulepreload" href="./_import/components/pageCache.349f7456.js">
+<link rel="modulepreload" href="./_import/components/r.f6ca0c3a.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.bbe6ec46.js">
+<link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
+<link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
+<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
+<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.5.0/index.96ab480f.js">
+<link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
+<link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
+<link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
+<link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
+<link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
+<link rel="modulepreload" href="./_node/decimal.js@10.6.0/index.7033d8a1.js">
+<link rel="modulepreload" href="./_node/complex.js@2.4.3/index.4529d832.js">
+<link rel="modulepreload" href="./_node/fraction.js@5.3.4/index.0a55e83c.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/defineProperty.57a30997.js">
+<link rel="modulepreload" href="./_node/javascript-natural-sort@0.7.1/index.5392e267.js">
+<link rel="modulepreload" href="./_node/escape-latex@1.2.0/index.8adbe58e.js">
+<link rel="modulepreload" href="./_node/seedrandom@3.0.5/index.d180388a.js">
+<link rel="modulepreload" href="./_node/tiny-emitter@2.1.0/index.82df77ed.js">
+<link rel="modulepreload" href="./_npm/d3-array@3.2.4/e93ca09f.js">
+<link rel="modulepreload" href="./_npm/d3-axis@3.0.0/0f2de24d.js">
+<link rel="modulepreload" href="./_npm/d3-brush@3.0.0/65eb105b.js">
+<link rel="modulepreload" href="./_npm/d3-chord@3.0.1/7ef8fb2e.js">
+<link rel="modulepreload" href="./_npm/d3-color@3.1.0/aeb57b94.js">
+<link rel="modulepreload" href="./_npm/d3-contour@4.0.2/1d2aed74.js">
+<link rel="modulepreload" href="./_npm/d3-delaunay@6.0.4/87adea64.js">
+<link rel="modulepreload" href="./_npm/d3-dispatch@3.0.1/9ba9c7f3.js">
+<link rel="modulepreload" href="./_npm/d3-drag@3.0.0/4202580c.js">
+<link rel="modulepreload" href="./_npm/d3-ease@3.0.1/cdd7e898.js">
+<link rel="modulepreload" href="./_npm/d3-fetch@3.0.1/b4e2ad9a.js">
+<link rel="modulepreload" href="./_npm/d3-force@3.0.0/5e804d15.js">
+<link rel="modulepreload" href="./_npm/d3-format@3.1.2/3785bf2d.js">
+<link rel="modulepreload" href="./_npm/d3-geo@3.1.1/40599fb3.js">
+<link rel="modulepreload" href="./_npm/d3-hierarchy@3.1.2/e49e792c.js">
+<link rel="modulepreload" href="./_npm/d3-interpolate@3.0.1/8d1e5425.js">
+<link rel="modulepreload" href="./_npm/d3-path@3.1.0/20d3f133.js">
+<link rel="modulepreload" href="./_npm/d3-polygon@3.0.1/7553081f.js">
+<link rel="modulepreload" href="./_npm/d3-quadtree@3.0.1/0dfd751c.js">
+<link rel="modulepreload" href="./_npm/d3-random@3.0.1/3c90ee06.js">
+<link rel="modulepreload" href="./_npm/d3-scale@4.0.2/720b7f0a.js">
+<link rel="modulepreload" href="./_npm/d3-scale-chromatic@3.1.0/ba24c2e7.js">
+<link rel="modulepreload" href="./_npm/d3-selection@3.0.0/4d94e5b7.js">
+<link rel="modulepreload" href="./_npm/d3-shape@3.2.0/6d3a6726.js">
+<link rel="modulepreload" href="./_npm/d3-time@3.1.0/9f03c579.js">
+<link rel="modulepreload" href="./_npm/d3-time-format@4.1.0/07c9626f.js">
+<link rel="modulepreload" href="./_npm/d3-timer@3.0.1/b58a267d.js">
+<link rel="modulepreload" href="./_npm/d3-transition@3.0.1/004da2ac.js">
+<link rel="modulepreload" href="./_npm/d3-zoom@3.0.0/b5786b3f.js">
+<link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/53fe8176.js">
+<link rel="modulepreload" href="./_node/htl@0.3.1/index.0caf36e7.js">
+<link rel="modulepreload" href="./_node/isoformat@0.2.1/index.0882e9d9.js">
+<link rel="modulepreload" href="./_npm/internmap@2.0.3/e08981d9.js">
+<link rel="modulepreload" href="./_npm/delaunator@5.1.0/d4ec0aa1.js">
+<link rel="modulepreload" href="./_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
+<link rel="modulepreload" href="./_npm/robust-predicates@3.0.3/42820bfa.js">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
+<script type="module">
+
+import {define} from "./_observablehq/client.48e27f80.js";
+import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
+
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.092e832d.csv","lastModified":1777369192755,"size":30355});
+registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1777369192755,"size":97292});
+registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.606330f7.csv","lastModified":1777369192755,"size":72475});
+
+define({id: "518b896c", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","computeWeightsMixed","poissonKernel","getCombinations","PcaInputRange","scatterPlot3d","matrixData","selectFromKeys","getCardinalityFromMatrix","DATASET","MODEL","DEFAULT_DATASET_INDEX","DEFAULT_MODEL_INDEX","ESTIMATORS","DEFAULT_ESTIMATOR_LIST","getEstimate","chart","pageCache","Mutable"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {computeWeightsMixed, poissonKernel}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {matrixData}, {selectFromKeys, getCardinalityFromMatrix}, {DATASET, MODEL, DEFAULT_DATASET_INDEX, DEFAULT_MODEL_INDEX, ESTIMATORS, DEFAULT_ESTIMATOR_LIST}, {getEstimate}, {chart}, {pageCache}, {Mutable}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/kernel.38228dd3.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_import/components/util.8c2c9357.js"), import("./_import/components/config.c99a965d.js"), import("./_import/components/getEstimate.a89ea39e.js"), import("./_import/components/scatterPlot.73bf6fe4.js"), import("./_import/components/pageCache.349f7456.js"), import("./_observablehq/stdlib.73a8ec5a.js")]);
+
+
+
+return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,computeWeightsMixed,poissonKernel,getCombinations,PcaInputRange,scatterPlot3d,matrixData,selectFromKeys,getCardinalityFromMatrix,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,DEFAULT_ESTIMATOR_LIST,getEstimate,chart,pageCache,Mutable};
+}});
+
+define({id: "818bbada", inputs: ["view","Inputs","DATASET","DEFAULT_DATASET_INDEX"], outputs: ["selectedDataset"], body: (view,Inputs,DATASET,DEFAULT_DATASET_INDEX) => {
+const selectedDataset = view(
+  Inputs.radio(DATASET, {
+    format: (x) => x.name,
+    value: DATASET[DEFAULT_DATASET_INDEX],
+  }),
+);
+return {selectedDataset};
+}});
+
+define({id: "732a6a72", inputs: ["FileAttachment"], outputs: ["datasets"], body: async (FileAttachment) => {
+const datasets = [
+  await FileAttachment("./data/dgp.csv").csv({ typed: true }),
+  await FileAttachment("./data/simulated_beta_data_phix.csv").csv({
+    typed: true,
+  }),
+  await FileAttachment("./data/doctorvisits.csv").csv({ typed: true }),
+];
+return {datasets};
+}});
+
+define({id: "c31861f0", inputs: ["view","Inputs","MODEL","DEFAULT_MODEL_INDEX"], outputs: ["selectedModel"], body: (view,Inputs,MODEL,DEFAULT_MODEL_INDEX) => {
+const selectedModel = view(
+  Inputs.select(MODEL, {
+    unique: true,
+    format: (x) => x.family,
+    value: MODEL[DEFAULT_MODEL_INDEX],
+  }),
+);
+return {selectedModel};
+}});
+
+define({id: "63f89669", inputs: ["view","Inputs","formMap"], outputs: ["conditionPointObj"], body: (view,Inputs,formMap) => {
+const conditionPointObj = view(Inputs.form(formMap));
+return {conditionPointObj};
+}});
+
+define({id: "6ef979be", inputs: ["view","Inputs"], outputs: ["kernal"], body: (view,Inputs) => {
+const kernal = view(
+  Inputs.range([0.01, 10], {
+    value: 1,
+    step: 0.01,
+    label: "smoothing parameter",
+  }),
+);
+return {kernal};
+}});
+
+define({id: "96e16aed", inputs: ["display","data_with_weights","d3"], body: (display,data_with_weights,d3) => {
+display(data_with_weights);
+display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
+}});
+
+define({id: "3a9b05b4", mode: "inline", inputs: ["scatterPlotList","display"], body: async (scatterPlotList,display) => {
+display(await(
+    scatterPlotList
+  
+))
+}});
+
+define({id: "c3db20c4", inputs: ["view","Inputs","ESTIMATORS"], outputs: ["selectedEstimators"], body: (view,Inputs,ESTIMATORS) => {
+const selectedEstimators = view(
+  Inputs.checkbox(ESTIMATORS, {
+    format: (item) => item.name,
+    value: ESTIMATORS,
+  }),
+);
+return {selectedEstimators};
+}});
+
+define({id: "024d8268", inputs: ["display","selectedEstimators"], body: (display,selectedEstimators) => {
+display(selectedEstimators);
+}});
+
+define({id: "05ced95b", inputs: ["display","pdfplot"], body: (display,pdfplot) => {
+display(pdfplot);
+}});
+
+define({id: "d454a666", inputs: ["display","summary"], body: (display,summary) => {
+display(summary);
+}});
+
+define({id: "240e2411", inputs: ["selectedDataset","datasets","getRanges","Inputs"], outputs: ["csvPath","categoricalKeys","continousKeys","ordinalKeys","bwCont","lambdaCat","lambdaOrd","index","keys","responseKey","name","responseBw","data","formMap","ranges"], body: (selectedDataset,datasets,getRanges,Inputs) => {
+const {
+  csvPath,
+  categoricalKeys,
+  continousKeys,
+  ordinalKeys,
+  bwCont,
+  lambdaCat,
+  lambdaOrd,
+  index,
+  keys,
+  responseKey,
+  name,
+  responseBw,
+} = selectedDataset;
+
+const data = datasets[index];
+
+const formMap = {};
+const ranges = getRanges(data);
+keys.forEach((key) => {
+  const result = ranges[key];
+  if (result instanceof Set) {
+    // @todo: countable variable
+  } else {
+    const { min, max } = result;
+    formMap[key] = Inputs.range([min, max], {
+      value: (min + max) / 2,
+      step: 0.5,
+      label: key,
+    });
+  }
+});
+return {csvPath,categoricalKeys,continousKeys,ordinalKeys,bwCont,lambdaCat,lambdaOrd,index,keys,responseKey,name,responseBw,data,formMap,ranges};
+}});
+
+define({id: "86ffc459", inputs: ["getCombinations","keys","conditionPointObj","data","jStat","selectFromKeys","continousKeys","categoricalKeys","ordinalKeys","getCardinalityFromMatrix","kernal","computeWeightsMixed","bwCont","lambdaCat","lambdaOrd","Mutable","d3"], outputs: ["dim","axisAr","conditionPoint","temp","stdevs","XCont","XCat","XOrd","x0","Ccat","externlH","weights","data_with_weights","dataState","resetDataState","wmin","wmax"], body: (getCombinations,keys,conditionPointObj,data,jStat,selectFromKeys,continousKeys,categoricalKeys,ordinalKeys,getCardinalityFromMatrix,kernal,computeWeightsMixed,bwCont,lambdaCat,lambdaOrd,Mutable,d3) => {
+const dim = 2;
+const axisAr = getCombinations(keys, dim);
+const conditionPoint = Object.values(conditionPointObj);
+const temp = keys.map((key) => data.map((item) => item[key]));
+const stdevs = temp.map((item) => jStat.stdev(item));
+
+const XCont = selectFromKeys(data, continousKeys);
+const XCat = selectFromKeys(data, categoricalKeys);
+const XOrd = selectFromKeys(data, ordinalKeys);
+
+const x0 = {
+  cont: selectFromKeys([conditionPointObj], continousKeys).flat(),
+  cat: selectFromKeys([conditionPointObj], categoricalKeys).flat(),
+  ord: selectFromKeys([conditionPointObj], []).flat(),
+};
+
+const Ccat = getCardinalityFromMatrix(XCat);
+const externlH = kernal;
+
+const weights = computeWeightsMixed({
+  XCont,
+  XCat,
+  XOrd,
+  x0,
+  bwCont,
+  lambdaCat,
+  lambdaOrd,
+  Ccat,
+  externlH,
+});
+
+const data_with_weights = data.map((d, index) => ({
+  ...d,
+  weight: weights[index],
+}));
+
+const dataState = Mutable(data_with_weights);
+const resetDataState = (newData) => {
+  dataState.value = newData;
+};
+
+const wmin = d3.min(data_with_weights, (d) => d.weight);
+const wmax = d3.max(data_with_weights, (d) => d.weight);
+return {dim,axisAr,conditionPoint,temp,stdevs,XCont,XCat,XOrd,x0,Ccat,externlH,weights,data_with_weights,dataState,resetDataState,wmin,wmax};
+}});
+
+define({id: "837eb652", inputs: ["axisAr","chart","data_with_weights","residuals","conditionPointObj","width"], outputs: ["scatterPlotList"], body: (axisAr,chart,data_with_weights,residuals,conditionPointObj,width) => {
+const scatterPlotList = axisAr.map((item) => {
+  const [key1, key2] = item;
+
+  return chart(
+    [
+      ...data_with_weights.map((item, index) => {
+        return {
+          group: "observation", // group key
+          x: item[key1],
+          y: item[key2],
+          weight: item.weight,
+          residual: residuals.values[index],
+        };
+      }),
+      {
+        group: "conditional", // group key
+        x: conditionPointObj[key1],
+        y: conditionPointObj[key2],
+        weight: item.weight,
+      },
+    ],
+    width,
+    width,
+  );
+});
+return {scatterPlotList};
+}});
+
+define({id: "62699b6d", outputs: ["negRegession","webR","getSummary","poissonRegession","cke","loess","getPearsonResiduals","getPcaData"], body: async () => {
+const [{negRegession, webR, getSummary, poissonRegession, cke, loess, getPearsonResiduals}, {getPcaData}] = await Promise.all([import("./_import/components/r.f6ca0c3a.js"), import("./_import/components/getPcaData.bbe6ec46.js")]);
+
+return {negRegession,webR,getSummary,poissonRegession,cke,loess,getPearsonResiduals,getPcaData};
+}});
+
+define({id: "4d8472db", inputs: ["webR","data","selectedModel","pageCache","responseKey","keys","poissonRegession","getEstimate","conditionPoint","data_with_weights","responseBw","d3","getSummary","getPearsonResiduals","jStat"], outputs: ["rFun","family","newModelOrData","output","coordinates","weightedGLM","ckCoordinates","modCkdCoordinates","summary","residuals","negBinomialPMF"], body: async (webR,data,selectedModel,pageCache,responseKey,keys,poissonRegession,getEstimate,conditionPoint,data_with_weights,responseBw,d3,getSummary,getPearsonResiduals,jStat) => {
+// R regression code
+await webR.objs.globalEnv.bind("data", data);
+
+const { rFun, family } = selectedModel;
+
+const newModelOrData = pageCache.data !== data || pageCache.family !== family;
+
+if (newModelOrData) {
+  const output =
+    (await rFun?.("data", `${responseKey} ~ ${keys.join(" + ")}`)) ||
+    (await poissonRegession("data", `${responseKey} ~ ${keys.join(" + ")}`));
+  pageCache.output = output;
+  pageCache.data = data;
+  pageCache.family = family;
+}
+
+const { output } = pageCache;
+
+const { coordinates, weightedGLM, ckCoordinates, modCkdCoordinates } =
+  await getEstimate(
+    family,
+    output,
+    conditionPoint,
+    data_with_weights,
+    keys,
+    responseKey,
+    responseBw,
+  );
+
+console.log(
+  "sum",
+  responseBw,
+  d3.sum(
+    ckCoordinates.map(
+      (item) => item.y * (ckCoordinates[1].x - ckCoordinates[0].x),
+    ),
+  ),
+  d3.sum(data_with_weights.map((item) => item.weight)),
+);
+
+const summary = await getSummary();
+const residuals = await getPearsonResiduals();
+
+function negBinomialPMF(k, r, p) {
+  if (k < 0) return 0;
+  const coef = jStat.gammafn(k + r) / (jStat.gammafn(r) * jStat.gammafn(k + 1));
+  return coef * Math.pow(p, r) * Math.pow(1 - p, k);
+}
+return {rFun,family,newModelOrData,output,coordinates,weightedGLM,ckCoordinates,modCkdCoordinates,summary,residuals,negBinomialPMF};
+}});
+
+define({id: "b1add587", inputs: ["selectedEstimators","d3","data_with_weights","responseKey","name","Plot","coordinates","ckCoordinates","modCkdCoordinates","weightedGLM"], outputs: ["showGLMEstimator","showWeightedGLMEstimator","showWeightedHist","showCKE","showModifiedCKE","ssum","marks","pdfplot"], body: (selectedEstimators,d3,data_with_weights,responseKey,name,Plot,coordinates,ckCoordinates,modCkdCoordinates,weightedGLM) => {
+const showGLMEstimator =
+  selectedEstimators.findIndex((item) => item.id === 0) !== -1;
+
+const showWeightedGLMEstimator =
+  selectedEstimators.findIndex((item) => item.id === 1) !== -1;
+
+const showWeightedHist =
+  selectedEstimators.findIndex((item) => item.id === 4) !== -1;
+
+const showCKE = selectedEstimators.findIndex((item) => item.id === 2) !== -1;
+
+const showModifiedCKE =
+  selectedEstimators.findIndex((item) => item.id === 3) !== -1;
+
+const ssum = d3.sum(data_with_weights.map((item) => item[responseKey[0]]));
+const marks =
+  name === "Continous Response"
+    ? [
+        Plot.ruleX([0]),
+        Plot.ruleY([0]),
+        Plot.rectY(
+          showWeightedHist &&
+            data_with_weights.map((item, index) => ({
+              ...item,
+              active: true,
+            })),
+          Plot.binX(
+            {
+              y: (bindata, bin) => {
+                return d3.sum(bindata.map((d) => d.weight)) / (bin.x2 - bin.x1);
+              },
+            },
+            { x: "Y", thresholds: 50, fill: "steelblue", opacity: 0.7 },
+          ),
+        ),
+        // Plot.rectY(
+        //   data_with_weights,
+        //   Plot.binX(
+        //     {
+        //       y: (bin, b) =>
+        //         bin.length / ((b.x2 - b.x1) * data_with_weights.length),
+        //     },
+        //     {
+        //       x: "Y",
+        //       thresholds: 50,
+        //       fill: "purple",
+        //       opacity: 0.5,
+        //     },
+        //   ),
+        // ),   // response density
+        Plot.line(showGLMEstimator && coordinates, {
+          x: "x",
+          y: "y",
+          stroke: "#F28C28",
+          strokeWidth: 2,
+        }),
+
+        // conditional kernel estimator
+        Plot.line(showCKE && ckCoordinates, {
+          x: "x",
+          y: "y",
+          stroke: "red",
+          strokeWidth: 2,
+        }),
+
+        // conditional kernel estimator
+        Plot.line((showModifiedCKE && modCkdCoordinates) || [], {
+          x: "x",
+          y: "y",
+          stroke: "black",
+          strokeWidth: 2,
+        }),
+
+        // weighted conditional density
+        Plot.line(showWeightedGLMEstimator && weightedGLM, {
+          x: "x",
+          y: "y",
+          stroke: "green",
+          strokeWidth: 2,
+        }),
+      ]
+    : [
+        Plot.ruleX([0]),
+        Plot.ruleY([0]),
+        Plot.barY(showWeightedHist && data_with_weights, {
+          x: responseKey[0],
+          y: "weight",
+          fill: "steelblue",
+          opacity: 0.7,
+        }),
+        Plot.line(showGLMEstimator && coordinates, {
+          x: "x",
+          y: "y",
+          stroke: "#F28C28",
+          strokeWidth: 2,
+          marker: "circle",
+        }),
+        Plot.line(showWeightedGLMEstimator && weightedGLM, {
+          x: "x",
+          y: "y",
+          stroke: "green",
+          strokeWidth: 2,
+          marker: "circle",
+        }),
+        Plot.line(showCKE && ckCoordinates, {
+          x: "x",
+          y: "y",
+          stroke: "red",
+          strokeWidth: 2,
+          marker: "circle",
+        }),
+      ];
+
+const pdfplot = Plot.plot({
+  title: name === "Continous Response" ? "pdf" : "pmf",
+
+  color: {
+    legend: true,
+  },
+
+  marks,
+});
+return {showGLMEstimator,showWeightedGLMEstimator,showWeightedHist,showCKE,showModifiedCKE,ssum,marks,pdfplot};
+}});
+
+</script>
+</head>
+<body>
+<input id="observablehq-sidebar-toggle" type="checkbox" title="Toggle sidebar">
+<label id="observablehq-sidebar-backdrop" for="observablehq-sidebar-toggle"></label>
+<nav id="observablehq-sidebar">
+  <ol>
+    <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
+    <li class="observablehq-link"><a href="./">VCD Project</a></li>
+  </ol>
+  <ol>
+    <li class="observablehq-link observablehq-link-active"><a href="./dashboard">Dashboard</a></li>
+    <li class="observablehq-link"><a href="./density_estimate">Density Estimator</a></li>
+    <li class="observablehq-link"><a href="./doctor">Doctor Visit</a></li>
+    <li class="observablehq-link"><a href="./pca">PCA example</a></li>
+    <li class="observablehq-link"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
+    <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
+    <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
+  </ol>
+</nav>
+<script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
+<div id="observablehq-center">
+<main id="observablehq-main" class="observablehq">
+<div class="observablehq observablehq--block"><!--:518b896c:--></div>
+<h2 id="select-dataset" tabindex="-1"><a class="observablehq-header-anchor" href="#select-dataset">Select Dataset</a></h2>
+<div class="observablehq observablehq--block"><!--:818bbada:--></div>
+<div class="observablehq observablehq--block"><!--:732a6a72:--></div>
+<h2 id="select-model" tabindex="-1"><a class="observablehq-header-anchor" href="#select-model">Select Model</a></h2>
+<div class="observablehq observablehq--block"><!--:c31861f0:--></div>
+<h2 id="select-conditional-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditional-data">Select Conditional Data</a></h2>
+<div class="observablehq observablehq--block"><!--:63f89669:--></div>
+<h2 id="select-bandwidth" tabindex="-1"><a class="observablehq-header-anchor" href="#select-bandwidth">Select bandwidth</a></h2>
+<div class="observablehq observablehq--block"><!--:6ef979be:--></div>
+<p>Every data point with weight is listed as follows.</p>
+<div class="observablehq observablehq--block"><!--:96e16aed:--></div>
+<div class="grid grid-cols-4">
+  <observablehq-loading></observablehq-loading><!--:3a9b05b4:-->
+</div>
+<div class="observablehq observablehq--block"><!--:c3db20c4:--></div>
+<div class="observablehq observablehq--block"><!--:024d8268:--></div>
+<div class="observablehq observablehq--block"><!--:05ced95b:--></div>
+<div class="observablehq observablehq--block"><!--:d454a666:--></div>
+<!-- js logics -->
+<div class="observablehq observablehq--block"><!--:240e2411:--></div>
+<div class="observablehq observablehq--block"><!--:86ffc459:--></div>
+<div class="observablehq observablehq--block"><!--:837eb652:--></div>
+<div class="observablehq observablehq--block"><!--:62699b6d:--></div>
+<div class="observablehq observablehq--block"><!--:4d8472db:--></div>
+<div class="observablehq observablehq--block"><!--:b1add587:--></div>
+</main>
+<footer id="observablehq-footer">
+<nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./density_estimate"><span>Density Estimator</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-28T10:03:32">Apr 28, 2026</a>.</div>
+</footer>
+</div>
+</body>
+</html>

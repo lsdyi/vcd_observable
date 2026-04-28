@@ -23,11 +23,11 @@
 <link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
-<link rel="modulepreload" href="./_import/components/r.e25cff1d.js">
+<link rel="modulepreload" href="./_import/components/r.f6ca0c3a.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
 <link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
 <link rel="modulepreload" href="./_import/components/scatterPlot3d.95fe92c3.js">
-<link rel="modulepreload" href="./_import/components/getPcaData.01bbfa2a.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.bbe6ec46.js">
 <link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
@@ -91,10 +91,10 @@
 import {define} from "./_observablehq/client.48e27f80.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.aa3177aa.csv","lastModified":1776814856840,"size":30355});
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.092e832d.csv","lastModified":1777369192755,"size":30355});
 
 define({id: "609849cf", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","negRegession","webR","getSummary","poissonRegession","cke","loess","getCombinations","PcaInputRange","scatterPlot3d","getPcaData","matrixData"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {negRegession, webR, getSummary, poissonRegession, cke, loess}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.e25cff1d.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/getPcaData.01bbfa2a.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {negRegession, webR, getSummary, poissonRegession, cke, loess}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.f6ca0c3a.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/getPcaData.bbe6ec46.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
 
 
 return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,negRegession,webR,getSummary,poissonRegession,cke,loess,getCombinations,PcaInputRange,scatterPlot3d,getPcaData,matrixData};
@@ -384,11 +384,11 @@ return {isPoissonReg,output,estimates,summary,mean,theta,xGrid,coordinates,weigh
     <li class="observablehq-link"><a href="./">VCD Project</a></li>
   </ol>
   <ol>
+    <li class="observablehq-link"><a href="./dashboard">Dashboard</a></li>
     <li class="observablehq-link"><a href="./density_estimate">Density Estimator</a></li>
     <li class="observablehq-link"><a href="./doctor">Doctor Visit</a></li>
     <li class="observablehq-link"><a href="./pca">PCA example</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
-    <li class="observablehq-link"><a href="./test">Test Page</a></li>
     <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
     <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
@@ -424,8 +424,8 @@ return {isPoissonReg,output,estimates,summary,mean,theta,xGrid,coordinates,weigh
 <div class="observablehq observablehq--block"><!--:3d3ec2d5:--></div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="./pca"><span>PCA example</span></a><a rel="next" href="./test"><span>Test Page</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-21T23:51:50">Apr 21, 2026</a>.</div>
+<nav><a rel="prev" href="./pca"><span>PCA example</span></a><a rel="next" href="./vcd_pca"><span>Visualizing conditional distributions(PCA)</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-28T10:03:32">Apr 28, 2026</a>.</div>
 </footer>
 </div>
 </body>

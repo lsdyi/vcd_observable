@@ -23,14 +23,14 @@
 <link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
-<link rel="modulepreload" href="./_import/components/kernel.b7337fd3.js">
+<link rel="modulepreload" href="./_import/components/kernel.38228dd3.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
 <link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
 <link rel="modulepreload" href="./_import/components/scatterPlot3d.95fe92c3.js">
 <link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
-<link rel="modulepreload" href="./_import/components/util.7d3fd3e7.js">
-<link rel="modulepreload" href="./_import/components/r.e25cff1d.js">
-<link rel="modulepreload" href="./_import/components/getPcaData.01bbfa2a.js">
+<link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
+<link rel="modulepreload" href="./_import/components/r.f6ca0c3a.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.bbe6ec46.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
@@ -93,10 +93,10 @@
 import {define} from "./_observablehq/client.48e27f80.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1776814856840,"size":97292});
+registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1777369192755,"size":97292});
 
 define({id: "1fa831e6", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","computeWeightsMixed","poissonKernel","getCombinations","PcaInputRange","scatterPlot3d","matrixData","selectFromKeys","getCardinalityFromMatrix","Mutable"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {computeWeightsMixed, poissonKernel}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {matrixData}, {selectFromKeys, getCardinalityFromMatrix}, {Mutable}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/kernel.b7337fd3.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_import/components/util.7d3fd3e7.js"), import("./_observablehq/stdlib.73a8ec5a.js")]);
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {computeWeightsMixed, poissonKernel}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {matrixData}, {selectFromKeys, getCardinalityFromMatrix}, {Mutable}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/kernel.38228dd3.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_import/components/util.8c2c9357.js"), import("./_observablehq/stdlib.73a8ec5a.js")]);
 
 
 return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,computeWeightsMixed,poissonKernel,getCombinations,PcaInputRange,scatterPlot3d,matrixData,selectFromKeys,getCardinalityFromMatrix,Mutable};
@@ -180,7 +180,7 @@ keys.forEach((key) => {
 return {keys,formMap,ranges};
 }});
 
-define({id: "4b478da8", inputs: ["getCombinations","keys","conditionPointObj","doctorvisits","jStat","_","selectFromKeys","getCardinalityFromMatrix","kernal","computeWeightsMixed","Mutable","d3"], outputs: ["dim","axisAr","conditionPoint","temp","stdevs","data","categoricalKeys","continousKeys","XCont","XCat","XOrd","x0","bwCont","lambdaCat","lambdaOrd","Ccat","externlH","weights","data_with_weights","dataState","resetDataState","wmin","wmax"], body: (getCombinations,keys,conditionPointObj,doctorvisits,jStat,_,selectFromKeys,getCardinalityFromMatrix,kernal,computeWeightsMixed,Mutable,d3) => {
+define({id: "c896b08f", inputs: ["getCombinations","keys","conditionPointObj","doctorvisits","jStat","_","selectFromKeys","getCardinalityFromMatrix","kernal","computeWeightsMixed","Mutable","d3"], outputs: ["dim","axisAr","conditionPoint","temp","stdevs","data","categoricalKeys","continousKeys","XCont","XCat","XOrd","x0","bwCont","lambdaCat","lambdaOrd","Ccat","externlH","weights","data_with_weights","dataState","resetDataState","wmin","wmax"], body: (getCombinations,keys,conditionPointObj,doctorvisits,jStat,_,selectFromKeys,getCardinalityFromMatrix,kernal,computeWeightsMixed,Mutable,d3) => {
 const dim = 2;
 const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
@@ -188,18 +188,6 @@ const temp = keys.map((key) => doctorvisits.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
 
 const data = doctorvisits.map((item) => _.pick(item, keys));
-// const unnormalizedweights = normWeights(
-//   data,
-//   conditionPoint,
-//   stdevs,
-//   undefined,
-//   kernal,
-// );
-// const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-// const weights2 = unnormalizedweights.map((d) => ({
-//   id: d.id,
-//   w: d.w / totalunnormalizedweight,
-// }));
 
 const categoricalKeys = ["reform", "badh"];
 const continousKeys = ["age", "educ", "loginc"];
@@ -284,17 +272,13 @@ const scatterList = axisAr.map((item) => {
 return {scatterList};
 }});
 
-define({id: "33b3fcc7", inputs: ["data_with_weights"], outputs: ["negRegession","webR","getSummary","poissonRegession","cke","loess","getPearsonResiduals","getPcaData"], body: async (data_with_weights) => {
-const [{negRegession, webR, getSummary, poissonRegession, cke, loess, getPearsonResiduals}, {getPcaData}] = await Promise.all([import("./_import/components/r.e25cff1d.js"), import("./_import/components/getPcaData.01bbfa2a.js")]);
-
-console.log('1', data_with_weights)
+define({id: "62699b6d", outputs: ["negRegession","webR","getSummary","poissonRegession","cke","loess","getPearsonResiduals","getPcaData"], body: async () => {
+const [{negRegession, webR, getSummary, poissonRegession, cke, loess, getPearsonResiduals}, {getPcaData}] = await Promise.all([import("./_import/components/r.f6ca0c3a.js"), import("./_import/components/getPcaData.bbe6ec46.js")]);
 
 return {negRegession,webR,getSummary,poissonRegession,cke,loess,getPearsonResiduals,getPcaData};
 }});
 
-define({id: "c18bb8f8", inputs: ["data_with_weights","model","webR","doctorvisits","poissonRegession","negRegession","getSummary","getPearsonResiduals","multiply","transpose","conditionPoint","jStat","d3","_","keys","poissonKernel"], outputs: ["isPoissonReg","output","estimates","summary","residuals","mean","theta","negBinomialPMF","xGrid","coordinates","weightedDen","h","hy","ckdCoordinates"], body: async (data_with_weights,model,webR,doctorvisits,poissonRegession,negRegession,getSummary,getPearsonResiduals,multiply,transpose,conditionPoint,jStat,d3,_,keys,poissonKernel) => {
-console.log('0', data_with_weights)
-
+define({id: "d92c9468", inputs: ["model","webR","doctorvisits","poissonRegession","negRegession","getSummary","getPearsonResiduals","multiply","transpose","conditionPoint","jStat","d3","data_with_weights","_","keys","poissonKernel"], outputs: ["isPoissonReg","output","estimates","summary","residuals","mean","theta","negBinomialPMF","xGrid","coordinates","weightedDen","h","ckdCoordinates"], body: async (model,webR,doctorvisits,poissonRegession,negRegession,getSummary,getPearsonResiduals,multiply,transpose,conditionPoint,jStat,d3,data_with_weights,_,keys,poissonKernel) => {
 const isPoissonReg = model === "Poisson Regression";
 // R regression code
 await webR.objs.globalEnv.bind("doctorvisits", doctorvisits);
@@ -376,8 +360,6 @@ const weightedDen = xGrid.map((xCor) => {
 
 const h = jStat.stdev(data_with_weights.map((item) => item.numvisit));
 
-const hy = 0.7228501;
-
 const ckdCoordinates = xGrid.map((item) => {
   const temp = data_with_weights.map((datapoint) => {
     const { numvisit, weight } = datapoint;
@@ -389,7 +371,7 @@ const ckdCoordinates = xGrid.map((item) => {
     y: d3.sum(temp),
   };
 });
-return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPMF,xGrid,coordinates,weightedDen,h,hy,ckdCoordinates};
+return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPMF,xGrid,coordinates,weightedDen,h,ckdCoordinates};
 }});
 
 define({id: "4f7a77d6", inputs: ["Plot","data_with_weights","coordinates","weightedDen","ckdCoordinates"], outputs: ["pdfplot"], body: (Plot,data_with_weights,coordinates,weightedDen,ckdCoordinates) => {
@@ -446,11 +428,11 @@ return {pdfplot};
     <li class="observablehq-link"><a href="./">VCD Project</a></li>
   </ol>
   <ol>
+    <li class="observablehq-link"><a href="./dashboard">Dashboard</a></li>
     <li class="observablehq-link"><a href="./density_estimate">Density Estimator</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./doctor">Doctor Visit</a></li>
     <li class="observablehq-link"><a href="./pca">PCA example</a></li>
     <li class="observablehq-link"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
-    <li class="observablehq-link"><a href="./test">Test Page</a></li>
     <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
     <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
   </ol>
@@ -477,15 +459,15 @@ return {pdfplot};
 <!-- js logics -->
 <div class="observablehq observablehq--block"><!--:9104b024:--></div>
 <div class="observablehq observablehq--block"><!--:bcb6b711:--></div>
-<div class="observablehq observablehq--block"><!--:4b478da8:--></div>
+<div class="observablehq observablehq--block"><!--:c896b08f:--></div>
 <div class="observablehq observablehq--block"><!--:9e452890:--></div>
-<div class="observablehq observablehq--block"><!--:33b3fcc7:--></div>
-<div class="observablehq observablehq--block"><!--:c18bb8f8:--></div>
+<div class="observablehq observablehq--block"><!--:62699b6d:--></div>
+<div class="observablehq observablehq--block"><!--:d92c9468:--></div>
 <div class="observablehq observablehq--block"><!--:4f7a77d6:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./density_estimate"><span>Density Estimator</span></a><a rel="next" href="./pca"><span>PCA example</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-21T23:51:50">Apr 21, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-28T10:03:32">Apr 28, 2026</a>.</div>
 </footer>
 </div>
 </body>
