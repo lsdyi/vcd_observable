@@ -1,3 +1,5 @@
+import * as d3 from "npm:d3";
+
 import Plotly from "plotly.js-dist-min";
 
 function unpack(rows, key) {
@@ -7,32 +9,54 @@ function unpack(rows, key) {
 }
 
 export const scatterPlot3d = (data, keys = ["x", "y", "z"], cordinate = []) => {
-  const trace = [
-    {
-      x: unpack(data, keys[0]),
-      y: unpack(data, keys[1]),
-      z: unpack(data, keys[2]),
-      mode: "markers",
-      type: "scatter3d",
-      marker: {
-        size: 5,
-        color: "rgb(23, 190, 207)",
-        opacity: 0.8,
+  const top = [...data]
+    .sort((a, b) => Math.abs(b.residual) - Math.abs(a.residual))
+    .slice(0, 10);
+
+  const mainTrace = {
+    x: unpack(data, keys[0]),
+    y: unpack(data, keys[1]),
+    z: unpack(data, keys[2]),
+    mode: "markers",
+    type: "scatter3d",
+    marker: {
+      size: 5,
+      color: "rgb(23, 190, 207)",
+      opacity: 0.8,
+    },
+    name: "data",
+  };
+
+  const shadowTrace = {
+    x: unpack(top, keys[0]),
+    y: unpack(top, keys[1]),
+    z: unpack(top, keys[2]),
+    mode: "markers",
+    type: "scatter3d",
+    marker: {
+      size: 12, // bigger = glow/shadow
+      color: "red",
+      opacity: 0.25, // faint = shadow effect
+      line: {
+        width: 0,
       },
     },
-    {
-      x: [cordinate[0]],
-      y: [cordinate[1]],
-      z: [cordinate[2]],
-      mode: "markers",
-      type: "scatter3d",
-      marker: {
-        size: 5,
-        color: "red",
-        opacity: 0.8,
-      },
+    name: "top residuals",
+    hoverinfo: "skip",
+  };
+
+  const conditional = {
+    x: [cordinate[0]],
+    y: [cordinate[1]],
+    z: [cordinate[2]],
+    mode: "markers",
+    type: "scatter3d",
+    marker: {
+      size: 6,
+      color: "red",
+      opacity: 0.9,
     },
-  ];
+  };
 
   const layout = {
     margin: { l: 0, r: 0, b: 0, t: 0 },
@@ -43,8 +67,13 @@ export const scatterPlot3d = (data, keys = ["x", "y", "z"], cordinate = []) => {
     },
   };
 
-  // Create the plot
   const container = document.createElement("div");
-  Plotly.newPlot(container, trace, layout);
+
+  Plotly.newPlot(
+    container,
+    [shadowTrace, mainTrace, global_check_2],
+    layout,
+  )
+
   return container;
 };
