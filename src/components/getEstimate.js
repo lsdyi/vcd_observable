@@ -15,15 +15,30 @@ const getEstimate = async (
   keys,
   responseKey,
   responseBw,
+  conditional,
 ) => {
+  console.log(conditionPoint);
   if (family === "beta regression") {
+    console.log(modelOutput);
     const betas = modelOutput.values[0].values;
-    const phi = modelOutput.values[4].values[0];
+    const betaPhis = modelOutput.values[4].values;
+    const phi = conditional
+      ? Math.exp(
+          multiply(transpose([1, conditionPoint[0], 0, 0, 0, 0]), betaPhis),
+        )
+      : multiply(transpose([1, 0, 0, 0, 0, 0]), betaPhis);
 
     const linearCom = multiply(transpose([1, ...conditionPoint]), betas);
     const mu = 1 / (1 + Math.exp(-linearCom));
 
-    const xGrid = d3.range(0, 1, 0.01);
+    console.log(
+      "beta regression",
+      mu,
+      Math.exp(conditionPoint[0] * 3 + 5),
+      phi,
+      betaPhis,
+    );
+    const xGrid = d3.range(0.01, 1, 0.01);
 
     const coordinates = xGrid.map((item) => {
       return {
@@ -34,7 +49,7 @@ const getEstimate = async (
 
     const weightedGLM = xGrid.map((xCor) => {
       const yList = data_with_weights.map((item) => {
-        const covariateObj = _.pick(item, ["X1", "X2", "X3"]);
+        const covariateObj = _.pick(item, keys);
         const covariates = Object.values(covariateObj);
         const linearCom = multiply(transpose([1, ...covariates]), betas);
         const mu = 1 / (1 + Math.exp(-linearCom));
@@ -48,15 +63,11 @@ const getEstimate = async (
         y: d3.sum(yList),
       };
     });
-    
+
     const ckCoordinates = xGrid.map((item) => {
       const temp = data_with_weights.map((datapoint) => {
         const { Y, weight } = datapoint;
-        return (
-          (1 / responseBw) *
-          weight *
-          kContinuous(item, Y, responseBw)
-        );
+        return (1 / responseBw) * weight * kContinuous(item, Y, responseBw);
       });
       return {
         x: item,
@@ -79,13 +90,14 @@ const getEstimate = async (
     //   const temp = data_with_weights_e.map((datapoint) => {
     //     const { Y, weight, e } = datapoint;
     //     const yStar = loessMu + e - weightedResidual;
-    //     return (1 / h) * weight * jStat.normal.pdf((item - yStar) / h, 0, 1);
+    //     return (1 / responseBw) * weight * kContinuous(item, yStar, responseBw)
     //   });
     //   return {
     //     x: item,
     //     y: d3.sum(temp),
     //   };
     // });
+
     return {
       coordinates,
       weightedGLM,
@@ -102,6 +114,7 @@ const getEstimate = async (
       ),
     );
 
+    console.log("poisson", mean);
     const xGrid = d3.range(0, 50, 1);
     // const xGrid = d3.range(data_with_weights[responseKey]);
     const coordinates = xGrid.map((item) => {
@@ -164,9 +177,13 @@ const getEstimate = async (
         estimates.slice(0, keys.length + 1),
       ),
     );
-    const theta = estimates[estimates.length - 1];
 
-    // const response = data_with_weights.map(item => item[responseKey])
+    console.log("poisson", mean);
+    console.log("mu", mean);
+    const theta = estimates[estimates.length - 1];
+    console.log("r", theta);
+
+    const response = data_with_weights.map((item) => item[responseKey]);
     // const minRes = d3.min(response)
     // const maxRes = d3.max(response)
     // const xGrid = d3.range(minRes, maxRes);

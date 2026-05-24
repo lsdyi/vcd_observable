@@ -128,7 +128,7 @@ const bwCont = [13.91312, 2.417221, 124196.4];
 const lambdaCat = [0.3210706, 0.01451098];
 const lambdaOrd = [];
 const Ccat = getCardinalityFromMatrix(XCat);
-const externlH = kernal;
+const externalH = kernal;
 
 const weights = computeWeightsMixed({
   XCont,
@@ -139,7 +139,7 @@ const weights = computeWeightsMixed({
   lambdaCat,
   lambdaOrd,
   Ccat,
-  externlH,
+  externalH,
 });
 
 const data_with_weights = data.map((d, index) => ({

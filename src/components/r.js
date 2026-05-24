@@ -31,6 +31,7 @@ const getSummary = async () => {
 };
 
 const betaRegession = async (dataName = "data", setup = "Y ~ X1 + X2 + X3", family = "beta regression") => {
+  console.log('running betareg')
   const rCodes = `
     library(betareg)
     fit <- betareg(${setup}, link = "logit", data = ${dataName})
@@ -105,16 +106,13 @@ const getPearsonResiduals = async () => {
   return output;
 };
 
-const loess = async () => {
+const loess = async (setup = "Y ~ X1 + X2 + X3 + X4") => {
+  const temp = await webR.evalR(`new_df`)
+  console.log('temp', temp)
   const rCodes = `
-    loessFit <- loess(Y ~ X1 + X2 + X3, data = data, span = 0.5)
+    loessFit <- loess(${setup}, data = data, span = 0.5)
     summary_stats <- summary(loessFit)
-    new_df <- data.frame(
-      X1 = c(0),
-      X2 = c(1),
-      X3 = c(2)
-    )
-
+    
     mu = predict(loessFit, newdata = new_df)
     `;
   await webR.evalR(rCodes);

@@ -61,7 +61,7 @@ const datasets = [
 const selectedModel = view(
   Inputs.select(MODEL, {
     unique: true,
-    format: (x) => x.family,
+    format: (x) => x.family + (x.conditional || ""),
     value: MODEL[DEFAULT_MODEL_INDEX],
   }),
 );
@@ -70,17 +70,46 @@ const selectedModel = view(
 ## Select Conditional Data
 
 ```js
-const conditionPointObj = view(Inputs.form(formMap));
+const radioOptions = [
+  {
+    name: "use PCA",
+    id: 0,
+  },
+  {
+    name: "NOT use PCA",
+    id: 1,
+  },
+];
+const showPCA = view(
+  Inputs.radio(radioOptions, {
+    format: (x) => x.name,
+    value: radioOptions[1],
+    label: "PCA radio",
+  }),
+);
+```
+
+```js
+const formNode = Inputs.form(formMap);
+const conditionPointObj = view(formNode);
 ```
 
 ## Select bandwidth
 
 ```js
-const kernal = view(
-  Inputs.range([0.01, 10], {
+const externalH = view(
+  Inputs.range([0.01, 20], {
     value: 1,
     step: 0.01,
-    label: "smoothing parameter",
+    label: "Smoothing parameter for continous covariate",
+  }),
+);
+
+const externalLamda = view(
+  Inputs.range([0.01, 100], {
+    value: 1,
+    step: 0.01,
+    label: "Smoothing parameter for discrete covariate",
   }),
 );
 ```
@@ -92,6 +121,32 @@ display(data_with_weights);
 display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
 ```
 
+```js
+const inputRanges = PcaInputRange();
+const pcaFormNode = Inputs.form(inputRanges);
+const pcCordinate = view(pcaFormNode);
+```
+
+```js
+display(showPCA.id === 0 ? container : html`<div></div>`);
+display(
+  showPCA.id === 0
+    ? html`
+        <div>
+          <strong>Conditional Point</strong>
+          ${JSON.stringify(reConCor, null, 2)}
+        </div>
+      `
+    : html`<div></div>`,
+);
+display(html`
+  <div>
+    <strong>Conditional Point</strong>
+    ${JSON.stringify(conditionPoint, null, 2)}
+  </div>
+`);
+```
+
 <div class="grid grid-cols-4">
   ${
     scatterPlotList
@@ -101,8 +156,9 @@ display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
 ```js
 const selectedEstimators = view(
   Inputs.checkbox(ESTIMATORS, {
-    format: (item) => item.name,
-    value: ESTIMATORS,
+    format: (item) =>
+      html`<span style="color: ${item.color}">${item.name}</span>`,
+    value: ESTIMATORS.slice(1, ESTIMATORS.length - 1),
   }),
 );
 ```
@@ -119,8 +175,6 @@ display(pdfplot);
 display(summary);
 ```
 
-<!-- js logics -->
-
 ```js
 const {
   csvPath,
@@ -136,21 +190,43 @@ const {
   name,
   responseBw,
 } = selectedDataset;
-
 const data = datasets[index];
+```
 
+<!-- js logics -->
+
+```js
 const formMap = {};
 const ranges = getRanges(data);
+
 keys.forEach((key) => {
   const result = ranges[key];
-  if (result instanceof Set) {
-    // @todo: countable variable
-  } else {
+
+  // CONTINUOUS: has min/max
+  if (continousKeys.includes(key)) {
     const { min, max } = result;
+
+    const range = max - min;
+    const step = range > 100 ? 1 : range > 10 ? 0.1 : range > 1 ? 0.01 : 0.001;
+
     formMap[key] = Inputs.range([min, max], {
       value: (min + max) / 2,
-      step: 0.5,
+      step,
       label: key,
+    });
+  }
+  // DISCRETE: Set
+  else {
+    const options = Array.from(new Set(data.map((item) => item[key])));
+
+    const sortedOptions =
+      typeof options[0] === "number"
+        ? options.sort((a, b) => a - b)
+        : options.sort();
+
+    formMap[key] = Inputs.select(sortedOptions, {
+      label: key,
+      value: sortedOptions[0],
     });
   }
 });
@@ -159,7 +235,7 @@ keys.forEach((key) => {
 ```js
 const dim = 2;
 const axisAr = getCombinations(keys, dim);
-const conditionPoint = Object.values(conditionPointObj);
+
 const temp = keys.map((key) => data.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
 
@@ -174,7 +250,6 @@ const x0 = {
 };
 
 const Ccat = getCardinalityFromMatrix(XCat);
-const externlH = kernal;
 
 const weights = computeWeightsMixed({
   XCont,
@@ -185,24 +260,31 @@ const weights = computeWeightsMixed({
   lambdaCat,
   lambdaOrd,
   Ccat,
-  externlH,
+  externalH,
+  externalLamda,
 });
 
 const data_with_weights = data.map((d, index) => ({
   ...d,
   weight: weights[index],
 }));
-
-const dataState = Mutable(data_with_weights);
-const resetDataState = (newData) => {
-  dataState.value = newData;
-};
-
-const wmin = d3.min(data_with_weights, (d) => d.weight);
-const wmax = d3.max(data_with_weights, (d) => d.weight);
+console.log("update datawithweights", showPCA);
 ```
 
 ```js
+const onClick = (d) => {
+  Object.keys(formMap).forEach((key) => {
+    if (d[key] !== undefined) {
+      const input = formMap[key];
+
+      input.value = d[key];
+
+      input.dispatchEvent(new Event("input"));
+    }
+  });
+
+  formNode.dispatchEvent(new Event("input", { bubbles: true }));
+};
 const scatterPlotList = axisAr.map((item) => {
   const [key1, key2] = item;
 
@@ -226,6 +308,11 @@ const scatterPlotList = axisAr.map((item) => {
     ],
     width,
     width,
+    10,
+    key1,
+    key2,
+    data_with_weights,
+    onClick,
   );
 });
 ```
@@ -244,20 +331,71 @@ import { getPcaData } from "./components/getPcaData.js";
 ```
 
 ```js
+const { pcaData, pcaProxyObj } = await getPcaData(
+  data_with_weights.map((item) => _.pick(item, continousKeys)),
+  continousKeys,
+);
+const zCor = continousKeys.map((_, index) => {
+  return pcCordinate[index] || 0;
+});
+const rotationMatrix = matrixData(
+  pcaProxyObj.values[1].values,
+  continousKeys.length,
+  continousKeys.length,
+);
+const scaleVec = pcaProxyObj.values[3].values;
+const centerVec = pcaProxyObj.values[2].values;
+const reConCor = add(
+  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
+  centerVec,
+);
+
+const onClick3D = (eventData) => {
+  const temp = eventData.points[0];
+  const pc1 = pcaFormNode.children[0];
+  pc1.value = temp.x;
+
+  const pc2 = pcaFormNode.children[1];
+  pc2.value = temp.y;
+
+  const pc3 = pcaFormNode.children[2];
+  pc3.value = temp.z;
+
+  pcaFormNode.dispatchEvent(new Event("input", { bubbles: true }));
+  formNode.dispatchEvent(new Event("input", { bubbles: true }));
+};
+
+const container = scatterPlot3d(
+  pcaData,
+  ["pc1", "pc2", "pc3"],
+  pcCordinate,
+  data_with_weights,
+  onClick3D,
+);
+
+const conditionPoint =
+  showPCA.id === 0 ? reConCor : Object.values(conditionPointObj);
+```
+
+```js
 // R regression code
 await webR.objs.globalEnv.bind("data", data);
 
-const { rFun, family } = selectedModel;
+const { rFun, family, conditional } = selectedModel;
 
-const newModelOrData = pageCache.data !== data || pageCache.family !== family;
+const newModelOrData = pageCache.data !== data || pageCache.family !== family || pageCache.conditional !== conditional;
 
 if (newModelOrData) {
   const output =
-    (await rFun?.("data", `${responseKey} ~ ${keys.join(" + ")}`)) ||
+    (await rFun?.(
+      "data",
+      `${responseKey} ~ ${keys.join(" + ")} ${conditional || ""}`,
+    )) ||
     (await poissonRegession("data", `${responseKey} ~ ${keys.join(" + ")}`));
   pageCache.output = output;
   pageCache.data = data;
   pageCache.family = family;
+  pageCache.conditional = conditional;
 }
 
 const { output } = pageCache;
@@ -271,18 +409,8 @@ const { coordinates, weightedGLM, ckCoordinates, modCkdCoordinates } =
     keys,
     responseKey,
     responseBw,
+    conditional,
   );
-
-console.log(
-  "sum",
-  responseBw,
-  d3.sum(
-    ckCoordinates.map(
-      (item) => item.y * (ckCoordinates[1].x - ckCoordinates[0].x),
-    ),
-  ),
-  d3.sum(data_with_weights.map((item) => item.weight)),
-);
 
 const summary = await getSummary();
 const residuals = await getPearsonResiduals();
@@ -309,6 +437,7 @@ const showCKE = selectedEstimators.findIndex((item) => item.id === 2) !== -1;
 const showModifiedCKE =
   selectedEstimators.findIndex((item) => item.id === 3) !== -1;
 
+let ss = 0;
 const ssum = d3.sum(data_with_weights.map((item) => item[responseKey[0]]));
 const marks =
   name === "Continous Response"
@@ -325,6 +454,7 @@ const marks =
             {
               y: (bindata, bin) => {
                 return d3.sum(bindata.map((d) => d.weight)) / (bin.x2 - bin.x1);
+                ss += (bin.x2 - bin.x1) * d3.sum(bindata.map((d) => d.weight));
               },
             },
             { x: "Y", thresholds: 50, fill: "steelblue", opacity: 0.7 },

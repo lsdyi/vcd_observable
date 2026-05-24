@@ -10,10 +10,10 @@ const DATASET = [
     continousKeys: ["X1", "X2", "X3"],
     keys: ["X1", "X2", "X3"],
     responseKey: ["Y"],
-    bwCont: [0.09691224, 0.5892781, 1.02301], // continous covariate bandwidth
-    lambdaCat: [0.3210706, 0.01451098], // categorical covariate bandwidth
+    bwCont: [0.1463431, 0.5160716, 44238.28], // continous covariate bandwidth
+    lambdaCat: [], // categorical covariate bandwidth
     lambdaOrd: [], // ordinal covariate bandwidth
-    responseBw: 1.081108,
+    responseBw: 1.358901,
   },
 
   {
@@ -21,15 +21,13 @@ const DATASET = [
     name: "Continous Response",
     categoricalKeys: [],
     ordinalKeys: [],
-    continousKeys: ["X1", "X2", "X3"],
-    keys: ["X1", "X2", "X3"],
+    continousKeys: ["X1", "X2", "X3", "X4", "X5"],
+    keys: ["X1", "X2", "X3", "X4", "X5"],
     responseKey: ["Y"],
-    // bwCont: [0.3980219, 0.5821581, 1.292169], // not fixed phi dataset
-    bwCont: [0.4163451, 2.120657, 1.909542], // continous covariate bandwidth
+    bwCont: [0.2339905, 0.5806615, 0.7938251, 0.1497883, 0.4333948], // continous covariate bandwidth
     lambdaCat: [], // categorical covariate bandwidth
     lambdaOrd: [], // ordinal covariate bandwidth
-    // responseBw: 0.04209059, // not fixed phi dataset
-    responseBw: 0.004129468,
+    responseBw: 0.02880596,
   },
 
   {
@@ -83,14 +81,19 @@ const MODEL = [
     family: `beta regression`,
     rFun: betaRegession,
   },
+  {
+    family: `beta regression`,
+    rFun: betaRegession,
+    conditional: ' | X1',
+  },
 ];
 
 const ESTIMATORS = [
-  { id: 0, name: "GLM", color: "orange" },
-  { id: 1, name: "weighted-GLM", color: "green" },
-  { id: 4, name: "weighted-histogram", color: "blue" },
-  { id: 2, name: "conditional kernel", color: "red" },
-  { id: 3, name: "modified conditional kernel", color: "black" },
+  { id: 0, name: "GLM", color: "#F28C28" },
+  { id: 1, name: "weighted GLM estimator", color: "#008000" },
+  { id: 4, name: "conditional histogram", color: "#4682B4" },
+  { id: 2, name: "conditional kernel estimator", color: "#FF0000" },
+  { id: 3, name: "modiﬁed kernel estimator", color: "#6A5ACD" },
 ];
 
 const DEFAULT_DATASET_INDEX = 1;

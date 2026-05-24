@@ -29,7 +29,8 @@ const computeWeightsMixed = ({
   lambdaCat,
   lambdaOrd,
   Ccat,
-  externlH,
+  externalH,
+  externalLamda
 }) => {
   const n = XCont.length;
   const weights = new Array(n).fill(0);
@@ -41,19 +42,20 @@ const computeWeightsMixed = ({
 
     // --- continuous part ---
     for (let j = 0; j < XCont[i]?.length; j++) {
-      k1 *= kContinuous(x0.cont[j], XCont[i][j], bwCont[j] * externlH);
+      k1 *= kContinuous(x0.cont[j], XCont[i][j], bwCont[j] * externalH);
     }
 
     // --- categorical part ---
     for (let j = 0; j < XCat[i]?.length; j++) {
-      k2 *= kUnordered(x0.cat[j], XCat[i][j], lambdaCat[j], Ccat[j] * externlH);
+      k2 *= kUnordered(x0.cat[j], XCat[i][j], lambdaCat[j], Ccat[j] * externalLamda);
     }
 
     // --- ordered part ---
     for (let j = 0; j < XOrd[i]?.length; j++) {
-      k3 *= kOrdered(x0.ord[j], XOrd[i][j], lambdaOrd[j] * externlH);
+      k3 *= kOrdered(x0.ord[j], XOrd[i][j], lambdaOrd[j] * externalLamda);
     }
 
+    console.log(externalH, externalLamda)
     weights[i] = k1 * k2 * k3;
   }
 
