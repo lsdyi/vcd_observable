@@ -41,11 +41,11 @@ phi <- exp(5 + 3 * X1)
 mean(phi < 1)
 mean(phi < 2)
 
-mean((mu*phi < 1)  & ((1-mu)*phi < 1))
-mean((mu*phi < 1)  & ((1-mu)*phi > 1))
-mean((mu*phi > 1)  & ((1-mu)*phi < 1))
+mean((mu * phi < 1) & ((1 - mu) * phi < 1))
+mean((mu * phi < 1) & ((1 - mu) * phi > 1))
+mean((mu * phi > 1) & ((1 - mu) * phi < 1))
 
-length(phi[phi<1])
+length(phi[phi < 1])
 head(sort(phi))
 plot(X1, log(phi))
 
@@ -53,12 +53,12 @@ plot(X1, log(phi))
 Y <- rbeta(n, shape1 = mu * phi, shape2 = (1 - mu) * phi)
 
 
-fit_x1 <- betareg(Y ~ X1 + X2 + X3 + X4 + X5 | X1 + X2 + X3 + X4 + X5)
+fit_x1 <- betareg(Y ~ X1 + X2 + X3 + X4 + X5 | X1)
 fit <- betareg(Y ~ X1 + X2 + X3 + X4 + X5)
 summary(fit)
 summary(fit_x1)
 
-p_res <- residuals(fit, type = "deviance")
+p_res <- residuals(fit, type = "pearson")
 
 cor(X) # correlation matrix of covariates
 
@@ -75,6 +75,55 @@ sim_data <- data.frame(
 # Quick look
 head(sim_data)
 write.csv(sim_data, "../src/data/simulated_beta_data_phix.csv", row.names = FALSE)
+```
+
+```{r}
+# fitted mean and precision from beta regression
+mu_hat  <- predict(fit_x1, type = "response")
+phi_hat <- predict(fit_x1, type = "precision")
+
+# simulate many Y_i^* from fitted conditional beta model
+B <- 1   # number of replicated datasets
+
+Y_star <- replicate(B, {
+  rbeta(
+    n = length(mu_hat),
+    shape1 = mu_hat * phi_hat,
+    shape2 = (1 - mu_hat) * phi_hat
+  )
+})
+
+# put simulations into long format
+df_star <- data.frame(
+  y = as.vector(Y_star),
+  rep = rep(1:B, each = length(mu_hat))
+)
+
+# empirical observed data
+df_obs <- data.frame(y = Y)
+
+ggplot() +
+  geom_density(
+    data = df_star,
+    aes(x = y),
+    color = "grey70",
+    linewidth = 0.3,
+    alpha = 0.4
+  ) +
+  geom_density(
+    data = df_obs,
+    aes(x = y, color = "Observed KDE"),
+    linewidth = 1.2
+  ) +
+  labs(
+    title = "Observed KDE vs. Simulated KDEs from Fitted Beta Regression",
+    x = "y",
+    y = "Density",
+    color = NULL
+  ) +
+  theme_bw()
+
+dim(df_star)
 ```
 
 
@@ -149,7 +198,7 @@ marginal_dens <- sapply(y_grid, function(yi) {
     ))
 })
 # empirical KDE data
-emp <- density(Y)
+emp <- density(Y, from = 0, to = 1)
 df_emp <- data.frame(x = emp$x, y = emp$y)
 
 # analytical marginal data
@@ -187,6 +236,83 @@ p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
 ggsave("./figures/global_check_2.svg", plot = p, width = 6, height = 4)
 ggsave("./figures/global_check_2.pdf", plot = p, width = 6, height = 4)
 p
+```
+
+```{r}
+mu_x1_hat <- predict(fit_x1, type = "response")
+# For Gamma GLM, shape = 1 / dispersion
+phi_x1_hat <- predict(fit_x1, type = "precision")
+head(phi_x1_hat)
+head(phi_hat)
+
+# Calculate the mean density across all observations for each point in the grid
+marginal_dens_flex_x1 <- sapply(y_grid, function(yi) {
+    mean(dbeta(yi,
+        shape1 = mu_x1_hat * phi_x1_hat,
+        shape2 = (1 - mu_x1_hat) * phi_x1_hat
+    ))
+})
+# empirical KDE data
+emp <- density(Y, from = 0, to = 1)
+df_emp <- data.frame(x = emp$x, y = emp$y)
+
+# analytical marginal data
+df_ana <- data.frame(x = y_grid, y = marginal_dens_flex_x1)
+
+# combined plot
+p2 <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+    geom_histogram(
+        data = sim_data,
+        aes(
+            x = Y,
+            y = after_stat(density),
+            fill = "Histogram"
+        ),
+        bins = 20,
+        color = "white"
+    ) +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+    geom_line(
+        data = df_ana, aes(x = x, y = y, color = "Analytical Marginal"),
+         linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Empirical KDE" = "black",
+        "Analytical Marginal" = "blue"
+    )) +
+    labs(
+        title = "Empirical vs. Analytical Marginal Density",
+        x = "y",
+        y = "Density",
+        color = NULL
+    ) +
+    theme_bw() +
+    scale_color_npg() + # Nature Publishing Group style
+    theme(
+        legend.position = "top",
+        panel.grid = element_blank(),
+        axis.text = element_text(color = "grey30"),
+        axis.title = element_text(color = "grey40"),
+        plot.title = element_text(color = "grey10"),
+        legend.text = element_text(color = "grey10"),
+        legend.title = element_text(color = "grey10"),
+        legend.margin = margin(b = -5) # pull legend closer
+    )
+ggsave("./figures/global_check_2_flex_x1.svg", plot = p2, width = 6, height = 4)
+ggsave("./figures/global_check_2_flex_x1.pdf", plot = p2, width = 6, height = 4)
+p2
+```
+
+```{r}
+temp <- c(1, -0.2066884, 0.03274259, 0.42958083, 0.5377012, 1.2147544) %*% c(
+    5.05024,
+    3.09693,
+    -0.10426,
+    -0.02968,
+    0.02457,
+    -0.05161
+)
+exp(temp)
 ```
 
 ```{r}

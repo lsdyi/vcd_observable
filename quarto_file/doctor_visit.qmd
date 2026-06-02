@@ -41,30 +41,99 @@ for (i in 1:length(y_grid)) {
     yi <- y_grid[i]
     poisson_marginal[i] <- mean(dpois(yi, poisson_mu_hat))
 }
-df_marginal_poisson = data.frame(x = y_grid, y = poisson_marginal)
+df_marginal_poisson <- data.frame(x = y_grid, y = poisson_marginal)
 
-df_numvisit = data.frame(table(doctorvisits$numvisit))
-df_emp = data.frame(x = as.numeric(as.character(df_numvisit$Var1)), y = df_numvisit$Freq/dim(doctorvisits)[1])
+df_numvisit <- data.frame(table(doctorvisits$numvisit))
+df_emp <- data.frame(x = as.numeric(as.character(df_numvisit$Var1)), y = df_numvisit$Freq / dim(doctorvisits)[1])
 
+head(df_numvisit)
 
-p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+df_hist <- data.frame(
+    x = as.numeric(names(table(doctorvisits$numvisit))),
+    prob = as.numeric(prop.table(table(doctorvisits$numvisit)))
+)
+
+# p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+#     # Histogram
+#     geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+#     geom_line(
+#         data = df_marginal_poisson, aes(x = x, y = y, color = "Analytical Marginal"),
+#         linetype = "dashed", linewidth = 1
+#     ) +
+#     scale_color_manual(values = c(
+#         "Empirical KDE" = "black",
+#         "Analytical Marginal" = "blue"
+#     )) +
+#     labs(
+#         title = "Empirical vs. Analytical Marginal Distribution",
+#         x = "Y",
+#         y = "Probability",
+#         color = NULL
+#     ) +
+#     theme_bw() +
+#     scale_color_npg() + # Nature Publishing Group style
+#     theme(
+#         legend.position = "top",
+#         panel.grid = element_blank(),
+#         axis.text = element_text(color = "grey30"),
+#         axis.title = element_text(color = "grey40"),
+#         plot.title = element_text(color = "grey10"),
+#         legend.text = element_text(color = "grey10"),
+#         legend.title = element_text(color = "grey10"),
+#         legend.margin = margin(b = -5) # pull legend closer
+#     )
+p <- ggplot() +
+
+    # Empirical bar chart
+    # geom_col(
+    #     data = df_hist,
+    #     aes(
+    #         x = x,
+    #         y = prob,
+    #         fill = "Empirical Frequency"
+    #     ),
+    #     alpha = 0.4,
+    #     width = 0.9
+    # ) +
+
+    # Empirical KDE / smoothed empirical distribution
     geom_line(
-        data = df_marginal_poisson, aes(x = x, y = y, color = "Analytical Marginal"),
-        linetype = "dashed", linewidth = 1
+        data = df_emp,
+        aes(
+            x = x,
+            y = y,
+            color = "Empirical Distribution"
+        ),
+        linewidth = 1
+    ) +
+
+    # Model implied marginal distribution
+    geom_line(
+        data = df_marginal_poisson,
+        aes(
+            x = x,
+            y = y,
+            color = "Analytical Marginal"
+        ),
+        linetype = "dashed",
+        linewidth = 1
     ) +
     scale_color_manual(values = c(
         "Empirical KDE" = "black",
         "Analytical Marginal" = "blue"
     )) +
+    scale_fill_manual(values = c(
+        "Empirical Frequency" = "grey70"
+    )) +
     labs(
         title = "Empirical vs. Analytical Marginal Distribution",
         x = "Y",
         y = "Probability",
-        color = NULL
+        color = NULL,
+        fill = NULL
     ) +
     theme_bw() +
-    scale_color_npg() + # Nature Publishing Group style
+    scale_color_npg() +
     theme(
         legend.position = "top",
         panel.grid = element_blank(),
@@ -73,31 +142,32 @@ p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
         plot.title = element_text(color = "grey10"),
         legend.text = element_text(color = "grey10"),
         legend.title = element_text(color = "grey10"),
-        legend.margin = margin(b = -5) # pull legend closer
+        legend.margin = margin(b = -5)
     )
+
+p
 ggsave("./figures/global_check_3_poisson_reg.svg", plot = p, width = 6, height = 4)
 ggsave("./figures/global_check_3_poisson_reg.pdf", plot = p, width = 6, height = 4)
-p
 
 
 # negtive binomial
 neg_mu_hat <- predict(model_nb, type = "response")
-theta_hat = model_nb$theta
+theta_hat <- model_nb$theta
 neg_marginal <- rep(NA, length(y_grid))
 for (i in 1:length(y_grid)) {
     yi <- y_grid[i]
     neg_marginal[i] <- mean(dnbinom(yi, size = theta_hat, mu = neg_mu_hat))
 }
-df_marginal_poisson = data.frame(x = y_grid, y = neg_marginal)
+df_marginal_poisson <- data.frame(x = y_grid, y = neg_marginal)
 
 p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical Distribution"), linewidth = 1) +
     geom_line(
         data = df_marginal_poisson, aes(x = x, y = y, color = "Analytical Marginal"),
         linetype = "dashed", linewidth = 1
     ) +
     scale_color_manual(values = c(
-        "Empirical KDE" = "black",
+        "Empirical Distribution" = "black",
         "Analytical Marginal" = "blue"
     )) +
     labs(

@@ -57,6 +57,8 @@ y[x1 >= cutoff] <- rnbinom(sum(x1 >= cutoff), mu = mu[x1 >= cutoff], size = size
 # assemble dataframe
 data <- data.frame(X1 = x1, X2 = x2, X3 = x3, Y = y, REGIME = ifelse(x1 < cutoff, "Poisson", "NegBin"))
 
+var(y)
+mean(y)
 
 # install.packages("scatterplot3d") # if not installed
 library(scatterplot3d)
@@ -176,7 +178,7 @@ for (i in 1:length(y_grid)) {
 
 df_ana <- data.frame(x = y_grid, y = marginal)
 p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
-    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical Distribution"), linewidth = 1) +
     geom_line(
         data = df_ana, aes(x = x, y = y, color = "Analytical Marginal"),
         linetype = "dashed", linewidth = 1
