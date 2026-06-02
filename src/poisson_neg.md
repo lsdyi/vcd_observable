@@ -1,42 +1,38 @@
 ---
-title: Poisson & Negtive Binomial Regression
+title: Poisson & Negative Binomial Regression
 toc: false
 ---
 
 ```js
 import _ from "lodash";
 import jStat from "jstat";
-import { multiply, transpose, dotMultiply, add } from "mathjs";
+import { multiply, transpose } from "mathjs";
 
-import { useOption } from "./components/hook/useOption.js";
-import { modelList } from "./components/modelList.js";
-import { getRanges } from "./components/getRanges.js";
-import { modelConfig } from "./components/modelConfig.js";
 import { normWeights } from "./components/normWeights.js";
 import {
-  negRegession,
+  negativeBinomialRegression,
   webR,
   getSummary,
-  poissonRegession,
-  cke,
-  loess
+  poissonRegression,
 } from "./components/r.js";
 import { getCombinations } from "./components/getCombinations.js";
-import { PcaInputRange } from "./components/UI/PcaInputRange.js";
-import { scatterPlot3d } from "./components/scatterPlot3d.js";
-import { getPcaData } from "./components/getPcaData.js";
-import { matrixData } from "./components/organizeData.js";
+import {
+  attachWeights,
+  createRangeFormMap,
+  createWeightedScatterGrid,
+  normalizeWeights,
+} from "./components/pageComponents.js";
 ```
 
-# Poisson & Negtive Binomial Regression
+# Poisson & Negative Binomial Regression
 
-This document firstly fits data using poisson regression. According to lack fit in some data points, change to negtive binomial regression which is expected to have a good fit. The document provides the process of checking model fit or lack fit using visulization method.
+This page is the thesis method in its most controlled setting. The data are generated from two count regimes: one region follows a Poisson model, while another region has extra variation and is better described by a negative-binomial model.
 
-These two regression methods model count data. In terms of histogram estimate, bar chart is used here. Each bar height equals to weight, and they sum up to one. In histogram context, the area of histogram should be one.
+The global story can look calm. The local story is sharper: after choosing a conditional point, the weighted bar chart shows the empirical count distribution around that point, and the model curves show whether Poisson or negative binomial regression follows the same shape.
 
 ## Dataset from dgp
 
-Data generating process references [thesis paper](https://www.overleaf.com/project/696eb73c13ae0d69be0a84bd).
+The simulated data are the locally overdispersed count experiment from the thesis.
 
 ```js
 display(Inputs.table(poiNegData));
@@ -54,13 +50,11 @@ const poiNegData = FileAttachment("./data/dgp.csv").csv({
 const conditionPointObj = view(Inputs.form(formMap));
 ```
 
-Covariates scatterplots are shown here. They're color firstly by regime property which indicates response. And darker color points means they're closer to conidtional datapoint in terms of Mahalanobis distance.
+The scatterplots show where the chosen point sits in covariate space. Darker points carry more local weight; red points belong to the negative-binomial regime and blue points belong to the Poisson regime.
 
-<div class="grid grid-cols-4">
-  ${scatterList.map(scatter => {
-    return scatter
-  })}
-</div>
+```js
+display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
+```
 
 ```js
 display(pdfplot);
@@ -102,27 +96,17 @@ display(summary);
 <!-- js logics -->
 
 ```js
-const keys = ["x1", "x2", "x3"];
-const formMap = {};
-const ranges = getRanges(poiNegData);
-keys.forEach((key) => {
-  const result = ranges[key];
-  if (result instanceof Set) {
-    // @todo: countable variable
-  } else {
-    const { min, max } = result;
-    formMap[key] = Inputs.range([min, max], {
-      value: (min + max) / 2,
-      step: 0.1,
-      label: key,
-    });
-  }
+const keys = ["X1", "X2", "X3"];
+const formMap = createRangeFormMap({
+  data: poiNegData,
+  keys,
+  defaults: { X1: -1, X2: 0, X3: 0 },
+  step: 0.1,
 });
 ```
 
 ```js
 const dim = 2;
-const keys = ["x1", "x2", "x3"];
 const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
 const temp = keys.map((key) => poiNegData.map((item) => item[key]));
@@ -136,74 +120,34 @@ const unnormalizedweights = normWeights(
   undefined,
   kernal,
 );
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+const weights = normalizeWeights({ d3, rawWeights: unnormalizedweights });
 
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  Y: poiNegData[index].y,
-  regime: poiNegData[index].regime,
-  weight: weights.find((item) => item.id === index).w,
-}));
+const data_with_weights = attachWeights({
+  rows: poiNegData,
+  covariates: data,
+  responseKey: "Y",
+  sourceResponseKey: "Y",
+  weights,
+  extra: (row) => ({ regime: row.REGIME }),
+});
 
-const wmin = d3.min(data_with_weights, (d) => d.weight);
-const wmax = d3.max(data_with_weights, (d) => d.weight);
-
-const scatterList = axisAr.map((item) => {
-  const [key1, key2] = item;
-  return Plot.plot({
-    title: `${key1} vs ${key2}`,
-    marks: [
-      Plot.dot(data_with_weights, {
-        x: key1,
-        y: key2,
-        fill: (d) => {
-          const t = (d.weight - wmin) / (wmax - wmin);
-          return d3.interpolateReds(t);
-        },
-        filter: (d) => d.regime === "NegBin",
-      }),
-
-      Plot.dot(data_with_weights, {
-        x: key1,
-        y: key2,
-        sort: "weight",
-        fill: (d) => {
-          const t = (d.weight - wmin) / (wmax - wmin);
-          return d3.interpolateBlues(t);
-        },
-        filter: (d) => d.regime === "Poisson",
-      }),
-
-      // conditional data point with orange color
-      Plot.dot(
-        [
-          {
-            [key1]: conditionPointObj[key1],
-            [key2]: conditionPointObj[key2],
-          },
-        ],
-        {
-          x: key1,
-          y: key2,
-          fill: "orange",
-          r: 10,
-        },
-      ),
-    ],
-  });
+const scatterList = createWeightedScatterGrid({
+  Plot,
+  d3,
+  axisPairs: axisAr,
+  data: data_with_weights,
+  conditionPoint: conditionPointObj,
+  regimeKey: "regime",
+  pointRadius: 8,
 });
 ```
 
 ```js
 const isPoissonReg = model === "Poisson Regression";
-// R regression code
+
+// Fit the selected count model in WebR, then compare its local PMF to the weighted data.
 await webR.objs.globalEnv.bind("poiNegData", poiNegData);
-// const output = await negRegession();
-const output = isPoissonReg ? await poissonRegession() : await negRegession();
+const output = isPoissonReg ? await poissonRegression() : await negativeBinomialRegression();
 const estimates = output.values;
 const summary = await getSummary();
 
@@ -231,7 +175,7 @@ const coordinates = xGrid.map((item) => {
 const weightedDen = xGrid.map((xCor) => {
   if (isPoissonReg) {
     const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, ["x1", "x2", "x3"]);
+      const covariateObj = _.pick(item, keys);
       const covariates = Object.values(covariateObj);
       const mean = Math.exp(
         multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
@@ -246,7 +190,7 @@ const weightedDen = xGrid.map((xCor) => {
     };
   } else {
     const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, ["x1", "x2", "x3"]);
+      const covariateObj = _.pick(item, keys);
       const covariates = Object.values(covariateObj);
       const mean = Math.exp(
         multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),

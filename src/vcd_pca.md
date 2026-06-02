@@ -10,7 +10,6 @@ import { multiply, transpose, dotMultiply, add } from "mathjs";
 
 import { useOption } from "./components/hook/useOption.js";
 import { modelList } from "./components/modelList.js";
-import { getRanges } from "./components/getRanges.js";
 import { modelConfig } from "./components/modelConfig.js";
 import { normWeights } from "./components/normWeights.js";
 import { getCombinations } from "./components/getCombinations.js";
@@ -21,12 +20,13 @@ import { matrixData } from "./components/organizeData.js";
 
 ```
 
-<h1>Visualizing conditional distributions(PCA)</h1>
-<title>Visualizing conditional distributions(PCA)</title>
+# Visualizing Conditional Distributions with PCA
 
-<h2>Load Dataset</h2>
+This page extends the slider prototype with PCA. Instead of moving one slider for every continuous covariate, the user moves through a three-dimensional PCA space. The selected PCA coordinates are reconstructed back into the original covariates, then the same local-fit comparison is recomputed.
 
-We use [credit card dataset](https://www.kaggle.com/datasets/dansbecker/aer-credit-card-data/data)
+## Load Dataset
+
+We use the credit-card dataset as a higher-dimensional example for navigating conditional points.
 
 ```js
 const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
@@ -38,8 +38,9 @@ const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
 display(Inputs.table(creditCard));
 ```
 
-<h2>Select Model</h2>
-Use a dropdown menu to select generalized linear model to fit the dataset.
+## Select Model
+
+Use the dropdown menu to select the generalized linear model used for the model-based local distribution.
 
 ```js
 const [option, setOption] = await useOption(modelList[4].family);
@@ -122,7 +123,10 @@ const continousCov = creditCard.map((item) => {
 });
 await webR.objs.globalEnv.bind("creditCard", continousCov);
 
-const { pcaData, pcaProxyObj } = await getPcaData();
+const { pcaData, pcaProxyObj } = await getPcaData(
+  continousCov,
+  continousCovariates,
+);
 const zCor = continousCovariates.map((_, index) => {
   return pcCordinate[index] || 0;
 });
@@ -201,6 +205,8 @@ const pdfplot = Plot.plot({
 const inputRanges = PcaInputRange();
 const pcCordinate = view(Inputs.form(inputRanges));
 ```
+
+The PCA controls are a navigation tool. The actual conditional point used by the model is reconstructed in the original covariate units:
 
 ```js
 display(reConCor);
@@ -326,8 +332,6 @@ const scatterList = axisAr.map((item) => {
 });
 ```
 
-<div class="grid grid-cols-4">
-  ${scatterList.map(scatter => {
-    return scatter
-  })}
-</div>
+```js
+display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
+```

@@ -55,7 +55,6 @@ const computeWeightsMixed = ({
       k3 *= kOrdered(x0.ord[j], XOrd[i][j], lambdaOrd[j] * externalLamda);
     }
 
-    console.log(externalH, externalLamda)
     weights[i] = k1 * k2 * k3;
   }
 

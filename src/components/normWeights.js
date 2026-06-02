@@ -2,8 +2,8 @@ import kd from "kd-tree-javascript";
 
 function distance(x, xlocal, stdev, power) {
   let dist = 0;
-  if (power == Infinity) {
-    let dist = -Infinity;
+  if (power === Infinity) {
+    dist = -Infinity;
     for (let i = 0; i < x.length; ++i) {
       dist = Math.max(dist, Math.abs((x[i] - xlocal[i]) / stdev[i]));
     }
@@ -38,7 +38,7 @@ export const normWeights = (
   kernal = 10,
   power = 2,
 ) => {
-  if (distance_type == "euclidean") {
+  if (distance_type === "euclidean") {
     var kernel = function (dist) {
       return Math.exp(-Math.pow(dist / kernal, 2));
     };
@@ -46,11 +46,11 @@ export const normWeights = (
       id: index,
       w: kernel(distance(Object.values(d), xlocal, stdevs, power)),
     }));
-  } else if (distance_type == "k-nearest") {
+  } else if (distance_type === "k-nearest") {
     // @todo: k number
     const k_nearest = 94;
     const k_nearest_neighbors = find_k_nearest(
-      data.map((item, index) => ({id:index, ...item})),
+      data.map((item, index) => ({ id: index, ...item })),
       xlocal,
       stdevs,
       power,
@@ -59,7 +59,9 @@ export const normWeights = (
     const ids = k_nearest_neighbors.map((d) => d[0].id);
     return data.map((d, index) => ({
       id: index,
-      w: ids.includes(d.id) ? 1 : 0,
+      w: ids.includes(index) ? 1 : 0,
     }));
   }
+
+  return [];
 };

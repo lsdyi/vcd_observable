@@ -10,18 +10,19 @@ import { multiply, transpose } from "mathjs";
 
 import { useOption } from "./components/hook/useOption.js";
 import { modelList } from "./components/modelList.js";
-import { getRanges } from "./components/getRanges.js";
 import { modelConfig } from "./components/modelConfig.js";
 import { normWeights } from "./components/normWeights.js";
 import { getCombinations } from "./components/getCombinations.js";
+import { createRangeFormMap } from "./components/pageComponents.js";
 ```
 
-<h1>Visualizing conditional distributions(Close Loop)</h1>
-<title>Visualizing conditional distributions(Close Loop)</title>
+# Visualizing Conditional Distributions: Slider Prototype
 
-<h2>Load Dataset</h2>
+This page is an early, low-dimensional prototype of the thesis dashboard. It keeps the idea deliberately simple: choose a model, choose a conditioning point with sliders, weight nearby observations, and compare the local response distribution.
 
-We use [credit card dataset](https://www.kaggle.com/datasets/dansbecker/aer-credit-card-data/data)
+## Load Dataset
+
+We use the credit-card dataset as a compact example for conditional-distribution exploration.
 
 ```js
 const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
@@ -33,8 +34,9 @@ const creditCard = FileAttachment("./data/AER_credit_card_data.csv").csv({
 display(Inputs.table(creditCard));
 ```
 
-<h2>Select Model</h2>
-Use a dropdown menu to select generalized linear model to fit the dataset.
+## Select Model
+
+Use the dropdown menu to select the generalized linear model used for the local comparison.
 
 ```js
 const [option, setOption] = await useOption(modelList[4].family);
@@ -169,31 +171,18 @@ if (clicks % 2 !== 0) {
 ### Select Conditioning Data
 
 ```js
-const ranges = getRanges(creditCard);
-
-// Formatting the output for readability
-const formMap = {};
 const { continousCovariates } = modelConfig;
-continousCovariates.forEach((key) => {
-  const result = ranges[key];
-  if (result instanceof Set) {
-    // @todo: countable variable
-  } else {
-    const { min, max } = result;
-    formMap[key] = Inputs.range([min, max], {
-      value: (min + max) / 2,
-      step: 1,
-      label: key,
-    });
-  }
+const formMap = createRangeFormMap({
+  data: creditCard,
+  keys: continousCovariates,
+  step: 1,
 });
 
-const conditionPoint = view(Inputs.form(formMap));
+const conditionPointObj = view(Inputs.form(formMap));
 ```
 
 ```js
-display(conditionPoint);
-display(ranges);
+display(conditionPointObj);
 ```
 
 ### Select smoothing parameter
@@ -212,7 +201,7 @@ const kernal = view(
 
 ```js
 const keys = continousCovariates;
-const conditionPoint = Object.values(conditionPoint);
+const conditionPoint = Object.values(conditionPointObj);
 
 const temp = keys.map((key) => creditCard.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
@@ -286,8 +275,8 @@ const scatterList = axisAr.map((item) => {
       Plot.dot(
         [
           {
-            [key1]: conditionPoint[key1],
-            [key2]: conditionPoint[key2],
+            [key1]: conditionPointObj[key1],
+            [key2]: conditionPointObj[key2],
           },
         ],
         {
@@ -318,8 +307,6 @@ const scatterList = axisAr.map((item) => {
 });
 ```
 
-<div class="grid grid-cols-4">
-  ${scatterList.map(scatter => {
-    return scatter
-  })}
-</div>
+```js
+display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
+```

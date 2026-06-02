@@ -6,23 +6,27 @@ toc: false
 ```js
 import _ from "lodash";
 import jStat from "jstat";
-import { multiply, transpose, dotMultiply, add } from "mathjs";
+import { multiply, transpose } from "mathjs";
 
-import { useOption } from "./components/hook/useOption.js";
-import { modelList } from "./components/modelList.js";
-import { getRanges } from "./components/getRanges.js";
-import { modelConfig } from "./components/modelConfig.js";
-import { normWeights } from "./components/normWeights.js";
 import { computeWeightsMixed, poissonKernel } from "./components/kernel.js";
 import { getCombinations } from "./components/getCombinations.js";
-import { PcaInputRange } from "./components/UI/PcaInputRange.js";
-import { scatterPlot3d } from "./components/scatterPlot3d.js";
-import { matrixData } from "./components/organizeData.js";
 import { selectFromKeys, getCardinalityFromMatrix } from "./components/util.js";
-import { Mutable } from "observablehq:stdlib";
+import {
+  createRangeFormMap,
+  createWeightedScatterGrid,
+} from "./components/pageComponents.js";
+import {
+  negativeBinomialRegression,
+  webR,
+  getSummary,
+  poissonRegression,
+  getPearsonResiduals,
+} from "./components/r.js";
 ```
 
-# Real Dataset: Doctor Visit
+# Real Dataset: Doctor Visits
+
+This page applies the thesis method to the German doctor-visit data. The response is a count: how many times each woman visited a physician during the last three months. The interesting question is not only whether Poisson or negative-binomial regression fits globally, but whether either model fits around a particular patient profile.
 
 ```js
 display(Inputs.table(doctorvisits));
@@ -45,7 +49,7 @@ const model = view(
 const conditionPointObj = view(Inputs.form(formMap));
 ```
 
-## Select bandwidth
+## Select Bandwidth
 
 ```js
 const kernal = view(
@@ -57,17 +61,15 @@ const kernal = view(
 );
 ```
 
-Every data point with weight is listed as follows.
+The selected profile defines a local neighborhood. Observations with larger weights are closer to that profile and therefore matter more in the local comparison.
 
 ```js
 display(data_with_weights);
 ```
 
-<div class="grid grid-cols-4">
-  ${scatterList.map(scatter => {
-    return scatter
-  })}
-</div>
+```js
+display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
+```
 
 ```js
 display(pdfplot);
@@ -86,22 +88,12 @@ const doctorvisits = FileAttachment("./data/doctorvisits.csv").csv({
 ```
 
 ```js
-// reform + badh + age + educ + loginc
 const keys = ["reform", "badh", "age", "educ", "loginc"];
-const formMap = {};
-const ranges = getRanges(doctorvisits);
-keys.forEach((key) => {
-  const result = ranges[key];
-  if (result instanceof Set) {
-    // @todo: countable variable
-  } else {
-    const { min, max } = result;
-    formMap[key] = Inputs.range([min, max], {
-      value: (min + max) / 2,
-      step: 0.5,
-      label: key,
-    });
-  }
+const formMap = createRangeFormMap({
+  data: doctorvisits,
+  keys,
+  defaults: { reform: 1, badh: 0, age: 35, educ: 11.5 },
+  step: 0.5,
 });
 ```
 
@@ -109,9 +101,6 @@ keys.forEach((key) => {
 const dim = 2;
 const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
-const temp = keys.map((key) => doctorvisits.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
-
 const data = doctorvisits.map((item) => _.pick(item, keys));
 
 const categoricalKeys = ["reform", "badh"];
@@ -147,86 +136,37 @@ const data_with_weights = data.map((d, index) => ({
   numvisit: doctorvisits[index].numvisit,
   weight: weights[index],
 }));
-
-const dataState = Mutable(data_with_weights);
-const resetDataState = (newData) => {
-  dataState.value = newData;
-};
-
-
-const wmin = d3.min(data_with_weights, (d) => d.weight);
-const wmax = d3.max(data_with_weights, (d) => d.weight);
 ```
 
 ```js
-const scatterList = axisAr.map((item) => {
-  const [key1, key2] = item;
-  return Plot.plot({
-    title: `${key1} vs ${key2}`,
-    marks: [
-      Plot.dot(data_with_weights, {
-        x: key1,
-        y: key2,
-        fill: (d, i) => {
-          const t = (d.weight - wmin) / (wmax - wmin);
-          return residuals.values[i] > 2 || residuals.values[i] < -2
-            ? d3.interpolateReds(t)
-            : d3.interpolateBlues(t);
-        },
-      }),
-
-      // conditional data point with orange color
-      Plot.dot(
-        [
-          {
-            [key1]: conditionPointObj[key1],
-            [key2]: conditionPointObj[key2],
-          },
-        ],
-        {
-          x: key1,
-          y: key2,
-          fill: "orange",
-          r: 5,
-        },
-      ),
-    ],
-  });
+const scatterList = createWeightedScatterGrid({
+  Plot,
+  d3,
+  axisPairs: axisAr,
+  data: data_with_weights,
+  conditionPoint: conditionPointObj,
+  residuals,
 });
 ```
 
 ```js
-import {
-  negRegession,
-  webR,
-  getSummary,
-  poissonRegession,
-  cke,
-  loess,
-  getPearsonResiduals,
-} from "./components/r.js";
-import { getPcaData } from "./components/getPcaData.js";
-```
-
-```js
 const isPoissonReg = model === "Poisson Regression";
-// R regression code
+
+// Fit the count model in WebR and keep the local comparison in JavaScript.
 await webR.objs.globalEnv.bind("doctorvisits", doctorvisits);
 
 const output = isPoissonReg
-  ? await poissonRegession(
+  ? await poissonRegression(
       "doctorvisits",
       "numvisit ~ reform + badh + age + educ +  loginc",
     )
-  : await negRegession(
+  : await negativeBinomialRegression(
       "doctorvisits",
       "numvisit ~ reform + badh + age + educ +  loginc",
     );
 const estimates = output.values;
 const summary = await getSummary();
-
 const residuals = await getPearsonResiduals();
-
 
 const mean = Math.exp(
   multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 6)),

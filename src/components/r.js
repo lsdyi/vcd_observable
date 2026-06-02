@@ -30,8 +30,7 @@ const getSummary = async () => {
   return text[0];
 };
 
-const betaRegession = async (dataName = "data", setup = "Y ~ X1 + X2 + X3", family = "beta regression") => {
-  console.log('running betareg')
+const betaRegression = async (dataName = "data", setup = "Y ~ X1 + X2 + X3") => {
   const rCodes = `
     library(betareg)
     fit <- betareg(${setup}, link = "logit", data = ${dataName})
@@ -48,7 +47,7 @@ const betaRegession = async (dataName = "data", setup = "Y ~ X1 + X2 + X3", fami
 };
 
 // negative binomial regression
-const negRegession = async (dataName = "data", setup = "Y ~ X1 + X2 + X3") => {
+const negativeBinomialRegression = async (dataName = "data", setup = "Y ~ X1 + X2 + X3") => {
   const rCodes = `
     library(MASS)
     fit <- glm.nb(${setup}, data = ${dataName})
@@ -70,7 +69,7 @@ const negRegession = async (dataName = "data", setup = "Y ~ X1 + X2 + X3") => {
 };
 
 // poisson regression
-const poissonRegession = async (
+const poissonRegression = async (
   dataName = "data",
   setup = "Y ~ X1 + X2 + X3",
   family = "poisson",
@@ -107,8 +106,6 @@ const getPearsonResiduals = async () => {
 };
 
 const loess = async (setup = "Y ~ X1 + X2 + X3 + X4") => {
-  const temp = await webR.evalR(`new_df`)
-  console.log('temp', temp)
   const rCodes = `
     loessFit <- loess(${setup}, data = data, span = 0.5)
     summary_stats <- summary(loessFit)
@@ -127,12 +124,19 @@ const loess = async (setup = "Y ~ X1 + X2 + X3 + X4") => {
   return output;
 };
 
+const betaRegession = betaRegression;
+const negRegession = negativeBinomialRegression;
+const poissonRegession = poissonRegression;
+
 export {
   webR,
   regressionBy,
   getSummary,
+  betaRegression,
   betaRegession,
+  negativeBinomialRegression,
   negRegession,
+  poissonRegression,
   poissonRegession,
   loess,
   getPearsonResiduals,

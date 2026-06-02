@@ -1,5 +1,5 @@
 import jStat from "jstat";
-import { betaRegession, negRegession } from "./r.js";
+import { betaRegression, negativeBinomialRegression } from "./r.js";
 
 const DATASET = [
   {
@@ -75,15 +75,15 @@ const MODEL = [
 
   {
     family: `negative binomial regression`,
-    rFun: negRegession,
+    rFun: negativeBinomialRegression,
   },
   {
     family: `beta regression`,
-    rFun: betaRegession,
+    rFun: betaRegression,
   },
   {
     family: `beta regression`,
-    rFun: betaRegession,
+    rFun: betaRegression,
     conditional: ' | X1',
   },
 ];

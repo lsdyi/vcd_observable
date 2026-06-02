@@ -5,16 +5,10 @@ toc: false
 
 ```js
 import _ from "lodash";
-import jStat from "jstat";
 import { multiply, transpose, dotMultiply, add } from "mathjs";
 
-import { useOption } from "./components/hook/useOption.js";
-import { modelList } from "./components/modelList.js";
-import { getRanges } from "./components/getRanges.js";
 import { modelConfig } from "./components/modelConfig.js";
-import { normWeights } from "./components/normWeights.js";
-import { getCombinations } from "./components/getCombinations.js";
-import { webR, regressionBy, getSummary } from "./components/r.js";
+import { webR } from "./components/r.js";
 import { matrixData } from "./components/organizeData.js";
 import { getPcaData } from "./components/getPcaData.js";
 import { PcaInputRange } from "./components/UI/PcaInputRange.js";
@@ -34,7 +28,10 @@ const continousCov = creditCard.map((item) => {
 });
 await webR.objs.globalEnv.bind("creditCard", continousCov);
 
-const { pcaData, pcaProxyObj } = await getPcaData();
+const { pcaData, pcaProxyObj } = await getPcaData(
+  continousCov,
+  continousCovariates,
+);
 
 const pcaSummaryProxy = await webR.evalR(
   'paste(capture.output(summary_stats), collapse = "\n")',
@@ -71,59 +68,58 @@ const pcaPlot2d = Plot.plot({
 });
 ```
 
-<h1>PCA example</h1>
-<title>PCA example</title>
-<h2>Dataset</h2>
-<p>
-Use creditCard dataset, the dataset is shown as follows.
-</p>
+# PCA as a Navigation Layer
+
+The full dashboard can use ordinary sliders when the covariate space is small. But when the model has many continuous covariates, pairwise scatterplots multiply quickly and the user loses the map. PCA gives the dashboard a lower-dimensional control surface: move in principal-component space, then reconstruct the corresponding covariate point.
+
+## Dataset
+
+This example uses the credit-card dataset and applies PCA to the continuous covariates used by the model.
 
 ```js
 display(Inputs.table(creditCard));
 ```
 
-<p>Do PCA to numeric continous covariates. The covariates and data are as follows.</p>
+The PCA input matrix is shown below. Each row remains tied to the original observation, which matters later when selecting points interactively.
 
 ```js
 display(Inputs.table(continousCov));
 ```
 
-<h2>PCA Result</h2>
-<h3>Excecute R codes, get the pca summary</h3>
+## PCA Result
+
+### Summary
 
 ```js
 display(pcaSummaryText);
 ```
 
-<h3>Excecute R codes, get all the principle components</h3>
+### First Principal Components
 
 ```js
 display(pcaXText);
 ```
 
-<h3>PCA Conclusion</h3>
+### Interpretation
 
-1. Every observation in PCA components corresposes to one observation in processed dataset.
-2. [Reconstruct data from reduced Space to original Space](#reconstruct-data-from-reduced-space-to-original-space)
-   - data from observation: use index to do 1v1 map, See Conclusion 1.
-   - Data never existing in observation: mathematical way (matrix transformation). Mathematical way is a general way. With all components, it will do non-loss transformation, which is the same effect as Conclusion 1
+1. Every point in PCA space corresponds to one row in the processed continuous-covariate matrix.
+2. A point can be reconstructed from reduced space back to original covariate space using the PCA rotation, scale, and center.
+3. In the dashboard, the first three components are used as a practical control surface. They do not preserve everything, but they give the user a coherent way to move through high-dimensional covariates.
 
-3. According to pca model summary, the first 2 components covers <mark>46.6%</mark> coverage of data i.e. PC1 and PC2. The first 3 components covers <mark>60.28%</mark> of data i.e PC1, PC2 and PC3.</p>
-
-<h3>Scatterplot of PC1 and PC2</h3>
+### Scatterplot of PC1 and PC2
 
 ```js
 display(pcaPlot2d);
 ```
 
-<h3>Scatterplot of PC1, PC2 and PC3</h3>
+### Scatterplot of PC1, PC2 and PC3
 
 ```js
 const container = scatterPlot3d(pcaData, ["pc1", "pc2", "pc3"], pcCordinate);
 display(container);
 ```
 
-### Reconstruct Data from Reduced Space to Original Space
+## Reconstruct Data from Reduced Space to Original Space
 
 ```js
 const inputRanges = PcaInputRange();
@@ -144,13 +140,13 @@ const reConCor = add(
 );
 ```
 
-Data in the reduced space is
+The selected point in reduced space is:
 
 ```js
 display(pcCordinate);
 ```
 
-Reconstructed data is
+The reconstructed covariate point is:
 
 ```js
 display(tex`\hat{X} = Z W^T + \mu`);

@@ -17,9 +17,7 @@ const getEstimate = async (
   responseBw,
   conditional,
 ) => {
-  console.log(conditionPoint);
   if (family === "beta regression") {
-    console.log(modelOutput);
     const betas = modelOutput.values[0].values;
     const betaPhis = modelOutput.values[4].values;
     const phi = conditional
@@ -31,13 +29,6 @@ const getEstimate = async (
     const linearCom = multiply(transpose([1, ...conditionPoint]), betas);
     const mu = 1 / (1 + Math.exp(-linearCom));
 
-    console.log(
-      "beta regression",
-      mu,
-      Math.exp(conditionPoint[0] * 3 + 5),
-      phi,
-      betaPhis,
-    );
     const xGrid = d3.range(0.01, 1, 0.01);
 
     const coordinates = xGrid.map((item) => {
@@ -114,7 +105,6 @@ const getEstimate = async (
       ),
     );
 
-    console.log("poisson", mean);
     const xGrid = d3.range(0, 50, 1);
     // const xGrid = d3.range(data_with_weights[responseKey]);
     const coordinates = xGrid.map((item) => {
@@ -178,10 +168,7 @@ const getEstimate = async (
       ),
     );
 
-    console.log("poisson", mean);
-    console.log("mu", mean);
     const theta = estimates[estimates.length - 1];
-    console.log("r", theta);
 
     const response = data_with_weights.map((item) => item[responseKey]);
     // const minRes = d3.min(response)
