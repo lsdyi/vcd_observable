@@ -23,7 +23,6 @@ export default {
     {
       name: "Prototypes",
       pages: [
-        { name: "React Dashboard", path: "/react_dashboard" },
         { name: "Slider Prototype", path: "/vcd_v0" },
         { name: "PCA Prototype", path: "/vcd_pca" },
       ],
