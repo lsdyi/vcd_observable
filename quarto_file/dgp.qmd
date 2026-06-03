@@ -15,12 +15,15 @@ callout-tip-caption: "Tip"
 ---
 
 ```{r}
-library(MASS) # for mvrnorm
+library(MASS)
 library(np)
+library(ggplot2)
+library(ggsci)
+```
 
-
+```{r}
 set.seed(123)
-n <- 500
+n <- 1000
 
 # correlation matrix
 Sigma <- matrix(c(
@@ -30,7 +33,7 @@ Sigma <- matrix(c(
 ), nrow = 3)
 
 # generate correlated covariates
-X <- mvrnorm(n, mu = c(3, 3, 3), Sigma = Sigma)
+X <- mvrnorm(n, mu = c(0, 0, 0), Sigma = Sigma)
 x1 <- X[, 1]
 x2 <- X[, 2]
 x3 <- X[, 3]
@@ -45,7 +48,7 @@ beta3 <- 0.3
 mu <- exp(beta0 + beta1 * x1 + beta2 * x2 + beta3 * x3)
 
 # generate two-regime counts
-size <- 2
+size <- 0.1
 y <- numeric(n)
 cutoff <- median(x1)
 y[x1 < cutoff] <- rpois(sum(x1 < cutoff), mu[x1 < cutoff])
@@ -54,6 +57,8 @@ y[x1 >= cutoff] <- rnbinom(sum(x1 >= cutoff), mu = mu[x1 >= cutoff], size = size
 # assemble dataframe
 data <- data.frame(X1 = x1, X2 = x2, X3 = x3, Y = y, REGIME = ifelse(x1 < cutoff, "Poisson", "NegBin"))
 
+var(y)
+mean(y)
 
 # install.packages("scatterplot3d") # if not installed
 library(scatterplot3d)
@@ -74,17 +79,13 @@ scatterplot3d(
     zlab = "Y (counts)"
 )
 legend("topright", legend = c("Poisson", "NegBin"), col = c("blue", "red"), pch = 16)
-
-# Quick look
-head(data)
-write.csv(data, "../src/data/dgp.csv", row.names = FALSE, quote = FALSE)
 ```
 
 ```{r}
-fit <- glm.nb(y ~ x1 + x2 + x3, data = data)
+nb_fit <- glm.nb(y ~ x1 + x2 + x3, data = data)
 params <- c(
-    coef(fit), # regression coefficients
-    fit$theta # dispersion parameter
+    coef(nb_fit), # regression coefficients
+    nb_fit$theta # dispersion parameter
 )
 params
 
@@ -100,25 +101,41 @@ dnbinom(10, mu = 9.792282457144397, size = 3.2628441009374476)
 ```{r}
 # bw_dist <- npcdistbw(
 #     formula = Y ~ X1 + X2 + X3,
-#     data = data, bwmethod = "cv.ls"
+#     data = data
 # )
 
 # bw_dist
+
+# Conditional distribution data (1000 observations, 4 variable(s))
+# (1 dependent variable(s), and 3 explanatory variable(s))
+
+#                                Y
+# Dep. Var. Bandwidth(s): 1.358901
+#                                X1        X2       X3
+# Exp. Var. Bandwidth(s): 0.1463431 0.5160716 44238.28
+
+# Bandwidth Selection Method: Least Squares Cross-Validation
+# Formula: Y ~ X1 + X2 + X3
+# Bandwidth Type: Fixed
+# Objective Function Value: 0.2159795 (achieved on multistart 3)
+
+# Continuous Kernel Type: Second-Order Gaussian 
+# No. Continuous Dependent Vars.: 1 
+# No. Continuous Explanatory Vars.: 3
 ```
 
 ```{r}
-mu_hat = predict(fit, newdata = data.frame(x1 =4.80695990758092, x2 = 2.33195514680647, x3 = 2.747928665946 ), type = "response")
+mu_hat <- predict(nb_fit, newdata = data.frame(x1 = 4.80695990758092, x2 = 2.33195514680647, x3 = 2.747928665946), type = "response")
 
-theta <- fit$theta
+theta <- nb_fit$theta
 
-yGrid = seq(0, 100, 1)
-pmf = rep(NA, length(yGrid))
+yGrid <- seq(0, 100, 1)
+pmf <- rep(NA, length(yGrid))
 for (i in yGrid) {
-  pmf[i] <- dnbinom(i, mu = mu_hat, size = theta)
+    pmf[i] <- dnbinom(i, mu = mu_hat, size = theta)
 }
 plot(yGrid, pmf)
 ```
-
 
 ```{r}
 # Conditional distribution data (500 observations, 4 variable(s))
@@ -134,7 +151,128 @@ plot(yGrid, pmf)
 # Bandwidth Type: Fixed
 # Objective Function Value: 0.1160094 (achieved on multistart 3)
 
-# Continuous Kernel Type: Second-Order Gaussian 
-# No. Continuous Dependent Vars.: 1 
+# Continuous Kernel Type: Second-Order Gaussian
+# No. Continuous Dependent Vars.: 1
 # No. Continuous Explanatory Vars.: 3
+```
+
+
+## Global Fit Check
+```{r}
+# Empirical PMF
+df_emp <- data.frame(table(data$Y))
+df_emp$x <- as.numeric(as.character(df_emp$Var1))
+df_emp$y <- df_emp$Freq / sum(df_emp$Freq)
+
+# negtive binomial regression check
+summary(nb_fit)
+
+mu_hat <- predict(nb_fit, type = "response")
+theta_hat <- nb_fit$theta
+y_grid <- seq(min(data$Y), max(data$Y), 1)
+marginal <- rep(NA, length(y_grid))
+for (i in 1:length(y_grid)) {
+    yi <- y_grid[i]
+    marginal[i] <- mean(dnbinom(yi, mu = mu_hat, size = theta_hat))
+}
+
+df_ana <- data.frame(x = y_grid, y = marginal)
+p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical Distribution"), linewidth = 1) +
+    geom_line(
+        data = df_ana, aes(x = x, y = y, color = "Analytical Marginal"),
+        linetype = "dashed", linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Empirical KDE" = "black",
+        "Analytical Marginal" = "blue"
+    )) +
+    labs(
+        title = "Empirical vs. Analytical Marginal Distribution",
+        x = "Y",
+        y = "Probability",
+        color = NULL
+    ) +
+    theme_bw() +
+    scale_color_npg() + # Nature Publishing Group style
+    theme(
+        legend.position = "top",
+        panel.grid = element_blank(),
+        axis.text = element_text(color = "grey30"),
+        axis.title = element_text(color = "grey40"),
+        plot.title = element_text(color = "grey10"),
+        legend.text = element_text(color = "grey10"),
+        legend.title = element_text(color = "grey10"),
+        legend.margin = margin(b = -5) # pull legend closer
+    )
+ggsave("./figures/global_check_1_negbinomial_reg.svg", plot = p, width = 6, height = 4)
+ggsave("./figures/global_check_1_negbinomial_reg.pdf", plot = p, width = 6, height = 4)
+p
+
+# poisson regression check
+poi_fit <- glm(Y ~ X1 + X2 + X3, data = data, family = poisson)
+summary(poi_fit)
+
+mu_hat <- predict(poi_fit, type = "response")
+marginal <- rep(NA, length(y_grid))
+for (i in 1:length(y_grid)) {
+    yi <- y_grid[i]
+    marginal[i] <- mean(dpois(yi, lambda = mu_hat))
+}
+
+df_ana <- data.frame(x = y_grid, y = marginal)
+p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical Distribution"), linewidth = 1) +
+    geom_line(
+        data = df_ana, aes(x = x, y = y, color = "Analytical Marginal"),
+        linetype = "dashed", linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Empirical KDE" = "black",
+        "Analytical Marginal" = "blue"
+    )) +
+    labs(
+        title = "Empirical vs. Analytical Marginal Distribution",
+        x = "Y",
+        y = "Probability",
+        color = NULL
+    ) +
+    theme_bw() +
+    scale_color_npg() + # Nature Publishing Group style
+    theme(
+        legend.position = "top",
+        panel.grid = element_blank(),
+        axis.text = element_text(color = "grey30"),
+        axis.title = element_text(color = "grey40"),
+        plot.title = element_text(color = "grey10"),
+        legend.text = element_text(color = "grey10"),
+        legend.title = element_text(color = "grey10"),
+        legend.margin = margin(b = -5) # pull legend closer
+    )
+ggsave("./figures/global_check_1_poisson_reg.svg", plot = p, width = 6, height = 4)
+ggsave("./figures/global_check_1_poisson_reg.pdf", plot = p, width = 6, height = 4)
+p
+```
+
+## PCA
+```{r}
+data_pca <- prcomp(
+    data.frame(
+        x1,
+        x2,
+        x3
+    ),
+    center = TRUE, scale. = TRUE
+)
+
+data_pca
+summary(data_pca)
+head(data_pca$x)
+head(data)
+```
+
+## Data Storage
+```{r}
+head(data)
+write.csv(data, "../src/data/dgp.csv", row.names = FALSE, quote = FALSE)
 ```

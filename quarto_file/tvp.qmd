@@ -1,0 +1,517 @@
+```{r}
+# ============================================================
+# Small example for the thesis:
+# ordinary regression vs time-varying regression vs shrinkage
+# ============================================================
+
+set.seed(123)
+
+# -----------------------------
+# 1. Simulate small dataset
+# -----------------------------
+T <- 80
+x <- rnorm(T)
+
+beta_true <- rep(1, T)
+beta_true[31:50] <- seq(1, 3, length.out = 20)
+beta_true[51:80] <- 3
+
+sigma_eps <- 0.4
+y <- beta_true * x + rnorm(T, 0, sigma_eps)
+
+df <- data.frame(
+  time = 1:T,
+  x = x,
+  y = y,
+  beta_true = beta_true
+)
+
+# -----------------------------
+# 2. Ordinary regression
+# -----------------------------
+fit_static <- lm(y ~ x - 1, data = df)
+beta_static <- coef(fit_static)[1]
+
+cat("Static beta estimate:", beta_static, "\n")
+
+# This gives ONE beta for all time.
+# But true beta changes from 1 to 3.
+
+
+# -----------------------------
+# 3. Kalman filter for TVP model
+# -----------------------------
+# Model:
+# y_t = x_t * beta_t + eps_t
+# beta_t = beta_{t-1} + eta_t
+
+kalman_tvp <- function(y, x, q, r, beta0 = 0, P0 = 10) {
+  T <- length(y)
+  
+  beta_pred <- numeric(T)
+  beta_filt <- numeric(T)
+  P_pred <- numeric(T)
+  P_filt <- numeric(T)
+  
+  beta_prev <- beta0
+  P_prev <- P0
+  
+  for (t in 1:T) {
+    
+    # Prediction step
+    beta_prior <- beta_prev
+    P_prior <- P_prev + q[t]
+    
+    # Observation update
+    S <- x[t]^2 * P_prior + r
+    K <- P_prior * x[t] / S
+    
+    beta_post <- beta_prior + K * (y[t] - x[t] * beta_prior)
+    P_post <- (1 - K * x[t]) * P_prior
+    
+    beta_pred[t] <- beta_prior
+    beta_filt[t] <- beta_post
+    P_pred[t] <- P_prior
+    P_filt[t] <- P_post
+    
+    beta_prev <- beta_post
+    P_prev <- P_post
+  }
+  
+  data.frame(
+    time = 1:T,
+    beta_filt = beta_filt,
+    lower = beta_filt - 1.96 * sqrt(P_filt),
+    upper = beta_filt + 1.96 * sqrt(P_filt)
+  )
+}
+
+# -----------------------------
+# 4. Constant-variance TVP
+# -----------------------------
+# Ordinary TVP assumes beta changes with same variance every time.
+
+q_constant <- rep(0.02, T)
+r <- sigma_eps^2
+
+res_constant <- kalman_tvp(y, x, q_constant, r)
+
+
+# -----------------------------
+# 5. Dynamic shrinkage idea
+# -----------------------------
+# Dynamic shrinkage says:
+# most of the time beta should barely move,
+# but sometimes it should be allowed to jump.
+
+q_dynamic <- rep(0.001, T)
+q_dynamic[31:50] <- 0.15
+
+res_dynamic <- kalman_tvp(y, x, q_dynamic, r)
+
+
+# -----------------------------
+# 6. Plot results
+# -----------------------------
+plot(
+  df$time, df$beta_true,
+  type = "l",
+  lwd = 3,
+  ylim = range(c(df$beta_true, res_constant$beta_filt, res_dynamic$beta_filt)),
+  xlab = "Time",
+  ylab = expression(beta[t]),
+  main = "Time-varying coefficient"
+)
+
+lines(df$time, rep(beta_static, T), lwd = 2, lty = 2)
+lines(res_constant$time, res_constant$beta_filt, lwd = 2)
+lines(res_dynamic$time, res_dynamic$beta_filt, lwd = 2)
+
+legend(
+  "topleft",
+  legend = c(
+    "True beta",
+    "Static regression",
+    "TVP constant variance",
+    "TVP dynamic shrinkage idea"
+  ),
+  lwd = c(3, 2, 2, 2),
+  lty = c(1, 2, 1, 1),
+  bty = "n"
+)
+
+
+# -----------------------------
+# 7. Compare errors
+# -----------------------------
+mse_static <- mean((rep(beta_static, T) - beta_true)^2)
+mse_constant <- mean((res_constant$beta_filt - beta_true)^2)
+mse_dynamic <- mean((res_dynamic$beta_filt - beta_true)^2)
+
+cat("\nMean squared error:\n")
+cat("Static regression:       ", mse_static, "\n")
+cat("TVP constant variance:   ", mse_constant, "\n")
+cat("TVP dynamic shrinkage:   ", mse_dynamic, "\n")
+```
+
+
+```{r}
+library(MASS)
+library(ggplot2)
+
+# Parameters
+mu_x <- 0
+mu_y <- 0
+
+sigma_x <- 1
+sigma_y <- 1.5
+
+rho <- 0.7
+
+# Covariance matrix
+Sigma <- matrix(c(
+  sigma_x^2,
+  rho * sigma_x * sigma_y,
+  rho * sigma_x * sigma_y,
+  sigma_y^2
+), nrow = 2)
+
+# Generate data
+set.seed(123)
+
+n <- 5000
+
+data <- as.data.frame(
+  mvrnorm(
+    n = n,
+    mu = c(mu_x, mu_y),
+    Sigma = Sigma
+  )
+)
+
+colnames(data) <- c("X", "Y")
+
+# -------------------------------------------------
+# Conditional distribution Y | X = x0
+# -------------------------------------------------
+
+x0 <- 1
+
+cond_mean <- mu_y +
+  rho * sigma_y / sigma_x * (x0 - mu_x)
+
+cond_sd <- sqrt(
+  sigma_y^2 * (1 - rho^2)
+)
+
+# Density grid
+y_grid <- seq(-5, 5, length.out = 500)
+
+cond_density <- dnorm(
+  y_grid,
+  mean = cond_mean,
+  sd = cond_sd
+)
+
+cond_df <- data.frame(
+  Y = y_grid,
+  Density = cond_density
+)
+
+# -------------------------------------------------
+# Plot 1: Joint distribution
+# -------------------------------------------------
+
+p1 <- ggplot(data, aes(X, Y)) +
+  geom_point(alpha = 0.15) +
+  geom_vline(xintercept = x0,
+             color = "red",
+             linewidth = 1) +
+  ggtitle("Joint Distribution of X and Y")
+
+print(p1)
+
+# -------------------------------------------------
+# Plot 2: Conditional density
+# -------------------------------------------------
+
+p2 <- ggplot(cond_df, aes(Y, Density)) +
+  geom_line(linewidth = 1.2) +
+  ggtitle(
+    paste0(
+      "Conditional Distribution: Y | X = ",
+      x0
+    )
+  )
+
+print(p2)
+```
+
+```{r}
+library(mvtnorm)
+library(plotly)
+
+# Parameters
+mu <- c(0, 0)
+
+sigma_x <- 1
+sigma_y <- 1.5
+rho <- 0.7
+
+Sigma <- matrix(c(
+  sigma_x^2, rho * sigma_x * sigma_y,
+  rho * sigma_x * sigma_y, sigma_y^2
+), nrow = 2)
+
+# Grid
+x <- seq(-4, 4, length.out = 100)
+y <- seq(-5, 5, length.out = 100)
+
+grid <- expand.grid(X = x, Y = y)
+
+# Joint density f(X, Y)
+z <- matrix(
+  dmvnorm(grid, mean = mu, sigma = Sigma),
+  nrow = length(x),
+  ncol = length(y)
+)
+
+# Conditional slice X = x0
+x0 <- 1
+
+cond_mean <- mu[2] + rho * sigma_y / sigma_x * (x0 - mu[1])
+cond_sd <- sqrt(sigma_y^2 * (1 - rho^2))
+
+y_slice <- seq(-5, 5, length.out = 200)
+
+# Joint density along X = x0
+z_slice <- dmvnorm(
+  cbind(x0, y_slice),
+  mean = mu,
+  sigma = Sigma
+)
+
+tail(sort(z_slice))
+
+
+plot_ly() %>%
+  add_surface(
+    x = x,
+    y = y,
+    z = z,
+    opacity = 0.85
+  ) %>%
+  add_trace(
+    x = rep(x0, length(y_slice)),
+    y = y_slice,
+    z = z_slice,
+    type = "scatter3d",
+    mode = "lines",
+    line = list(color = "red", width = 8),
+    name = paste0("Slice: X = ", x0)
+  ) %>%
+  layout(
+    title = "3D Joint Normal Density with Conditional Slice",
+    scene = list(
+      xaxis = list(title = "X"),
+      yaxis = list(title = "Y"),
+      zaxis = list(title = "Density")
+    )
+  )
+```
+
+## joint distribution
+```{r}
+library(mvtnorm)
+library(plotly)
+
+# =====================================================
+# Parameters
+# =====================================================
+
+mu <- c(0, 0)
+
+sigma_x <- 1
+sigma_y <- 1.5
+rho <- 0.7
+
+Sigma <- matrix(
+  c(
+    sigma_x^2,
+    rho * sigma_x * sigma_y,
+
+    rho * sigma_x * sigma_y,
+    sigma_y^2
+  ),
+  nrow = 2,
+  byrow = TRUE
+)
+
+# =====================================================
+# Grid for joint density
+# =====================================================
+
+x <- seq(-4, 4, length.out = 100)
+y <- seq(-5, 5, length.out = 100)
+
+grid <- expand.grid(
+  X = x,
+  Y = y
+)
+
+# Joint density values
+z <- matrix(
+  dmvnorm(
+    grid,
+    mean = mu,
+    sigma = Sigma
+  ),
+  nrow = length(x),
+  ncol = length(y)
+)
+
+# =====================================================
+# Slice at fixed X = x0
+# =====================================================
+
+x0 <- 1
+
+y_slice <- seq(-5, 5, length.out = 300)
+
+z_slice <- dmvnorm(
+  cbind(
+    rep(x0, length(y_slice)),
+    y_slice
+  ),
+  mean = mu,
+  sigma = Sigma
+)
+
+tail(sort(z_slice))
+sum(z_slice*(y_slice[2]- y_slice[1]))
+dnorm(1)
+# =====================================================
+# 3D plot
+# =====================================================
+
+plot_ly() %>%
+
+  # Joint distribution surface
+  add_surface(
+    x = x,
+    y = y,
+    z = z,
+    opacity = 0.85,
+    colorscale = "Viridis",
+    name = "Joint Density"
+  ) %>%
+
+  # Slice from joint density
+  add_trace(
+    x = rep(x0, length(y_slice)),
+    y = y_slice,
+    z = z_slice,
+    type = "scatter3d",
+    mode = "lines",
+    line = list(
+      color = "red",
+      width = 10
+    ),
+    name = paste0("Slice at X = ", x0)
+  ) %>%
+
+  layout(
+    title = "Joint Distribution with Density Slice",
+    scene = list(
+      xaxis = list(title = "X"),
+      yaxis = list(title = "Y"),
+      zaxis = list(title = "Density")
+    )
+  )
+```
+
+```{r}
+library(plotly)
+
+# =====================================================
+# Parameters
+# =====================================================
+
+mu_x <- 0
+mu_y <- 0
+
+sigma_x <- 1
+sigma_y <- 1.5
+rho <- 0.7
+
+# =====================================================
+# Conditional distribution: Y | X = x
+# =====================================================
+
+x <- seq(-4, 4, length.out = 100)
+y <- seq(-5, 5, length.out = 100)
+
+grid <- expand.grid(X = x, Y = y)
+
+cond_mean <- mu_y + rho * sigma_y / sigma_x * (grid$X - mu_x)
+cond_sd <- sqrt(sigma_y^2 * (1 - rho^2))
+
+z <- matrix(
+  dnorm(
+    grid$Y,
+    mean = cond_mean,
+    sd = cond_sd
+  ),
+  nrow = length(x),
+  ncol = length(y)
+)
+
+# =====================================================
+# Slice at fixed X = x0
+# =====================================================
+
+x0 <- 1
+
+y_slice <- seq(-5, 5, length.out = 300)
+
+cond_mean_x0 <- mu_y + rho * sigma_y / sigma_x * (x0 - mu_x)
+cond_sd_x0 <- sqrt(sigma_y^2 * (1 - rho^2))
+
+z_slice <- dnorm(
+  y_slice,
+  mean = cond_mean_x0,
+  sd = cond_sd_x0
+)
+sum(z_slice*(y_slice[2]- y_slice[1]))
+
+# =====================================================
+# 3D plot
+# =====================================================
+
+plot_ly() %>%
+  add_surface(
+    x = x,
+    y = y,
+    z = z,
+    opacity = 0.85,
+    colorscale = "Viridis",
+    name = "Conditional Density"
+  ) %>%
+  add_trace(
+    x = rep(x0, length(y_slice)),
+    y = y_slice,
+    z = z_slice,
+    type = "scatter3d",
+    mode = "lines",
+    line = list(color = "red", width = 10),
+    name = paste0("Y | X = ", x0)
+  ) %>%
+  layout(
+    title = "Conditional Distribution Surface: Y | X",
+    scene = list(
+      xaxis = list(title = "Fixed X value"),
+      yaxis = list(title = "Y"),
+      zaxis = list(title = "Conditional Density")
+    )
+  )
+```

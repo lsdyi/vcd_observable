@@ -10,46 +10,55 @@ library(mvtnorm)
 ```{r}
 set.seed(123)
 
-n <- 1000 # sample size
-mu_beta <- c(0, 0, 0) # means of X1, X2, X3
+n <- 1000
+mu_beta <- c(0, 0, 0, 0, 0)
 
 # Covariance matrix for correlated covariates
 Sigma <- matrix(c(
-    1, 0.5, 0.3,
-    0.5, 1, 0.4,
-    0.3, 0.4, 1
-), nrow = 3)
+    1,   0.5, 0.3, 0.2, 0.1,
+    0.5, 1,   0.4, 0.3, 0.2,
+    0.3, 0.4, 1,   0.5, 0.3,
+    0.2, 0.3, 0.5, 1,   0.4,
+    0.1, 0.2, 0.3, 0.4, 1
+), nrow = 5, byrow = TRUE)
 
 # Generate correlated covariates
 X <- mvrnorm(n, mu = mu_beta, Sigma = Sigma)
 X1 <- X[, 1]
 X2 <- X[, 2]
 X3 <- X[, 3]
+X4 <- X[, 4]
+X5 <- X[, 5]
 
 # simulate response
-beta <- c(0.5, 0.7, -0.3, 0.2) # beta0, beta1, beta2, beta3
-
-# Linear predictor
-eta <- beta[1] + beta[2] * X1 + beta[3] * X2 + beta[4] * X3
+beta <- c(0.5, 0, -0.3, 0.2, 1.2, 0.4) # beta0, beta1, beta2, beta3
+eta <- X %*% beta[2:length(beta)] + beta[1]
 
 # Inverse logit to get mean in (0,1)
 mu <- plogis(eta)
-phi <- exp(1 + 2 * X1) # precision parameter
+phi <- exp(5 + 3 * X1)
 
-# phi = 5
+mean(phi < 1)
+mean(phi < 2)
+
+mean((mu * phi < 1) & ((1 - mu) * phi < 1))
+mean((mu * phi < 1) & ((1 - mu) * phi > 1))
+mean((mu * phi > 1) & ((1 - mu) * phi < 1))
+
+length(phi[phi < 1])
+head(sort(phi))
+plot(X1, log(phi))
 
 # Simulate beta response
 Y <- rbeta(n, shape1 = mu * phi, shape2 = (1 - mu) * phi)
-Y_fixed_phi <- rbeta(n, shape1 = mu * 5, shape2 = (1 - mu) * 5)
 
 
-fit_x1 <- betareg(Y ~ X1 + X2 + X3 | X1)
-fit <- betareg(Y ~ X1 + X2 + X3)
+fit_x1 <- betareg(Y ~ X1 + X2 + X3 + X4 + X5 | X1)
+fit <- betareg(Y ~ X1 + X2 + X3 + X4 + X5)
 summary(fit)
 summary(fit_x1)
 
-hist(Y, freq=FALSE, breaks = seq(min(Y), max(Y), by = 0.02))
-hist(Y_fixed_phi, freq=FALSE, breaks = seq(min(Y), max(Y), by = 0.02))
+p_res <- residuals(fit, type = "pearson")
 
 cor(X) # correlation matrix of covariates
 
@@ -58,24 +67,68 @@ sim_data <- data.frame(
     Y = Y,
     X1 = X1,
     X2 = X2,
-    X3 = X3
-)
-
-sim_data_fixed_phi <- data.frame(
-    Y = Y_fixed_phi,
-    X1 = X1,
-    X2 = X2,
-    X3 = X3
+    X3 = X3,
+    X4 = X4,
+    X5 = X5
 )
 
 # Quick look
 head(sim_data)
 write.csv(sim_data, "../src/data/simulated_beta_data_phix.csv", row.names = FALSE)
-write.csv(sim_data_fixed_phi, "../src/data/simulated_beta_data.csv", row.names = FALSE)
 ```
 
 ```{r}
-x_new <- data.frame(X1 = 0, X2 = 1, X3 = 2)
+# fitted mean and precision from beta regression
+mu_hat  <- predict(fit_x1, type = "response")
+phi_hat <- predict(fit_x1, type = "precision")
+
+# simulate many Y_i^* from fitted conditional beta model
+B <- 1   # number of replicated datasets
+
+Y_star <- replicate(B, {
+  rbeta(
+    n = length(mu_hat),
+    shape1 = mu_hat * phi_hat,
+    shape2 = (1 - mu_hat) * phi_hat
+  )
+})
+
+# put simulations into long format
+df_star <- data.frame(
+  y = as.vector(Y_star),
+  rep = rep(1:B, each = length(mu_hat))
+)
+
+# empirical observed data
+df_obs <- data.frame(y = Y)
+
+ggplot() +
+  geom_density(
+    data = df_star,
+    aes(x = y),
+    color = "grey70",
+    linewidth = 0.3,
+    alpha = 0.4
+  ) +
+  geom_density(
+    data = df_obs,
+    aes(x = y, color = "Observed KDE"),
+    linewidth = 1.2
+  ) +
+  labs(
+    title = "Observed KDE vs. Simulated KDEs from Fitted Beta Regression",
+    x = "y",
+    y = "Density",
+    color = NULL
+  ) +
+  theme_bw()
+
+dim(df_star)
+```
+
+
+```{r}
+x_new <- data.frame(X1 = 0, X2 = 1, X3 = 2, X4 = 1, X5 = 1.5)
 
 # Predict conditional mean
 mu_hat <- predict(fit, newdata = x_new, type = "response")
@@ -125,6 +178,8 @@ ggplot(df, aes(y, d, color = factor(x))) +
     labs(color = "X1", title = "Beta densities at different X1")
 ```
 
+
+
 ```{r}
 # y_grid <- seq(min(Y), max(Y), length.out = 200)
 y_grid <- seq(0.001, 0.999, length.out = 200)
@@ -143,7 +198,7 @@ marginal_dens <- sapply(y_grid, function(yi) {
     ))
 })
 # empirical KDE data
-emp <- density(Y)
+emp <- density(Y, from = 0, to = 1)
 df_emp <- data.frame(x = emp$x, y = emp$y)
 
 # analytical marginal data
@@ -178,7 +233,86 @@ p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
         legend.title = element_text(color = "grey10"),
         legend.margin = margin(b = -5) # pull legend closer
     )
+ggsave("./figures/global_check_2.svg", plot = p, width = 6, height = 4)
+ggsave("./figures/global_check_2.pdf", plot = p, width = 6, height = 4)
 p
+```
+
+```{r}
+mu_x1_hat <- predict(fit_x1, type = "response")
+# For Gamma GLM, shape = 1 / dispersion
+phi_x1_hat <- predict(fit_x1, type = "precision")
+head(phi_x1_hat)
+head(phi_hat)
+
+# Calculate the mean density across all observations for each point in the grid
+marginal_dens_flex_x1 <- sapply(y_grid, function(yi) {
+    mean(dbeta(yi,
+        shape1 = mu_x1_hat * phi_x1_hat,
+        shape2 = (1 - mu_x1_hat) * phi_x1_hat
+    ))
+})
+# empirical KDE data
+emp <- density(Y, from = 0, to = 1)
+df_emp <- data.frame(x = emp$x, y = emp$y)
+
+# analytical marginal data
+df_ana <- data.frame(x = y_grid, y = marginal_dens_flex_x1)
+
+# combined plot
+p2 <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+    geom_histogram(
+        data = sim_data,
+        aes(
+            x = Y,
+            y = after_stat(density),
+            fill = "Histogram"
+        ),
+        bins = 20,
+        color = "white"
+    ) +
+    geom_line(data = df_emp, aes(x = x, y = y, color = "Empirical KDE"), linewidth = 1) +
+    geom_line(
+        data = df_ana, aes(x = x, y = y, color = "Analytical Marginal"),
+         linewidth = 1
+    ) +
+    scale_color_manual(values = c(
+        "Empirical KDE" = "black",
+        "Analytical Marginal" = "blue"
+    )) +
+    labs(
+        title = "Empirical vs. Analytical Marginal Density",
+        x = "y",
+        y = "Density",
+        color = NULL
+    ) +
+    theme_bw() +
+    scale_color_npg() + # Nature Publishing Group style
+    theme(
+        legend.position = "top",
+        panel.grid = element_blank(),
+        axis.text = element_text(color = "grey30"),
+        axis.title = element_text(color = "grey40"),
+        plot.title = element_text(color = "grey10"),
+        legend.text = element_text(color = "grey10"),
+        legend.title = element_text(color = "grey10"),
+        legend.margin = margin(b = -5) # pull legend closer
+    )
+ggsave("./figures/global_check_2_flex_x1.svg", plot = p2, width = 6, height = 4)
+ggsave("./figures/global_check_2_flex_x1.pdf", plot = p2, width = 6, height = 4)
+p2
+```
+
+```{r}
+temp <- c(1, -0.2066884, 0.03274259, 0.42958083, 0.5377012, 1.2147544) %*% c(
+    5.05024,
+    3.09693,
+    -0.10426,
+    -0.02968,
+    0.02457,
+    -0.05161
+)
+exp(temp)
 ```
 
 ```{r}
@@ -186,75 +320,87 @@ x_grid <- quantile(X1, probs = c(0.1, 0.5, 0.9))
 
 y_seq <- seq(0.001, 0.999, length = 200)
 
-mu_hat  <- fitted(fit)
+mu_hat <- fitted(fit)
 phi_hat <- predict(fit, type = "precision")
 
 plot(NULL,
-     xlim = c(0, 1),
-     ylim = c(0, 8),
-     xlab = "y",
-     ylab = "Density",
-     main = "Misspecified model: identical spread across X1")
+    xlim = c(0, 1),
+    ylim = c(0, 8),
+    xlab = "y",
+    ylab = "Density",
+    main = "Misspecified model: identical spread across X1"
+)
 
 cols <- c("red", "blue", "darkgreen")
 
 for (j in 1:3) {
-  
-  idx <- which.min(abs(X1 - x_grid[j]))
-  
-  dens <- dbeta(y_seq,
-                shape1 = mu_hat[idx] * phi_hat[idx],
-                shape2 = (1 - mu_hat[idx]) * phi_hat[idx])
-  
-  lines(y_seq, dens, col = cols[j], lwd = 2)
+    idx <- which.min(abs(X1 - x_grid[j]))
+
+    dens <- dbeta(y_seq,
+        shape1 = mu_hat[idx] * phi_hat[idx],
+        shape2 = (1 - mu_hat[idx]) * phi_hat[idx]
+    )
+
+    lines(y_seq, dens, col = cols[j], lwd = 2)
 }
 
 legend("topright",
-       legend = paste0("X1 ≈ ", round(x_grid, 2)),
-       col = cols,
-       lwd = 2)
+    legend = paste0("X1 ≈ ", round(x_grid, 2)),
+    col = cols,
+    lwd = 2
+)
 ```
 
 ```{r}
-# bw_cond <- npcdensbw(Y ~ X1 + X2 + X3,
-#     data = sim_data_fixed_phi,
+data_pca <- prcomp(
+    sim_data[, names(sim_data) != "Y"],
+    center = TRUE, scale. = TRUE
+)
+summary(data_pca)
+head(data_pca$x)
+# predict(data_pca, newdata = data.frame(
+#     pc1 = 1.9411608972877326, pc2 = 2.6111184979065585, pc3 = -0.6013957929255663
+# ))
+
+reconstruct_pca <- function(z, pca_model, k = 3) {
+    rotation <- pca_model$rotation[, 1:k]
+    center <- pca_model$center
+    scale <- pca_model$scale
+
+    x_scaled <- z %*% t(rotation)
+
+    x <- sweep(x_scaled, 2, scale, "*")
+    x <- sweep(x, 2, center, "+")
+
+    return(as.numeric(x))
+}
+reconstruct_pca(
+    c(1.9411608972877326, 2.6111184979065585, -0.6013957929255663), data_pca
+)
+```
+
+```{r}
+# bw_cond <- npcdensbw(Y ~ X1 + X2 + X3 + X4 + X5,
+#     data = sim_data,
 #     wmethod = "cv.ml"
 # )
 
 # bw_cond
 
-# Conditional density data (1000 observations, 4 variable(s))
-# (1 dependent variable(s), and 3 explanatory variable(s))
+# Conditional density data (1000 observations, 6 variable(s))
+# (1 dependent variable(s), and 5 explanatory variable(s))
 
 #                                  Y
-# Dep. Var. Bandwidth(s): 0.04209059
-#                                X1        X2       X3
-# Exp. Var. Bandwidth(s): 0.3980219 0.5821581 1.292169
+# Dep. Var. Bandwidth(s): 0.02675895
+#                                X1        X2       X3        X4        X5
+# Exp. Var. Bandwidth(s): 0.3350361 0.7421807 1.015481 0.1895807 0.5358538
 
 # Bandwidth Selection Method: Maximum Likelihood Cross-Validation
-# Formula: Y ~ X1 + X2 + X3
+# Formula: Y ~ X1 + X2 + X3 + X4 + X5
 # Bandwidth Type: Fixed
-# Objective Function Value: 284.2563 (achieved on multistart 2)
+# Objective Function Value: 1278.562 (achieved on multistart 4)
 
-# Continuous Kernel Type: Second-Order Gaussian 
-# No. Continuous Dependent Vars.: 1 
-# No. Continuous Explanatory Vars.: 3
-
-
-# Conditional density data (1000 observations, 4 variable(s))
-# (1 dependent variable(s), and 3 explanatory variable(s))
-
-#                                   Y
-# Dep. Var. Bandwidth(s): 0.004129468
-#                                X1       X2       X3
-# Exp. Var. Bandwidth(s): 0.4163451 2.120657 1.909542
-
-# Bandwidth Selection Method: Maximum Likelihood Cross-Validation
-# Formula: Y ~ X1 + X2 + X3
-# Bandwidth Type: Fixed
-# Objective Function Value: 779.5153 (achieved on multistart 2)
-
-# Continuous Kernel Type: Second-Order Gaussian 
-# No. Continuous Dependent Vars.: 1 
-# No. Continuous Explanatory Vars.: 3
+# Continuous Kernel Type: Second-Order Gaussian
+# No. Continuous Dependent Vars.: 1
+# No. Continuous Explanatory Vars.: 5
 ```

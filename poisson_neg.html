@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="generator" content="Observable Framework v1.13.3">
-<title>Poisson &amp; Negtive Binomial Regression | VCD Project</title>
+<title>Poisson &amp; Negative Binomial Regression | VCD Project</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="preload" as="style" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
@@ -12,32 +12,26 @@
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&amp;display=swap" crossorigin>
 <link rel="stylesheet" type="text/css" href="./_observablehq/theme-air,near-midnight.dcdbf18e.css">
 <link rel="stylesheet" type="text/css" href="./_observablehq/stdlib/inputs.ea9fd553.css">
-<link rel="modulepreload" href="./_observablehq/client.48e27f80.js">
+<link rel="modulepreload" href="./_observablehq/client.e73ce0be.js">
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
 <link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
 <link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
-<link rel="modulepreload" href="./_import/components/hook/useOption.a983f875.js">
-<link rel="modulepreload" href="./_import/components/modelList.98b739ae.js">
-<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
-<link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
-<link rel="modulepreload" href="./_import/components/normWeights.f81d63f9.js">
-<link rel="modulepreload" href="./_import/components/r.f6ca0c3a.js">
+<link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
+<link rel="modulepreload" href="./_import/components/r.bd092806.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
-<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.70ac0bce.js">
-<link rel="modulepreload" href="./_import/components/scatterPlot3d.95fe92c3.js">
-<link rel="modulepreload" href="./_import/components/getPcaData.bbe6ec46.js">
-<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
+<link rel="modulepreload" href="./_import/components/pageComponents.ed1c8859.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
-<link rel="modulepreload" href="./_observablehq/stdlib/inputs.4ef1d259.js">
+<link rel="modulepreload" href="./_npm/htl@1.0.0/87d6f6ef.js">
+<link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
+<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
-<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.5.0/index.96ab480f.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
-<link rel="modulepreload" href="./_npm/htl@0.3.1/72f4716c.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
 <link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
 <link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
@@ -88,16 +82,16 @@
 <link rel="icon" href="https://avatars.githubusercontent.com/u/52379902?v=4" type="image/png" sizes="32x32">
 <script type="module">
 
-import {define} from "./_observablehq/client.48e27f80.js";
+import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.092e832d.csv","lastModified":1777369192755,"size":30355});
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780517923851,"size":63992});
 
-define({id: "609849cf", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","negRegession","webR","getSummary","poissonRegession","cke","loess","getCombinations","PcaInputRange","scatterPlot3d","getPcaData","matrixData"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {negRegession, webR, getSummary, poissonRegession, cke, loess}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.f81d63f9.js"), import("./_import/components/r.f6ca0c3a.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.70ac0bce.js"), import("./_import/components/scatterPlot3d.95fe92c3.js"), import("./_import/components/getPcaData.bbe6ec46.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
+define({id: "264976db", outputs: ["_","jStat","multiply","transpose","normWeights","negativeBinomialRegression","webR","getSummary","poissonRegression","getCombinations","attachWeights","createRangeFormMap","createWeightedScatterGrid","normalizeWeights"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose}, {normWeights}, {negativeBinomialRegression, webR, getSummary, poissonRegression}, {getCombinations}, {attachWeights, createRangeFormMap, createWeightedScatterGrid, normalizeWeights}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/normWeights.12937a58.js"), import("./_import/components/r.bd092806.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/pageComponents.ed1c8859.js")]);
 
 
-return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,negRegession,webR,getSummary,poissonRegession,cke,loess,getCombinations,PcaInputRange,scatterPlot3d,getPcaData,matrixData};
+return {_,jStat,multiply,transpose,normWeights,negativeBinomialRegression,webR,getSummary,poissonRegression,getCombinations,attachWeights,createRangeFormMap,createWeightedScatterGrid,normalizeWeights};
 }});
 
 define({id: "a3fb517b", inputs: ["display","Inputs","poiNegData"], body: (display,Inputs,poiNegData) => {
@@ -116,12 +110,8 @@ const conditionPointObj = view(Inputs.form(formMap));
 return {conditionPointObj};
 }});
 
-define({id: "9d89a716", mode: "inline", inputs: ["scatterList","display"], body: async (scatterList,display) => {
-display(await(
-scatterList.map(scatter => {
-    return scatter
-  })
-))
+define({id: "bc286b65", inputs: ["display","html","scatterList"], body: (display,html,scatterList) => {
+display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
 }});
 
 define({id: "05ced95b", inputs: ["display","pdfplot"], body: (display,pdfplot) => {
@@ -157,29 +147,19 @@ define({id: "d454a666", inputs: ["display","summary"], body: (display,summary) =
 display(summary);
 }});
 
-define({id: "26789752", inputs: ["getRanges","poiNegData","Inputs"], outputs: ["keys","formMap","ranges"], body: (getRanges,poiNegData,Inputs) => {
-const keys = ["x1", "x2", "x3"];
-const formMap = {};
-const ranges = getRanges(poiNegData);
-keys.forEach((key) => {
-  const result = ranges[key];
-  if (result instanceof Set) {
-    // @todo: countable variable
-  } else {
-    const { min, max } = result;
-    formMap[key] = Inputs.range([min, max], {
-      value: (min + max) / 2,
-      step: 0.1,
-      label: key,
-    });
-  }
+define({id: "ee94f13f", inputs: ["createRangeFormMap","poiNegData"], outputs: ["keys","formMap"], body: (createRangeFormMap,poiNegData) => {
+const keys = ["X1", "X2", "X3"];
+const formMap = createRangeFormMap({
+  data: poiNegData,
+  keys,
+  defaults: { X1: -1, X2: 0, X3: 0 },
+  step: 0.1,
 });
-return {keys,formMap,ranges};
+return {keys,formMap};
 }});
 
-define({id: "cabe7afb", inputs: ["getCombinations","conditionPointObj","poiNegData","jStat","_","normWeights","kernal","d3","Plot"], outputs: ["dim","keys","axisAr","conditionPoint","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","data_with_weights","wmin","wmax","scatterList"], body: (getCombinations,conditionPointObj,poiNegData,jStat,_,normWeights,kernal,d3,Plot) => {
+define({id: "05465223", inputs: ["getCombinations","keys","conditionPointObj","poiNegData","jStat","_","normWeights","kernal","normalizeWeights","d3","attachWeights","createWeightedScatterGrid","Plot"], outputs: ["dim","axisAr","conditionPoint","temp","stdevs","data","unnormalizedweights","weights","data_with_weights","scatterList"], body: (getCombinations,keys,conditionPointObj,poiNegData,jStat,_,normWeights,kernal,normalizeWeights,d3,attachWeights,createWeightedScatterGrid,Plot) => {
 const dim = 2;
-const keys = ["x1", "x2", "x3"];
 const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
 const temp = keys.map((key) => poiNegData.map((item) => item[key]));
@@ -193,75 +173,35 @@ const unnormalizedweights = normWeights(
   undefined,
   kernal,
 );
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+const weights = normalizeWeights({ d3, rawWeights: unnormalizedweights });
 
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  Y: poiNegData[index].y,
-  regime: poiNegData[index].regime,
-  weight: weights.find((item) => item.id === index).w,
-}));
-
-const wmin = d3.min(data_with_weights, (d) => d.weight);
-const wmax = d3.max(data_with_weights, (d) => d.weight);
-
-const scatterList = axisAr.map((item) => {
-  const [key1, key2] = item;
-  return Plot.plot({
-    title: `${key1} vs ${key2}`,
-    marks: [
-      Plot.dot(data_with_weights, {
-        x: key1,
-        y: key2,
-        fill: (d) => {
-          const t = (d.weight - wmin) / (wmax - wmin);
-          return d3.interpolateReds(t);
-        },
-        filter: (d) => d.regime === "NegBin",
-      }),
-
-      Plot.dot(data_with_weights, {
-        x: key1,
-        y: key2,
-        sort: "weight",
-        fill: (d) => {
-          const t = (d.weight - wmin) / (wmax - wmin);
-          return d3.interpolateBlues(t);
-        },
-        filter: (d) => d.regime === "Poisson",
-      }),
-
-      // conditional data point with orange color
-      Plot.dot(
-        [
-          {
-            [key1]: conditionPointObj[key1],
-            [key2]: conditionPointObj[key2],
-          },
-        ],
-        {
-          x: key1,
-          y: key2,
-          fill: "orange",
-          r: 10,
-        },
-      ),
-    ],
-  });
+const data_with_weights = attachWeights({
+  rows: poiNegData,
+  covariates: data,
+  responseKey: "Y",
+  sourceResponseKey: "Y",
+  weights,
+  extra: (row) => ({ regime: row.REGIME }),
 });
-return {dim,keys,axisAr,conditionPoint,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,data_with_weights,wmin,wmax,scatterList};
+
+const scatterList = createWeightedScatterGrid({
+  Plot,
+  d3,
+  axisPairs: axisAr,
+  data: data_with_weights,
+  conditionPoint: conditionPointObj,
+  regimeKey: "regime",
+  pointRadius: 8,
+});
+return {dim,axisAr,conditionPoint,temp,stdevs,data,unnormalizedweights,weights,data_with_weights,scatterList};
 }});
 
-define({id: "3d3ec2d5", inputs: ["model","webR","poiNegData","poissonRegession","negRegession","getSummary","multiply","transpose","conditionPoint","d3","jStat","data_with_weights","_","Plot"], outputs: ["isPoissonReg","output","estimates","summary","mean","theta","xGrid","coordinates","weightedDen","h","ckdCoordinates","pdfplot"], body: async (model,webR,poiNegData,poissonRegession,negRegession,getSummary,multiply,transpose,conditionPoint,d3,jStat,data_with_weights,_,Plot) => {
+define({id: "3fdbc2b8", inputs: ["model","webR","poiNegData","poissonRegression","negativeBinomialRegression","getSummary","multiply","transpose","conditionPoint","d3","jStat","data_with_weights","_","keys","Plot"], outputs: ["isPoissonReg","output","estimates","summary","mean","theta","xGrid","coordinates","weightedDen","h","ckdCoordinates","pdfplot"], body: async (model,webR,poiNegData,poissonRegression,negativeBinomialRegression,getSummary,multiply,transpose,conditionPoint,d3,jStat,data_with_weights,_,keys,Plot) => {
 const isPoissonReg = model === "Poisson Regression";
-// R regression code
+
+// Fit the selected count model in WebR, then compare its local PMF to the weighted data.
 await webR.objs.globalEnv.bind("poiNegData", poiNegData);
-// const output = await negRegession();
-const output = isPoissonReg ? await poissonRegession() : await negRegession();
+const output = isPoissonReg ? await poissonRegression() : await negativeBinomialRegression();
 const estimates = output.values;
 const summary = await getSummary();
 
@@ -289,7 +229,7 @@ const coordinates = xGrid.map((item) => {
 const weightedDen = xGrid.map((xCor) => {
   if (isPoissonReg) {
     const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, ["x1", "x2", "x3"]);
+      const covariateObj = _.pick(item, keys);
       const covariates = Object.values(covariateObj);
       const mean = Math.exp(
         multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
@@ -304,7 +244,7 @@ const weightedDen = xGrid.map((xCor) => {
     };
   } else {
     const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, ["x1", "x2", "x3"]);
+      const covariateObj = _.pick(item, keys);
       const covariates = Object.values(covariateObj);
       const mean = Math.exp(
         multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
@@ -383,33 +323,50 @@ return {isPoissonReg,output,estimates,summary,mean,theta,xGrid,coordinates,weigh
     <label id="observablehq-sidebar-close" for="observablehq-sidebar-toggle"></label>
     <li class="observablehq-link"><a href="./">VCD Project</a></li>
   </ol>
+  <div id="observablehq-search"><input type="search" placeholder="Search"></div>
+  <div id="observablehq-search-results"></div>
+  <script>{const o=document.querySelector("#observablehq-search");o.setAttribute("data-shortcut",`${/Mac|iPhone/.test(navigator.platform)?"\u2318":"Alt-"}K`);const t=o.querySelector("input"),r=()=>import("./_observablehq/search.37554d01.js");t.addEventListener("focus",r,{once:!0}),t.addEventListener("keydown",r,{once:!0});const c=document.querySelector("#observablehq-sidebar-toggle");addEventListener("keydown",e=>{(e.code==="KeyK"&&e.metaKey&&!e.altKey&&!e.ctrlKey||e.key==="/"&&!e.metaKey&&!e.altKey&&!e.ctrlKey&&e.target===document.body)&&(c.checked?t.focus():(c.click(),t.focus(),c.click()),t.select(),e.preventDefault())});}</script>
   <ol>
-    <li class="observablehq-link"><a href="./dashboard">Dashboard</a></li>
-    <li class="observablehq-link"><a href="./density_estimate">Density Estimator</a></li>
-    <li class="observablehq-link"><a href="./doctor">Doctor Visit</a></li>
-    <li class="observablehq-link"><a href="./pca">PCA example</a></li>
-    <li class="observablehq-link observablehq-link-active"><a href="./poisson_neg">Poisson &amp; Negtive Binomial Regression</a></li>
-    <li class="observablehq-link"><a href="./vcd_pca">Visualizing conditional distributions(PCA)</a></li>
-    <li class="observablehq-link"><a href="./vcd_v0">Visualizing conditional distributions(Close Loop)</a></li>
+    <li class="observablehq-link"><a href="./">Overview</a></li>
   </ol>
+  <section>
+    <summary>Application</summary>
+    <ol>
+    <li class="observablehq-link"><a href="./dashboard">Dashboard</a></li>
+    </ol>
+  </section>
+  <section class="observablehq-section-active">
+    <summary>Method Notes</summary>
+    <ol>
+    <li class="observablehq-link"><a href="./density_estimate">Density Estimator</a></li>
+    <li class="observablehq-link"><a href="./pca">PCA Navigation</a></li>
+    <li class="observablehq-link observablehq-link-active"><a href="./poisson_neg">Poisson &amp; Negative Binomial</a></li>
+    <li class="observablehq-link"><a href="./doctor">Doctor Visit</a></li>
+    </ol>
+  </section>
+  <section>
+    <summary>Prototypes</summary>
+    <ol>
+    <li class="observablehq-link"><a href="./vcd_v0">Slider Prototype</a></li>
+    <li class="observablehq-link"><a href="./vcd_pca">PCA Prototype</a></li>
+    </ol>
+  </section>
 </nav>
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:609849cf:--></div>
-<h1 id="poisson-and-negtive-binomial-regression" tabindex="-1"><a class="observablehq-header-anchor" href="#poisson-and-negtive-binomial-regression">Poisson &amp; Negtive Binomial Regression</a></h1>
-<p>This document firstly fits data using poisson regression. According to lack fit in some data points, change to negtive binomial regression which is expected to have a good fit. The document provides the process of checking model fit or lack fit using visulization method.</p>
-<p>These two regression methods model count data. In terms of histogram estimate, bar chart is used here. Each bar height equals to weight, and they sum up to one. In histogram context, the area of histogram should be one.</p>
+<div class="observablehq observablehq--block"><!--:264976db:--></div>
+<h1 id="poisson-and-negative-binomial-regression" tabindex="-1"><a class="observablehq-header-anchor" href="#poisson-and-negative-binomial-regression">Poisson &amp; Negative Binomial Regression</a></h1>
+<p>This page is the thesis method in its most controlled setting. The data are generated from two count regimes: one region follows a Poisson model, while another region has extra variation and is better described by a negative-binomial model.</p>
+<p>The global story can look calm. The local story is sharper: after choosing a conditional point, the weighted bar chart shows the empirical count distribution around that point, and the model curves show whether Poisson or negative binomial regression follows the same shape.</p>
 <h2 id="dataset-from-dgp" tabindex="-1"><a class="observablehq-header-anchor" href="#dataset-from-dgp">Dataset from dgp</a></h2>
-<p>Data generating process references <a href="https://www.overleaf.com/project/696eb73c13ae0d69be0a84bd" target="_blank" rel="noopener noreferrer">thesis paper</a>.</p>
+<p>The simulated data are the locally overdispersed count experiment from the thesis.</p>
 <div class="observablehq observablehq--block"><!--:a3fb517b:--></div>
 <div class="observablehq observablehq--block"><!--:28b797e0:--></div>
 <h2 id="select-conditional-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditional-data">Select Conditional Data</a></h2>
 <div class="observablehq observablehq--block"><!--:63f89669:--></div>
-<p>Covariates scatterplots are shown here. They're color firstly by regime property which indicates response. And darker color points means they're closer to conidtional datapoint in terms of Mahalanobis distance.</p>
-<div class="grid grid-cols-4">
-  <observablehq-loading></observablehq-loading><!--:9d89a716:-->
-</div>
+<p>The scatterplots show where the chosen point sits in covariate space. Darker points carry more local weight; red points belong to the negative-binomial regime and blue points belong to the Poisson regime.</p>
+<div class="observablehq observablehq--block"><!--:bc286b65:--></div>
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
 <h2 id="weight-datapoint" tabindex="-1"><a class="observablehq-header-anchor" href="#weight-datapoint">Weight Datapoint</a></h2>
 <div class="observablehq observablehq--block"><!--:a8ed1892:--></div>
@@ -419,13 +376,13 @@ return {isPoissonReg,output,estimates,summary,mean,theta,xGrid,coordinates,weigh
 <div class="observablehq observablehq--block"><!--:6815abba:--></div>
 <div class="observablehq observablehq--block"><!--:d454a666:--></div>
 <!-- js logics -->
-<div class="observablehq observablehq--block"><!--:26789752:--></div>
-<div class="observablehq observablehq--block"><!--:cabe7afb:--></div>
-<div class="observablehq observablehq--block"><!--:3d3ec2d5:--></div>
+<div class="observablehq observablehq--block"><!--:ee94f13f:--></div>
+<div class="observablehq observablehq--block"><!--:05465223:--></div>
+<div class="observablehq observablehq--block"><!--:3fdbc2b8:--></div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="./pca"><span>PCA example</span></a><a rel="next" href="./vcd_pca"><span>Visualizing conditional distributions(PCA)</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-04-28T10:03:32">Apr 28, 2026</a>.</div>
+<nav><a rel="prev" href="./pca"><span>PCA Navigation</span></a><a rel="next" href="./doctor"><span>Doctor Visit</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-03T20:21:19">Jun 3, 2026</a>.</div>
 </footer>
 </div>
 </body>

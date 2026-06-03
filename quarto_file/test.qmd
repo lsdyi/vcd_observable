@@ -1,0 +1,126 @@
+---
+title: "Simulation test"
+# format: pdf
+editor: visual
+---
+
+```{r}
+library(MASS)
+library(dplyr)
+library(tidyr)
+library(geepack)
+```
+
+```{r}
+simulate_dataset <- function(N = 5000, rho_b = 0.70) {
+    beta1 <- c(-1.0, 0.4, -0.5, 0.3, -0.2, 0.4)
+    beta2 <- c(-0.8, 0.3, -0.4, 0.2, -0.3, 0.3)
+
+    # Covariates
+    X1 <- rnorm(N, mean = 0, sd = 1)
+    X2 <- rnorm(N, mean = 0, sd = 1)
+    X3 <- rnorm(N, mean = 0, sd = 1)
+    X4 <- rnorm(N, mean = 0, sd = 1)
+    X5 <- rnorm(N, mean = 0, sd = 1)
+
+    # Random effects
+    sigma_b <- matrix(c(1, rho_b, rho_b, 1), nrow = 2)
+    b <- mvrnorm(n = N, mu = c(0, 0), Sigma = sigma_b)
+
+    # Linear predictor
+    eta1 <- beta1[1] + X1 * beta1[2] + X2 * beta1[3] + X3 * beta1[4] + X4 * beta1[5] + X5 * beta1[6] + b[, 1]
+    eta2 <- beta2[1] + X1 * beta2[2] + X2 * beta2[3] + X3 * beta2[4] + X4 * beta2[5] + X5 * beta2[6] + b[, 2]
+
+    # Probabilities
+    p1 <- 1 / (1 + exp(-eta1))
+    p2 <- 1 / (1 + exp(-eta2))
+
+    Y1 <- rbinom(N, size = 1, prob = p1)
+    Y2 <- rbinom(N, size = 1, prob = p2)
+
+    df <- data.frame(id = 1:N, Y1 = Y1, Y2 = Y2)
+    df <- cbind(df, X1, X2, X3, X4, X5)
+    return(df)
+}
+
+set.seed(123)
+datasets_5000 <- lapply(1:100, function(i) simulate_dataset(N = 5000))
+```
+
+```{r}
+gee_results <- vector("list", length(datasets_5000))
+
+for (i in seq_along(datasets_5000)) {
+    dat <- datasets_5000[[i]]
+
+    dat_long <- dat %>%
+        pivot_longer(cols = c(Y1, Y2), names_to = "outcome_type", values_to = "Y") %>%
+        mutate(is_Y2 = ifelse(outcome_type == "Y2", 1, 0)) %>%
+        arrange(id) #
+
+    dat_long$X1 <- as.numeric(dat_long$X1)
+    dat_long$X2 <- as.numeric(dat_long$X2)
+    dat_long$X3 <- as.numeric(dat_long$X3)
+    dat_long$X4 <- as.numeric(dat_long$X4)
+    dat_long$X5 <- as.numeric(dat_long$X5)
+    dat_long$is_Y2 <- as.factor(dat_long$is_Y2)
+
+    # id = id (individen)
+    #   fit_gee <- geeglm(
+    #     Y ~ X1 + X2 + X3 + X4 + X5 + is_Y2,
+    #     family = binomial("logit"),
+    #     id = id,
+    #     corstr = "exchangeable",
+    #     data = dat_long
+    #   )
+    fit_gee <- geeglm(
+        Y ~ (X1 + X2 + X3 + X4 + X5) * is_Y2,
+        family = binomial("logit"),
+        id = id,
+        corstr = "exchangeable",
+        data = dat_long
+    )
+
+    # 3. Spara summary
+    gee_results[[i]] <- summary(fit_gee)
+}
+```
+
+```{r}
+true_beta1 <- c("(Intercept)" = -1.0, "X1" = 0.4, "X2" = -0.5, "X3" = 0.3, "X4" = -0.2, "X5" = 0.4)
+true_beta2 <- c("(Intercept)" = -0.8, "X1" = 0.3, "X2" = -0.4, "X3" = 0.2, "X4" = -0.3, "X5" = 0.3)
+
+n_rep <- 100
+var_names <- rownames(gee_results[[1]]$coefficients)
+p <- length(var_names)
+
+coef_matrix <- matrix(NA, 100, p, dimnames = list(NULL, var_names))
+se_matrix <- matrix(NA, 100, p, dimnames = list(NULL, var_names))
+
+for (i in 1:100) {
+    coef_matrix[i, ] <- gee_results[[i]]$coefficients[, "Estimate"]
+    se_matrix[i, ] <- gee_results[[i]]$coefficients[, "Std.err"]
+}
+
+summary_table <- data.frame(
+    Parameter = names(true_beta1),
+    Mean_Estimate = colMeans(coef_matrix[, names(true_beta1)]),
+    Bias1 = colMeans(coef_matrix[, names(true_beta1)]) - true_beta1,
+    Bias2 = colMeans(coef_matrix[, names(true_beta1)]) - true_beta2,
+    Mean_SE = colMeans(se_matrix[, names(true_beta1)])
+)
+
+# Coverage probability
+summary_table$Coverage1 <- sapply(names(true_beta1), function(v) {
+    lower <- coef_matrix[, v] - 1.96 * se_matrix[, v]
+    upper <- coef_matrix[, v] + 1.96 * se_matrix[, v]
+    mean(lower <= true_beta1[v] & upper >= true_beta1[v])
+})
+summary_table$Coverage2 <- sapply(names(true_beta1), function(v) {
+    lower <- coef_matrix[, v] - 1.96 * se_matrix[, v]
+    upper <- coef_matrix[, v] + 1.96 * se_matrix[, v]
+    mean(lower <= true_beta2[v] & upper >= true_beta2[v])
+})
+
+summary_table
+```
