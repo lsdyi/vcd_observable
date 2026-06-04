@@ -25,6 +25,7 @@ export default {
       pages: [
         { name: "Slider Prototype", path: "/vcd_v0" },
         { name: "PCA Prototype", path: "/vcd_pca" },
+        { name: "React", path: "/react" },
       ],
     },
   ],

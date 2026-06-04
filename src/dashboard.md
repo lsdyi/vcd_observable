@@ -3,37 +3,6 @@ title: Dashboard
 toc: false
 ---
 
-```js
-import _ from "lodash";
-import jStat from "jstat";
-import { multiply, transpose, dotMultiply, add } from "mathjs";
-
-import { useOption } from "./components/hook/useOption.js";
-import { modelList } from "./components/modelList.js";
-import { getRanges } from "./components/getRanges.js";
-import { modelConfig } from "./components/modelConfig.js";
-import { normWeights } from "./components/normWeights.js";
-import { computeWeightsMixed, poissonKernel } from "./components/kernel.js";
-import { getCombinations } from "./components/getCombinations.js";
-import { PcaInputRange } from "./components/UI/PcaInputRange.js";
-import { scatterPlot3d } from "./components/scatterPlot3d.js";
-import { matrixData } from "./components/organizeData.js";
-import { selectFromKeys, getCardinalityFromMatrix } from "./components/util.js";
-import {
-  DATASET,
-  MODEL,
-  DEFAULT_DATASET_INDEX,
-  DEFAULT_MODEL_INDEX,
-  ESTIMATORS,
-  DEFAULT_ESTIMATOR_LIST,
-} from "./components/config.js";
-import { getEstimate } from "./components/getEstimate.js";
-import { chart } from "./components/scatterPlot.js";
-import { pageCache } from "./components/pageCache.js";
-
-import { Mutable } from "observablehq:stdlib";
-```
-
 ## Select Dataset
 
 ```js
@@ -43,16 +12,6 @@ const selectedDataset = view(
     value: DATASET[DEFAULT_DATASET_INDEX],
   }),
 );
-```
-
-```js
-const datasets = [
-  await FileAttachment("./data/dgp.csv").csv({ typed: true }),
-  await FileAttachment("./data/simulated_beta_data_phix.csv").csv({
-    typed: true,
-  }),
-  await FileAttachment("./data/doctorvisits.csv").csv({ typed: true }),
-];
 ```
 
 ## Select Model
@@ -70,28 +29,49 @@ const selectedModel = view(
 ## Select Conditional Data
 
 ```js
-const radioOptions = [
-  {
-    name: "use PCA",
-    id: 0,
-  },
-  {
-    name: "NOT use PCA",
-    id: 1,
-  },
-];
 const showPCA = view(
-  Inputs.radio(radioOptions, {
+  Inputs.radio(RADIO_OPTIONS, {
     format: (x) => x.name,
-    value: radioOptions[1],
+    value: RADIO_OPTIONS[RADIO_OPTION_INDEX],
     label: "PCA radio",
   }),
 );
 ```
 
 ```js
+const formMap = {};
+const ranges = getRanges(data);
+
+keys.forEach((key) => {
+  const result = ranges[key];
+
+  if (continousKeys.includes(key)) {
+    const { min, max } = result;
+    const value = (min + max) / 2;
+    const range = max - min;
+    const step = range > 100 ? 1 : range > 10 ? 0.1 : range > 1 ? 0.01 : 0.001;
+
+    formMap[key] = Inputs.range([min, max], {
+      value,
+      step,
+      label: key,
+    });
+  } else {
+    const options = Array.from(new Set(data.map((item) => item[key])));
+    const sortedOptions =
+      typeof options[0] === "number"
+        ? options.sort((a, b) => a - b)
+        : options.sort();
+
+    formMap[key] = Inputs.select(sortedOptions, {
+      label: key,
+      value: sortedOptions[0],
+    });
+  }
+});
+
 const formNode = Inputs.form(formMap);
-const conditionPointObj = view(formNode);
+const conditionPointObjFromSlider = view(formNode);
 ```
 
 ## Select bandwidth
@@ -128,17 +108,6 @@ const pcCordinate = view(pcaFormNode);
 ```
 
 ```js
-display(showPCA.id === 0 ? container : html`<div></div>`);
-display(
-  showPCA.id === 0
-    ? html`
-        <div>
-          <strong>Conditional Point</strong>
-          ${JSON.stringify(reConCor, null, 2)}
-        </div>
-      `
-    : html`<div></div>`,
-);
 display(html`
   <div>
     <strong>Conditional Point</strong>
@@ -147,11 +116,59 @@ display(html`
 `);
 ```
 
-<div class="grid grid-cols-4">
-  ${
-    scatterPlotList
-  }
-</div>
+```js
+display(showPCA.id === 0 ? container : html`<span></span>`);
+```
+
+```js
+const dim = 2;
+const axisAr = getCombinations(keys, dim);
+const onClick = (d) => {
+  Object.keys(formMap).forEach((key) => {
+    if (d[key] !== undefined) {
+      const input = formMap[key];
+
+      input.value = d[key];
+
+      input.dispatchEvent(new Event("input"));
+    }
+  });
+
+  formNode.dispatchEvent(new Event("input", { bubbles: true }));
+};
+const scatterPlotList = axisAr.map((item) => {
+  const [key1, key2] = item;
+
+  return chart(
+    [
+      ...data_with_weights.map((item, index) => {
+        return {
+          group: "observation", // group key
+          x: item[key1],
+          y: item[key2],
+          weight: item.weight,
+          residual: residuals[index],
+        };
+      }),
+      {
+        group: "conditional", // group key
+        x: conditionPointObj[key1],
+        y: conditionPointObj[key2],
+        weight: item.weight,
+      },
+    ],
+    width,
+    width,
+    10,
+    key1,
+    key2,
+    data_with_weights,
+    onClick,
+  );
+});
+
+display(html`<div class="grid grid-cols-4">${scatterPlotList}</div>`);
+```
 
 ```js
 const selectedEstimators = view(
@@ -176,6 +193,15 @@ display(summary);
 ```
 
 ```js
+// load all the datasets
+const datasets = [
+  await FileAttachment("./data/dgp.csv").csv({ typed: true }),
+  await FileAttachment("./data/simulated_beta_data_phix.csv").csv({
+    typed: true,
+  }),
+  await FileAttachment("./data/doctorvisits.csv").csv({ typed: true }),
+];
+
 const {
   csvPath,
   categoricalKeys,
@@ -190,51 +216,52 @@ const {
   name,
   responseBw,
 } = selectedDataset;
-const data = datasets[index];
+const data = datasets[index]; // original data selected
 ```
 
-<!-- js logics -->
-
 ```js
-const formMap = {};
-const ranges = getRanges(data);
-
-keys.forEach((key) => {
-  const result = ranges[key];
-
-  // CONTINUOUS: has min/max
-  if (continousKeys.includes(key)) {
-    const { min, max } = result;
-
-    const range = max - min;
-    const step = range > 100 ? 1 : range > 10 ? 0.1 : range > 1 ? 0.01 : 0.001;
-
-    formMap[key] = Inputs.range([min, max], {
-      value: (min + max) / 2,
-      step,
-      label: key,
-    });
-  }
-  // DISCRETE: Set
-  else {
-    const options = Array.from(new Set(data.map((item) => item[key])));
-
-    const sortedOptions =
-      typeof options[0] === "number"
-        ? options.sort((a, b) => a - b)
-        : options.sort();
-
-    formMap[key] = Inputs.select(sortedOptions, {
-      label: key,
-      value: sortedOptions[0],
-    });
-  }
+const { pcaData, pcaProxyObj } = await getPcaData(
+  data.map((item) => _.pick(item, continousKeys)),
+  continousKeys,
+);
+const zCor = continousKeys.map((_, index) => {
+  return pcCordinate[index] || 0;
 });
-```
+const rotationMatrix = matrixData(
+  pcaProxyObj.values[1].values,
+  continousKeys.length,
+  continousKeys.length,
+);
+const scaleVec = pcaProxyObj.values[3].values;
+const centerVec = pcaProxyObj.values[2].values;
+const reConCor = add(
+  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
+  centerVec,
+);
 
-```js
-const dim = 2;
-const axisAr = getCombinations(keys, dim);
+const onClick3D = (eventData) => {
+  const temp = eventData.points[0];
+  const pc1 = pcaFormNode.children[0];
+  pc1.value = temp.x;
+
+  const pc2 = pcaFormNode.children[1];
+  pc2.value = temp.y;
+
+  const pc3 = pcaFormNode.children[2];
+  pc3.value = temp.z;
+
+  pcaFormNode.dispatchEvent(new Event("input", { bubbles: true }));
+  formNode.dispatchEvent(new Event("input", { bubbles: true }));
+};
+
+// weights calculation
+let conditionPointObj =
+  showPCA.id === 0
+    ? Object.fromEntries(keys.map((key, i) => [key, reConCor[i]]))
+    : conditionPointObjFromSlider;
+
+const conditionPoint =
+  showPCA.id === 0 ? reConCor : Object.values(conditionPointObj);
 
 const temp = keys.map((key) => data.map((item) => item[key]));
 const stdevs = temp.map((item) => jStat.stdev(item));
@@ -268,113 +295,19 @@ const data_with_weights = data.map((d, index) => ({
   ...d,
   weight: weights[index],
 }));
-console.log("update datawithweights", showPCA);
-```
-
-```js
-const onClick = (d) => {
-  Object.keys(formMap).forEach((key) => {
-    if (d[key] !== undefined) {
-      const input = formMap[key];
-
-      input.value = d[key];
-
-      input.dispatchEvent(new Event("input"));
-    }
-  });
-
-  formNode.dispatchEvent(new Event("input", { bubbles: true }));
-};
-const scatterPlotList = axisAr.map((item) => {
-  const [key1, key2] = item;
-
-  return chart(
-    [
-      ...data_with_weights.map((item, index) => {
-        return {
-          group: "observation", // group key
-          x: item[key1],
-          y: item[key2],
-          weight: item.weight,
-          residual: residuals.values[index],
-        };
-      }),
-      {
-        group: "conditional", // group key
-        x: conditionPointObj[key1],
-        y: conditionPointObj[key2],
-        weight: item.weight,
-      },
-    ],
-    width,
-    width,
-    10,
-    key1,
-    key2,
-    data_with_weights,
-    onClick,
-  );
-});
-```
-
-```js
-import {
-  negRegession,
-  webR,
-  getSummary,
-  poissonRegession,
-  cke,
-  loess,
-  getPearsonResiduals,
-} from "./components/r.js";
-import { getPcaData } from "./components/getPcaData.js";
-```
-
-```js
-const { pcaData, pcaProxyObj } = await getPcaData(
-  data_with_weights.map((item) => _.pick(item, continousKeys)),
-  continousKeys,
-);
-const zCor = continousKeys.map((_, index) => {
-  return pcCordinate[index] || 0;
-});
-const rotationMatrix = matrixData(
-  pcaProxyObj.values[1].values,
-  continousKeys.length,
-  continousKeys.length,
-);
-const scaleVec = pcaProxyObj.values[3].values;
-const centerVec = pcaProxyObj.values[2].values;
-const reConCor = add(
-  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
-  centerVec,
-);
-
-const onClick3D = (eventData) => {
-  const temp = eventData.points[0];
-  const pc1 = pcaFormNode.children[0];
-  pc1.value = temp.x;
-
-  const pc2 = pcaFormNode.children[1];
-  pc2.value = temp.y;
-
-  const pc3 = pcaFormNode.children[2];
-  pc3.value = temp.z;
-
-  pcaFormNode.dispatchEvent(new Event("input", { bubbles: true }));
-  formNode.dispatchEvent(new Event("input", { bubbles: true }));
-};
 
 const container = scatterPlot3d(
-  pcaData,
+  pcaData.map((item, index) => {
+    return {
+      ...item,
+      residual: residuals[index],
+    };
+  }),
   ["pc1", "pc2", "pc3"],
   pcCordinate,
   data_with_weights,
   onClick3D,
 );
-
-const conditionPoint =
-  showPCA.id === 0 ? reConCor : Object.values(conditionPointObj);
 ```
 
 ```js
@@ -383,7 +316,10 @@ await webR.objs.globalEnv.bind("data", data);
 
 const { rFun, family, conditional } = selectedModel;
 
-const newModelOrData = pageCache.data !== data || pageCache.family !== family || pageCache.conditional !== conditional;
+const newModelOrData =
+  pageCache.data !== data ||
+  pageCache.family !== family ||
+  pageCache.conditional !== conditional;
 
 if (newModelOrData) {
   const output =
@@ -400,7 +336,7 @@ if (newModelOrData) {
 
 const { output } = pageCache;
 
-const { coordinates, weightedGLM, ckCoordinates, modCkdCoordinates } =
+const newModelState =
   await getEstimate(
     family,
     output,
@@ -411,9 +347,11 @@ const { coordinates, weightedGLM, ckCoordinates, modCkdCoordinates } =
     responseBw,
     conditional,
   );
+setModelState(newModelState);
 
 const summary = await getSummary();
-const residuals = await getPearsonResiduals();
+const temp = await getPearsonResiduals();
+setResiduals(temp.values);
 
 function negBinomialPMF(k, r, p) {
   if (k < 0) return 0;
@@ -423,6 +361,8 @@ function negBinomialPMF(k, r, p) {
 ```
 
 ```js
+const { coordinates, weightedGLM, ckCoordinates, modCkdCoordinates } =
+  modelState;
 const showGLMEstimator =
   selectedEstimators.findIndex((item) => item.id === 0) !== -1;
 
@@ -547,4 +487,66 @@ const pdfplot = Plot.plot({
 
   marks,
 });
+```
+
+```js
+import _ from "lodash";
+import jStat from "jstat";
+import { multiply, transpose, dotMultiply, add } from "mathjs";
+
+import { useOption } from "./components/hook/useOption.js";
+import { modelList } from "./components/modelList.js";
+import { getRanges } from "./components/getRanges.js";
+import { modelConfig } from "./components/modelConfig.js";
+import { normWeights } from "./components/normWeights.js";
+import { computeWeightsMixed, poissonKernel } from "./components/kernel.js";
+import { getCombinations } from "./components/getCombinations.js";
+import { PcaInputRange } from "./components/UI/PcaInputRange.js";
+import { scatterPlot3d } from "./components/scatterPlot3d.js";
+import { matrixData } from "./components/organizeData.js";
+import { selectFromKeys, getCardinalityFromMatrix } from "./components/util.js";
+import {
+  DATASET,
+  MODEL,
+  DEFAULT_DATASET_INDEX,
+  DEFAULT_MODEL_INDEX,
+  ESTIMATORS,
+  DEFAULT_ESTIMATOR_LIST,
+  RADIO_OPTIONS,
+  RADIO_OPTION_INDEX,
+} from "./components/config.js";
+import { getEstimate } from "./components/getEstimate.js";
+import { chart } from "./components/scatterPlot.js";
+import { pageCache } from "./components/pageCache.js";
+import { Mutable } from "observablehq:stdlib";
+import {
+  negRegession,
+  webR,
+  getSummary,
+  poissonRegession,
+  cke,
+  loess,
+  getPearsonResiduals,
+} from "./components/r.js";
+import { getPcaData } from "./components/getPcaData.js";
+
+// non-input state
+const residuals = Mutable([]);
+const setResiduals = (newValue) => {
+  if (!_.isEqual(newValue, residuals.value)) {
+    residuals.value = newValue;
+  }
+};
+
+const modelState = Mutable({
+  coordinates: [],
+  weightedGLM: [],
+  ckCoordinates: [],
+  modCkdCoordinates: [],
+});
+const setModelState = (newValue) => {
+  if (!_.isEqual(newValue, modelState.value)) {
+    modelState.value = newValue;
+  }
+};
 ```

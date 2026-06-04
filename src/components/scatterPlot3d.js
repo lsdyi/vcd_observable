@@ -10,12 +10,14 @@ export const scatterPlot3d = (
   keys = ["x", "y", "z"],
   coordinate = [],
   data_with_weights = [],
-  onClick3D
+  onClick3D,
 ) => {
   // --- top residuals ---
-  const top = [...data]
-    .sort((a, b) => Math.abs(b.residual) - Math.abs(a.residual))
-    .slice(0, 10);
+  const top = data[0].residual
+    ? [...data]
+        .sort((a, b) => Math.abs(b.residual) - Math.abs(a.residual))
+        .slice(0, 10)
+    : [];
 
   const wScale = d3
     .scaleLinear()
