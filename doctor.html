@@ -17,11 +17,10 @@
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
 <link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
-<link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
-<link rel="modulepreload" href="./_import/components/kernel.a91a6573.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
-<link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
-<link rel="modulepreload" href="./_import/components/pageComponents.ed1c8859.js">
+<link rel="modulepreload" href="./_import/components/pageComponents.f0021791.js">
+<link rel="modulepreload" href="./_import/components/weighting.b58377f1.js">
+<link rel="modulepreload" href="./_import/components/countModels.4c4872f0.js">
 <link rel="modulepreload" href="./_import/components/r.bd092806.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_npm/htl@1.0.0/87d6f6ef.js">
@@ -29,20 +28,15 @@
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
+<link rel="modulepreload" href="./_import/components/kernel.a91a6573.js">
+<link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
+<link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
+<link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
+<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
-<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
-<link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
-<link rel="modulepreload" href="./_node/decimal.js@10.6.0/index.7033d8a1.js">
-<link rel="modulepreload" href="./_node/complex.js@2.4.3/index.4529d832.js">
-<link rel="modulepreload" href="./_node/fraction.js@5.3.4/index.0a55e83c.js">
-<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/defineProperty.57a30997.js">
-<link rel="modulepreload" href="./_node/javascript-natural-sort@0.7.1/index.5392e267.js">
-<link rel="modulepreload" href="./_node/escape-latex@1.2.0/index.8adbe58e.js">
-<link rel="modulepreload" href="./_node/seedrandom@3.0.5/index.d180388a.js">
-<link rel="modulepreload" href="./_node/tiny-emitter@2.1.0/index.82df77ed.js">
 <link rel="modulepreload" href="./_npm/d3-array@3.2.4/e93ca09f.js">
 <link rel="modulepreload" href="./_npm/d3-axis@3.0.0/0f2de24d.js">
 <link rel="modulepreload" href="./_npm/d3-brush@3.0.0/65eb105b.js">
@@ -75,6 +69,16 @@
 <link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/53fe8176.js">
 <link rel="modulepreload" href="./_node/htl@0.3.1/index.0caf36e7.js">
 <link rel="modulepreload" href="./_node/isoformat@0.2.1/index.0882e9d9.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
+<link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
+<link rel="modulepreload" href="./_node/decimal.js@10.6.0/index.7033d8a1.js">
+<link rel="modulepreload" href="./_node/complex.js@2.4.3/index.4529d832.js">
+<link rel="modulepreload" href="./_node/fraction.js@5.3.4/index.0a55e83c.js">
+<link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/defineProperty.57a30997.js">
+<link rel="modulepreload" href="./_node/javascript-natural-sort@0.7.1/index.5392e267.js">
+<link rel="modulepreload" href="./_node/escape-latex@1.2.0/index.8adbe58e.js">
+<link rel="modulepreload" href="./_node/seedrandom@3.0.5/index.d180388a.js">
+<link rel="modulepreload" href="./_node/tiny-emitter@2.1.0/index.82df77ed.js">
 <link rel="modulepreload" href="./_npm/internmap@2.0.3/e08981d9.js">
 <link rel="modulepreload" href="./_npm/delaunator@5.1.0/d4ec0aa1.js">
 <link rel="modulepreload" href="./_npm/binary-search-bounds@2.0.5/cbf6ba23.js">
@@ -85,13 +89,13 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1780538112858,"size":97292});
+registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1780539438365,"size":97292});
 
-define({id: "4ce323f7", outputs: ["_","jStat","multiply","transpose","computeWeightsMixed","poissonKernel","getCombinations","selectFromKeys","getCardinalityFromMatrix","createRangeFormMap","createWeightedScatterGrid","negativeBinomialRegression","webR","getSummary","poissonRegression","getPearsonResiduals"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose}, {computeWeightsMixed, poissonKernel}, {getCombinations}, {selectFromKeys, getCardinalityFromMatrix}, {createRangeFormMap, createWeightedScatterGrid}, {negativeBinomialRegression, webR, getSummary, poissonRegression, getPearsonResiduals}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/kernel.a91a6573.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/util.8c2c9357.js"), import("./_import/components/pageComponents.ed1c8859.js"), import("./_import/components/r.bd092806.js")]);
+define({id: "7bc1dfb1", outputs: ["_","jStat","getCombinations","createRangeFormMap","createWeightedScatterGrid","computeDashboardWeights","createCountModelCurves","createCountPmfPlot","createPoissonKernelCurve","negativeBinomialRegression","webR","getSummary","poissonRegression","getPearsonResiduals"], body: async () => {
+const [{default: _}, {default: jStat}, {getCombinations}, {createRangeFormMap, createWeightedScatterGrid}, {computeDashboardWeights}, {createCountModelCurves, createCountPmfPlot, createPoissonKernelCurve}, {negativeBinomialRegression, webR, getSummary, poissonRegression, getPearsonResiduals}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/pageComponents.f0021791.js"), import("./_import/components/weighting.b58377f1.js"), import("./_import/components/countModels.4c4872f0.js"), import("./_import/components/r.bd092806.js")]);
 
 
-return {_,jStat,multiply,transpose,computeWeightsMixed,poissonKernel,getCombinations,selectFromKeys,getCardinalityFromMatrix,createRangeFormMap,createWeightedScatterGrid,negativeBinomialRegression,webR,getSummary,poissonRegression,getPearsonResiduals};
+return {_,jStat,getCombinations,createRangeFormMap,createWeightedScatterGrid,computeDashboardWeights,createCountModelCurves,createCountPmfPlot,createPoissonKernelCurve,negativeBinomialRegression,webR,getSummary,poissonRegression,getPearsonResiduals};
 }});
 
 define({id: "96836a7f", inputs: ["display","Inputs","doctorvisits"], body: (display,Inputs,doctorvisits) => {
@@ -158,7 +162,7 @@ const formMap = createRangeFormMap({
 return {keys,formMap};
 }});
 
-define({id: "95d241c6", inputs: ["getCombinations","keys","conditionPointObj","doctorvisits","_","selectFromKeys","getCardinalityFromMatrix","kernal","computeWeightsMixed"], outputs: ["dim","axisAr","conditionPoint","data","categoricalKeys","continousKeys","XCont","XCat","XOrd","x0","bwCont","lambdaCat","lambdaOrd","Ccat","externalH","weights","data_with_weights"], body: (getCombinations,keys,conditionPointObj,doctorvisits,_,selectFromKeys,getCardinalityFromMatrix,kernal,computeWeightsMixed) => {
+define({id: "4472dabf", inputs: ["getCombinations","keys","conditionPointObj","doctorvisits","_","kernal","computeDashboardWeights"], outputs: ["dim","axisAr","conditionPoint","data","categoricalKeys","continousKeys","ordinalKeys","bwCont","lambdaCat","lambdaOrd","externalH","weightedCovariates","data_with_weights"], body: (getCombinations,keys,conditionPointObj,doctorvisits,_,kernal,computeDashboardWeights) => {
 const dim = 2;
 const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
@@ -166,38 +170,29 @@ const data = doctorvisits.map((item) => _.pick(item, keys));
 
 const categoricalKeys = ["reform", "badh"];
 const continousKeys = ["age", "educ", "loginc"];
-const XCont = selectFromKeys(data, continousKeys);
-const XCat = selectFromKeys(data, categoricalKeys);
-const XOrd = [];
-const x0 = {
-  cont: selectFromKeys([conditionPointObj], continousKeys).flat(),
-  cat: selectFromKeys([conditionPointObj], categoricalKeys).flat(),
-  ord: selectFromKeys([conditionPointObj], []).flat(),
-};
+const ordinalKeys = [];
 const bwCont = [13.91312, 2.417221, 124196.4];
 const lambdaCat = [0.3210706, 0.01451098];
 const lambdaOrd = [];
-const Ccat = getCardinalityFromMatrix(XCat);
 const externalH = kernal;
-
-const weights = computeWeightsMixed({
-  XCont,
-  XCat,
-  XOrd,
-  x0,
+const { dataWithWeights: weightedCovariates } = computeDashboardWeights({
+  data,
+  conditionPointObj,
+  continousKeys,
+  categoricalKeys,
+  ordinalKeys,
   bwCont,
   lambdaCat,
   lambdaOrd,
-  Ccat,
   externalH,
+  externalLamda: 1,
 });
 
-const data_with_weights = data.map((d, index) => ({
+const data_with_weights = weightedCovariates.map((d, index) => ({
   ...d,
   numvisit: doctorvisits[index].numvisit,
-  weight: weights[index],
 }));
-return {dim,axisAr,conditionPoint,data,categoricalKeys,continousKeys,XCont,XCat,XOrd,x0,bwCont,lambdaCat,lambdaOrd,Ccat,externalH,weights,data_with_weights};
+return {dim,axisAr,conditionPoint,data,categoricalKeys,continousKeys,ordinalKeys,bwCont,lambdaCat,lambdaOrd,externalH,weightedCovariates,data_with_weights};
 }});
 
 define({id: "4acb37ee", inputs: ["createWeightedScatterGrid","Plot","d3","axisAr","data_with_weights","conditionPointObj","residuals"], outputs: ["scatterList"], body: (createWeightedScatterGrid,Plot,d3,axisAr,data_with_weights,conditionPointObj,residuals) => {
@@ -212,7 +207,7 @@ const scatterList = createWeightedScatterGrid({
 return {scatterList};
 }});
 
-define({id: "b4bb3fce", inputs: ["model","webR","doctorvisits","poissonRegression","negativeBinomialRegression","getSummary","getPearsonResiduals","multiply","transpose","conditionPoint","jStat","d3","data_with_weights","_","keys","poissonKernel"], outputs: ["isPoissonReg","output","estimates","summary","residuals","mean","theta","negBinomialPMF","xGrid","coordinates","weightedDen","h","ckdCoordinates"], body: async (model,webR,doctorvisits,poissonRegression,negativeBinomialRegression,getSummary,getPearsonResiduals,multiply,transpose,conditionPoint,jStat,d3,data_with_weights,_,keys,poissonKernel) => {
+define({id: "62670121", inputs: ["model","webR","doctorvisits","poissonRegression","negativeBinomialRegression","getSummary","getPearsonResiduals","d3","createCountModelCurves","data_with_weights","keys","conditionPoint","jStat","createPoissonKernelCurve"], outputs: ["isPoissonReg","output","estimates","summary","residuals","xGrid","coordinates","weightedDen","h","ckdCoordinates"], body: async (model,webR,doctorvisits,poissonRegression,negativeBinomialRegression,getSummary,getPearsonResiduals,d3,createCountModelCurves,data_with_weights,keys,conditionPoint,jStat,createPoissonKernelCurve) => {
 const isPoissonReg = model === "Poisson Regression";
 
 // Fit the count model in WebR and keep the local comparison in JavaScript.
@@ -231,121 +226,36 @@ const estimates = output.values;
 const summary = await getSummary();
 const residuals = await getPearsonResiduals();
 
-const mean = Math.exp(
-  multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 6)),
-);
-const theta = estimates[6];
-
-function negBinomialPMF(k, r, p) {
-  if (k < 0) return 0;
-  const coef = jStat.gammafn(k + r) / (jStat.gammafn(r) * jStat.gammafn(k + 1));
-  return coef * Math.pow(p, r) * Math.pow(1 - p, k);
-}
-
 const xGrid = d3.range(0, 50, 1);
-const coordinates = xGrid.map((item) => {
-  if (isPoissonReg) {
-    return {
-      x: item,
-      y: jStat.jStat.poisson.pdf(item, mean) || 0,
-    };
-  } else {
-    return {
-      x: item,
-      y: negBinomialPMF(item, theta, theta / (mean + theta)) || 0,
-    };
-  }
-});
-
-const weightedDen = xGrid.map((xCor) => {
-  if (isPoissonReg) {
-    const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, keys);
-      const covariates = Object.values(covariateObj);
-      const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 6)),
-      );
-      const y = jStat.jStat.poisson.pdf(xCor, mean) || 0;
-      return y * item.weight;
-    });
-
-    return {
-      x: xCor,
-      y: d3.sum(yList),
-    };
-  } else {
-    const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, keys);
-      const covariates = Object.values(covariateObj);
-      const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 6)),
-      );
-      const y = negBinomialPMF(xCor, theta, theta / (mean + theta)) || 0;
-      return y * item.weight;
-    });
-
-    return {
-      x: xCor,
-      y: d3.sum(yList),
-    };
-  }
+const { coordinates, weightedDen } = createCountModelCurves({
+  d3,
+  dataWithWeights: data_with_weights,
+  covariateKeys: keys,
+  conditionPoint,
+  estimates,
+  isPoissonReg,
+  xGrid,
 });
 
 const h = jStat.stdev(data_with_weights.map((item) => item.numvisit));
-
-const ckdCoordinates = xGrid.map((item) => {
-  const temp = data_with_weights.map((datapoint) => {
-    const { numvisit, weight } = datapoint;
-
-    return weight * poissonKernel(item, numvisit, h);
-  });
-  return {
-    x: item,
-    y: d3.sum(temp),
-  };
+const ckdCoordinates = createPoissonKernelCurve({
+  d3,
+  dataWithWeights: data_with_weights,
+  responseKey: "numvisit",
+  bandwidth: h,
+  xGrid,
 });
-return {isPoissonReg,output,estimates,summary,residuals,mean,theta,negBinomialPMF,xGrid,coordinates,weightedDen,h,ckdCoordinates};
+return {isPoissonReg,output,estimates,summary,residuals,xGrid,coordinates,weightedDen,h,ckdCoordinates};
 }});
 
-define({id: "4f7a77d6", inputs: ["Plot","data_with_weights","coordinates","weightedDen","ckdCoordinates"], outputs: ["pdfplot"], body: (Plot,data_with_weights,coordinates,weightedDen,ckdCoordinates) => {
-const pdfplot = Plot.plot({
-  title: "pmf",
-
-  color: {
-    legend: true,
-  },
-
-  marks: [
-    Plot.ruleX([0]),
-    Plot.ruleY([0]),
-    Plot.barY(data_with_weights, {
-      x: "numvisit",
-      y: "weight",
-      fill: "steelblue",
-      opacity: 0.7,
-    }),
-    Plot.line(coordinates, {
-      x: "x",
-      y: "y",
-      stroke: "#F28C28",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-    Plot.line(weightedDen, {
-      x: "x",
-      y: "y",
-      stroke: "green",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-    Plot.line(ckdCoordinates, {
-      x: "x",
-      y: "y",
-      stroke: "red",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-  ],
+define({id: "b53be2ab", inputs: ["createCountPmfPlot","Plot","data_with_weights","coordinates","weightedDen","ckdCoordinates"], outputs: ["pdfplot"], body: (createCountPmfPlot,Plot,data_with_weights,coordinates,weightedDen,ckdCoordinates) => {
+const pdfplot = createCountPmfPlot({
+  Plot,
+  dataWithWeights: data_with_weights,
+  responseKey: "numvisit",
+  coordinates,
+  weightedDen,
+  ckdCoordinates,
 });
 return {pdfplot};
 }});
@@ -393,7 +303,7 @@ return {pdfplot};
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:4ce323f7:--></div>
+<div class="observablehq observablehq--block"><!--:7bc1dfb1:--></div>
 <h1 id="real-dataset-doctor-visits" tabindex="-1"><a class="observablehq-header-anchor" href="#real-dataset-doctor-visits">Real Dataset: Doctor Visits</a></h1>
 <p>This page applies the thesis method to the German doctor-visit data. The response is a count: how many times each woman visited a physician during the last three months. The interesting question is not only whether Poisson or negative-binomial regression fits globally, but whether either model fits around a particular patient profile.</p>
 <div class="observablehq observablehq--block"><!--:96836a7f:--></div>
@@ -411,14 +321,14 @@ return {pdfplot};
 <!-- js logics -->
 <div class="observablehq observablehq--block"><!--:9104b024:--></div>
 <div class="observablehq observablehq--block"><!--:b4352644:--></div>
-<div class="observablehq observablehq--block"><!--:95d241c6:--></div>
+<div class="observablehq observablehq--block"><!--:4472dabf:--></div>
 <div class="observablehq observablehq--block"><!--:4acb37ee:--></div>
-<div class="observablehq observablehq--block"><!--:b4bb3fce:--></div>
-<div class="observablehq observablehq--block"><!--:4f7a77d6:--></div>
+<div class="observablehq observablehq--block"><!--:62670121:--></div>
+<div class="observablehq observablehq--block"><!--:b53be2ab:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./poisson_neg"><span>Poisson &amp; Negative Binomial</span></a><a rel="next" href="./vcd_v0"><span>Slider Prototype</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T01:56:57">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T02:18:31">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>

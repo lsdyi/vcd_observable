@@ -21,9 +21,10 @@
 <link rel="modulepreload" href="./_import/components/hook/useOption.a983f875.js">
 <link rel="modulepreload" href="./_import/components/modelList.98b739ae.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
-<link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
-<link rel="modulepreload" href="./_import/components/pageComponents.ed1c8859.js">
+<link rel="modulepreload" href="./_import/components/pageComponents.f0021791.js">
+<link rel="modulepreload" href="./_import/components/weighting.b58377f1.js">
+<link rel="modulepreload" href="./_import/components/plots.063ae0a1.js">
 <link rel="modulepreload" href="./_npm/react@19.2.7/jsx-runtime.c6c547ca.js">
 <link rel="modulepreload" href="./_import/components/r.bd092806.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
@@ -31,10 +32,16 @@
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_npm/react-dom@19.2.7/client.858c04f6.js">
-<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
 <link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
+<link rel="modulepreload" href="./_import/components/kernel.a91a6573.js">
+<link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
+<link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot.86ab2c01.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.a1619c2a.js">
 <link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
+<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.6.0/index.43b8cd79.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
 <link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
@@ -92,13 +99,13 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1780538112858,"size":73250});
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1780539438364,"size":73250});
 
-define({id: "49aef8a5", outputs: ["_","jStat","multiply","transpose","useOption","modelList","modelConfig","normWeights","getCombinations","createRangeFormMap"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose}, {useOption}, {modelList}, {modelConfig}, {normWeights}, {getCombinations}, {createRangeFormMap}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.12937a58.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/pageComponents.ed1c8859.js")]);
+define({id: "d673148d", outputs: ["_","jStat","multiply","transpose","useOption","modelList","modelConfig","getCombinations","createRangeFormMap","computeKernelWeightedRows","computeStdevsByKey","createWeightedScatterGridPlot"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose}, {useOption}, {modelList}, {modelConfig}, {getCombinations}, {createRangeFormMap}, {computeKernelWeightedRows, computeStdevsByKey}, {createWeightedScatterGridPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/pageComponents.f0021791.js"), import("./_import/components/weighting.b58377f1.js"), import("./_import/components/plots.063ae0a1.js")]);
 
 
-return {_,jStat,multiply,transpose,useOption,modelList,modelConfig,normWeights,getCombinations,createRangeFormMap};
+return {_,jStat,multiply,transpose,useOption,modelList,modelConfig,getCombinations,createRangeFormMap,computeKernelWeightedRows,computeStdevsByKey,createWeightedScatterGridPlot};
 }});
 
 define({id: "3e3650fd", inputs: ["FileAttachment"], outputs: ["creditCard"], body: (FileAttachment) => {
@@ -262,114 +269,37 @@ const kernal = view(
 return {kernal};
 }});
 
-define({id: "5de750be", inputs: ["continousCovariates","conditionPointObj","creditCard","jStat","_","normWeights","kernal","d3","display"], outputs: ["keys","conditionPoint","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights"], body: (continousCovariates,conditionPointObj,creditCard,jStat,_,normWeights,kernal,d3,display) => {
+define({id: "b97ce4ee", inputs: ["continousCovariates","conditionPointObj","creditCard","_","computeStdevsByKey","jStat","computeKernelWeightedRows","d3","kernal","display"], outputs: ["keys","conditionPoint","data","stdevs","data_with_weights","weights"], body: (continousCovariates,conditionPointObj,creditCard,_,computeStdevsByKey,jStat,computeKernelWeightedRows,d3,kernal,display) => {
 const keys = continousCovariates;
 const conditionPoint = Object.values(conditionPointObj);
 
-const temp = keys.map((key) => creditCard.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
-
 const data = creditCard.map((item) => _.pick(item, keys));
-const unnormalizedweights = normWeights(
-  data,
+const stdevs = computeStdevsByKey({ jStat, rows: creditCard, keys });
+const { dataWithWeights: data_with_weights, weights } = computeKernelWeightedRows({
+  d3,
+  rows: creditCard,
+  covariates: data,
   conditionPoint,
   stdevs,
-  undefined,
-  kernal,
-);
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+  kernelScale: kernal,
+});
 display(weights);
 display(data);
-return {keys,conditionPoint,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights};
+return {keys,conditionPoint,data,stdevs,data_with_weights,weights};
 }});
 
-define({id: "89c0b464", inputs: ["data","weights","display","getCombinations","keys","Plot","conditionPointObj"], outputs: ["weighteddata","data_with_weights","distance_type","dim","axisAr","scatterList"], body: (data,weights,display,getCombinations,keys,Plot,conditionPointObj) => {
-const weighteddata = "Yes";
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  weight:
-    weighteddata == "Yes"
-      ? weights.find((item) => item.id === index).w
-      : 1 / data.length,
-}));
-
+define({id: "7b0a536d", inputs: ["display","data_with_weights","getCombinations","keys","createWeightedScatterGridPlot","Plot","d3","conditionPointObj"], outputs: ["axisAr","scatterList"], body: (display,data_with_weights,getCombinations,keys,createWeightedScatterGridPlot,Plot,d3,conditionPointObj) => {
 display(data_with_weights);
 
-const distance_type = "euclidean";
-
-const dim = 2;
-const axisAr = getCombinations(keys, dim);
-
-const scatterList = axisAr.map((item) => {
-  const [key1, key2] = item;
-  return Plot.plot({
-    color: {
-      scheme: "blues",
-      transform: (f) => Math.sqrt(f),
-    },
-    title: `${key1} vs ${key2}`,
-    marks: [
-      Plot.dot(data_with_weights, {
-        filter: (d) => distance_type == "euclidean",
-        x: key1,
-        y: key2,
-        fill: "weight",
-        sort: "weight",
-      }),
-      // Plot.dot(data_with_weights, {
-      //   filter: (d) => (distance_type == "k-nearest") & (d.weight == 0),
-      //   x: "heatstress",
-      //   y: "cloudfree",
-      //   fill: "#E8E8E8",
-      //   sort: "weight",
-      // }),
-      // Plot.dot(data_with_weights, {
-      //   filter: (d) => (distance_type == "k-nearest") & (d.weight > 0),
-      //   x: "heatstress",
-      //   y: "cloudfree",
-      //   fill: "#0047AB",
-      //   sort: "weight",
-      // }),
-
-      // conditional data point with orange color
-      Plot.dot(
-        [
-          {
-            [key1]: conditionPointObj[key1],
-            [key2]: conditionPointObj[key2],
-          },
-        ],
-        {
-          x: key1,
-          y: key2,
-          fill: "orange",
-          r: 5,
-        },
-      ),
-      // Plot.tip(
-      //   data_with_weights,
-      //   Plot.pointer({
-      //     x: "heatstress",
-      //     y: "cloudfree",
-      //     title: (d) =>
-      //       [
-      //         "bleaching = ",
-      //         d.reports.toFixed(1),
-      //         ", depth = ",
-      //         d.age.toFixed(1),
-      //         ", weight = ",
-      //         d.income.toFixed(3),
-      //       ].join(""),
-      //   }),
-      // ),
-    ],
-  });
+const axisAr = getCombinations(keys, 2);
+const scatterList = createWeightedScatterGridPlot({
+  Plot,
+  d3,
+  axisPairs: axisAr,
+  data: data_with_weights,
+  conditionPoint: conditionPointObj,
 });
-return {weighteddata,data_with_weights,distance_type,dim,axisAr,scatterList};
+return {axisAr,scatterList};
 }});
 
 define({id: "bc286b65", inputs: ["display","html","scatterList"], body: (display,html,scatterList) => {
@@ -419,7 +349,7 @@ display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:49aef8a5:--></div>
+<div class="observablehq observablehq--block"><!--:d673148d:--></div>
 <h1 id="visualizing-conditional-distributions-slider-prototype" tabindex="-1"><a class="observablehq-header-anchor" href="#visualizing-conditional-distributions-slider-prototype">Visualizing Conditional Distributions: Slider Prototype</a></h1>
 <p>This page is an early, low-dimensional prototype of the thesis dashboard. It keeps the idea deliberately simple: choose a model, choose a conditioning point with sliders, weight nearby observations, and compare the local response distribution.</p>
 <h2 id="load-dataset" tabindex="-1"><a class="observablehq-header-anchor" href="#load-dataset">Load Dataset</a></h2>
@@ -443,13 +373,13 @@ display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
 <h3 id="select-smoothing-parameter" tabindex="-1"><a class="observablehq-header-anchor" href="#select-smoothing-parameter">Select smoothing parameter</a></h3>
 <p>To give every data point a weight.</p>
 <div class="observablehq observablehq--block"><!--:fb03a970:--></div>
-<div class="observablehq observablehq--block"><!--:5de750be:--></div>
-<div class="observablehq observablehq--block"><!--:89c0b464:--></div>
+<div class="observablehq observablehq--block"><!--:b97ce4ee:--></div>
+<div class="observablehq observablehq--block"><!--:7b0a536d:--></div>
 <div class="observablehq observablehq--block"><!--:bc286b65:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./doctor"><span>Doctor Visit</span></a><a rel="next" href="./vcd_pca"><span>PCA Prototype</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T01:56:57">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T02:18:31">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>

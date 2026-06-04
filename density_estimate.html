@@ -20,24 +20,21 @@
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
 <link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
 <link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
-<link rel="modulepreload" href="./_import/components/hook/useOption.a983f875.js">
-<link rel="modulepreload" href="./_import/components/modelList.98b739ae.js">
-<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
-<link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
-<link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
-<link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
-<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.a6a44b29.js">
-<link rel="modulepreload" href="./_import/components/scatterPlot3d.a1619c2a.js">
-<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
+<link rel="modulepreload" href="./_import/components/pageComponents.f0021791.js">
+<link rel="modulepreload" href="./_import/components/weighting.b58377f1.js">
 <link rel="modulepreload" href="./_import/components/r.bd092806.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/tex.10826b50.js">
-<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
-<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.6.0/index.43b8cd79.js">
+<link rel="modulepreload" href="./_import/components/kernel.a91a6573.js">
+<link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
+<link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
+<link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
+<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
 <link rel="modulepreload" href="./_npm/htl@1.0.0/87d6f6ef.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
@@ -94,13 +91,13 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780538112859,"size":108748});
+registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780539438366,"size":108748});
 
-define({id: "6b0edda6", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","getRanges","modelConfig","normWeights","getCombinations","PcaInputRange","scatterPlot3d","matrixData","Mutable"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {getRanges}, {modelConfig}, {normWeights}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {matrixData}, {Mutable}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/getRanges.5556642d.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.12937a58.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.a6a44b29.js"), import("./_import/components/scatterPlot3d.a1619c2a.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_observablehq/stdlib.73a8ec5a.js")]);
+define({id: "516fa5a0", outputs: ["_","jStat","multiply","transpose","createRangeFormMap","computeKernelWeightedRows","computeStdevsByKey"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose}, {createRangeFormMap}, {computeKernelWeightedRows, computeStdevsByKey}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/pageComponents.f0021791.js"), import("./_import/components/weighting.b58377f1.js")]);
 
 
-return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,getRanges,modelConfig,normWeights,getCombinations,PcaInputRange,scatterPlot3d,matrixData,Mutable};
+return {_,jStat,multiply,transpose,createRangeFormMap,computeKernelWeightedRows,computeStdevsByKey};
 }});
 
 define({id: "077f600b", mode: "inline", inputs: ["tex","display"], body: async (tex,display) => {
@@ -329,49 +326,33 @@ define({id: "05ced95b", inputs: ["display","pdfplot"], body: (display,pdfplot) =
 display(pdfplot);
 }});
 
-define({id: "5dd2562a", inputs: ["getRanges","betaData","Inputs"], outputs: ["keys","formMap","ranges"], body: (getRanges,betaData,Inputs) => {
+define({id: "49907763", inputs: ["createRangeFormMap","betaData"], outputs: ["keys","formMap"], body: (createRangeFormMap,betaData) => {
 const keys = ["X1", "X2", "X3"];
-const formMap = {};
-const ranges = getRanges(betaData);
-keys.forEach((key) => {
-  const result = ranges[key];
-  if (result instanceof Set) {
-    // @todo: countable variable
-  } else {
-    const { min, max } = result;
-    formMap[key] = Inputs.range([min, max], {
-      value: (min + max) / 2,
-      step: 0.5,
-      label: key,
-    });
-  }
+const formMap = createRangeFormMap({
+  data: betaData,
+  keys,
+  step: 0.5,
 });
-return {keys,formMap,ranges};
+return {keys,formMap};
 }});
 
-define({id: "233c46b7", inputs: ["conditionPointObj","betaData","jStat","_","normWeights","kernal","d3","multiply","transpose","Plot"], outputs: ["betaRegession","webR","loess","conditionPoint","keys","temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights","output","betas","phi","linearCom","mu","loessRes","loessMu","data_with_weights","weightedResidual","xGrid","coordinates","denCoordinates","h","ckdCoordinates","modCkdCoordinates","pdfplot"], body: async (conditionPointObj,betaData,jStat,_,normWeights,kernal,d3,multiply,transpose,Plot) => {
+define({id: "cd3cca89", inputs: ["conditionPointObj","betaData","_","computeStdevsByKey","jStat","computeKernelWeightedRows","d3","kernal","multiply","transpose","Plot"], outputs: ["betaRegession","webR","loess","conditionPoint","keys","data","stdevs","weightedData","weights","output","betas","phi","linearCom","mu","loessRes","loessMu","data_with_weights","weightedResidual","xGrid","coordinates","denCoordinates","h","ckdCoordinates","modCkdCoordinates","pdfplot"], body: async (conditionPointObj,betaData,_,computeStdevsByKey,jStat,computeKernelWeightedRows,d3,kernal,multiply,transpose,Plot) => {
 const {betaRegession, webR, loess} = await import("./_import/components/r.bd092806.js");
 
 const conditionPoint = Object.values(conditionPointObj);
 
 const keys = ["X1", "X2", "X3"];
-const temp = keys.map((key) => betaData.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
-
 const data = betaData.map((item) => _.pick(item, keys));
-const unnormalizedweights = normWeights(
-  data,
+const stdevs = computeStdevsByKey({ jStat, rows: betaData, keys });
+const { dataWithWeights: weightedData, weights } = computeKernelWeightedRows({
+  d3,
+  rows: betaData,
+  covariates: data,
   conditionPoint,
   stdevs,
-  undefined,
-  kernal,
-);
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+  kernelScale: kernal,
+  responseKey: "Y",
+});
 
 await webR.objs.globalEnv.bind("betaData", betaData);
 const output = await betaRegession();
@@ -384,10 +365,8 @@ const mu = 1 / (1 + Math.exp(-linearCom));
 const loessRes = await loess()
 const loessMu = loessRes.values[0]
 
-const data_with_weights = data.map((d, index) => ({
+const data_with_weights = weightedData.map((d, index) => ({
   ...d,
-  Y: betaData[index].Y,
-  weight: weights.find((item) => item.id === index).w,
   e: betaData[index].Y - loessMu,
 }));
 const weightedResidual = d3.sum(
@@ -504,7 +483,7 @@ const pdfplot = Plot.plot({
     }),
   ],
 });
-return {betaRegession,webR,loess,conditionPoint,keys,temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights,output,betas,phi,linearCom,mu,loessRes,loessMu,data_with_weights,weightedResidual,xGrid,coordinates,denCoordinates,h,ckdCoordinates,modCkdCoordinates,pdfplot};
+return {betaRegession,webR,loess,conditionPoint,keys,data,stdevs,weightedData,weights,output,betas,phi,linearCom,mu,loessRes,loessMu,data_with_weights,weightedResidual,xGrid,coordinates,denCoordinates,h,ckdCoordinates,modCkdCoordinates,pdfplot};
 }});
 
 define({id: "2beead3a", inputs: ["tex","display"], body: async (tex,display) => {
@@ -608,7 +587,7 @@ tex.block`e_j = Y_j - \hat r(X_j)`
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:6b0edda6:--></div>
+<div class="observablehq observablehq--block"><!--:516fa5a0:--></div>
 <h1 id="density-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#density-estimator">Density Estimator</a></h1>
 <p>This page covers</p>
 <ul>
@@ -648,8 +627,8 @@ tex.block`e_j = Y_j - \hat r(X_j)`
 <p>Conditional point is set to <observablehq-loading></observablehq-loading><!--:c1483183:-->. It should be able to change flexibly.</p>
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
 <!-- js logics -->
-<div class="observablehq observablehq--block"><!--:5dd2562a:--></div>
-<div class="observablehq observablehq--block"><!--:233c46b7:--></div>
+<div class="observablehq observablehq--block"><!--:49907763:--></div>
+<div class="observablehq observablehq--block"><!--:cd3cca89:--></div>
 <h2 id="kernel-estimator" tabindex="-1"><a class="observablehq-header-anchor" href="#kernel-estimator">Kernel Estimator</a></h2>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:2beead3a:--></div>
 <div class="observablehq observablehq--block"><observablehq-loading></observablehq-loading><!--:9f8c74d5:--></div>
@@ -663,7 +642,7 @@ tex.block`e_j = Y_j - \hat r(X_j)`
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./dashboard"><span>Dashboard</span></a><a rel="next" href="./pca"><span>PCA Navigation</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T01:56:57">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T02:18:31">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>

@@ -21,12 +21,12 @@
 <link rel="modulepreload" href="./_import/components/hook/useOption.a983f875.js">
 <link rel="modulepreload" href="./_import/components/modelList.98b739ae.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
-<link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
-<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.a6a44b29.js">
-<link rel="modulepreload" href="./_import/components/scatterPlot3d.a1619c2a.js">
 <link rel="modulepreload" href="./_import/components/getPcaData.efb7c441.js">
-<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
+<link rel="modulepreload" href="./_import/components/forms.8eae4b50.js">
+<link rel="modulepreload" href="./_import/components/pcaUtils.9772a307.js">
+<link rel="modulepreload" href="./_import/components/weighting.b58377f1.js">
+<link rel="modulepreload" href="./_import/components/plots.063ae0a1.js">
 <link rel="modulepreload" href="./_npm/react@19.2.7/jsx-runtime.c6c547ca.js">
 <link rel="modulepreload" href="./_import/components/r.bd092806.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
@@ -34,10 +34,18 @@
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_npm/react-dom@19.2.7/client.858c04f6.js">
-<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
+<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
+<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.a6a44b29.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
-<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.6.0/index.43b8cd79.js">
+<link rel="modulepreload" href="./_import/components/kernel.a91a6573.js">
+<link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
+<link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot.86ab2c01.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.a1619c2a.js">
 <link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
+<link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
+<link rel="modulepreload" href="./_node/plotly.js-dist-min@3.6.0/index.43b8cd79.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
 <link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
@@ -95,13 +103,13 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1780538112858,"size":73250});
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1780539438364,"size":73250});
 
-define({id: "93170b3c", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","modelConfig","normWeights","getCombinations","PcaInputRange","scatterPlot3d","getPcaData","matrixData"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {modelConfig}, {normWeights}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.12937a58.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.a6a44b29.js"), import("./_import/components/scatterPlot3d.a1619c2a.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
+define({id: "e59f9d6d", outputs: ["_","jStat","multiply","transpose","useOption","modelList","modelConfig","getCombinations","getPcaData","createPcaForm","reconstructPcaCoordinate","computeKernelWeightedRows","computeStdevsByKey","createPcaScatter3d","createWeightedScatterGridPlot"], body: async () => {
+const [{default: _}, {default: jStat}, {multiply, transpose}, {useOption}, {modelList}, {modelConfig}, {getCombinations}, {getPcaData}, {createPcaForm}, {reconstructPcaCoordinate}, {computeKernelWeightedRows, computeStdevsByKey}, {createPcaScatter3d, createWeightedScatterGridPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/forms.8eae4b50.js"), import("./_import/components/pcaUtils.9772a307.js"), import("./_import/components/weighting.b58377f1.js"), import("./_import/components/plots.063ae0a1.js")]);
 
 
-return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,modelConfig,normWeights,getCombinations,PcaInputRange,scatterPlot3d,getPcaData,matrixData};
+return {_,jStat,multiply,transpose,useOption,modelList,modelConfig,getCombinations,getPcaData,createPcaForm,reconstructPcaCoordinate,computeKernelWeightedRows,computeStdevsByKey,createPcaScatter3d,createWeightedScatterGridPlot};
 }});
 
 define({id: "3e3650fd", inputs: ["FileAttachment"], outputs: ["creditCard"], body: (FileAttachment) => {
@@ -179,7 +187,7 @@ if (clicks % 2 !== 0) {
 return {summary};
 }});
 
-define({id: "b3f6495e", inputs: ["creditCard","modelConfig","_","getPcaData","pcCordinate","matrixData","add","dotMultiply","multiply","transpose","scatterPlot3d","display"], outputs: ["webR","regressionBy","getSummary","continousCovariates","continousCov","pcaData","pcaProxyObj","zCor","rotationMatrix","scaleVec","centerVec","reConCor","container","conditionPoint"], body: async (creditCard,modelConfig,_,getPcaData,pcCordinate,matrixData,add,dotMultiply,multiply,transpose,scatterPlot3d,display) => {
+define({id: "a81c24ba", inputs: ["creditCard","modelConfig","_","getPcaData","reconstructPcaCoordinate","pcCordinate","createPcaScatter3d","display"], outputs: ["webR","regressionBy","getSummary","continousCovariates","continousCov","pcaData","pcaProxyObj","reConCor","container","conditionPoint"], body: async (creditCard,modelConfig,_,getPcaData,reconstructPcaCoordinate,pcCordinate,createPcaScatter3d,display) => {
 const {webR, regressionBy, getSummary} = await import("./_import/components/r.bd092806.js");
 // @todo: this import cant be lifted up?
 await webR.objs.globalEnv.bind("df_raw", creditCard);
@@ -194,22 +202,17 @@ const { pcaData, pcaProxyObj } = await getPcaData(
   continousCov,
   continousCovariates,
 );
-const zCor = continousCovariates.map((_, index) => {
-  return pcCordinate[index] || 0;
+const reConCor = reconstructPcaCoordinate({
+  pcaProxyObj,
+  continousKeys: continousCovariates,
+  pcCordinate,
 });
-const rotationMatrix = matrixData(pcaProxyObj.values[1].values, 8, 8);
-const scaleVec = pcaProxyObj.values[3].values;
-const centerVec = pcaProxyObj.values[2].values;
-const reConCor = add(
-  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
-  centerVec,
-);
-const container = scatterPlot3d(pcaData, ["pc1", "pc2", "pc3"], pcCordinate);
+const container = createPcaScatter3d({ pcaData, pcCordinate });
 display(container);
 const conditionPoint = Object.fromEntries(
       continousCovariates.map((key, index) => [key, reConCor[index]]),
     );
-return {webR,regressionBy,getSummary,continousCovariates,continousCov,pcaData,pcaProxyObj,zCor,rotationMatrix,scaleVec,centerVec,reConCor,container,conditionPoint};
+return {webR,regressionBy,getSummary,continousCovariates,continousCov,pcaData,pcaProxyObj,reConCor,container,conditionPoint};
 }});
 
 define({id: "1fdb8fbe", inputs: ["regressionBy","option","modelList","multiply","transpose","reConCor","d3","Plot","data_with_weights","creditCard"], outputs: ["output","params","dist","mean","xGrid","coordinates","pdfplot"], body: async (regressionBy,option,modelList,multiply,transpose,reConCor,d3,Plot,data_with_weights,creditCard) => {
@@ -266,10 +269,9 @@ const pdfplot = Plot.plot({
 return {output,params,dist,mean,xGrid,coordinates,pdfplot};
 }});
 
-define({id: "a3c331af", inputs: ["PcaInputRange","view","Inputs"], outputs: ["inputRanges","pcCordinate"], body: (PcaInputRange,view,Inputs) => {
-const inputRanges = PcaInputRange();
-const pcCordinate = view(Inputs.form(inputRanges));
-return {inputRanges,pcCordinate};
+define({id: "c614223e", inputs: ["view","createPcaForm"], outputs: ["pcCordinate"], body: (view,createPcaForm) => {
+const pcCordinate = view(createPcaForm());
+return {pcCordinate};
 }});
 
 define({id: "3a5868e6", inputs: ["display","reConCor"], body: (display,reConCor) => {
@@ -287,111 +289,37 @@ const kernal = view(
 return {kernal};
 }});
 
-define({id: "c6a8be93", inputs: ["continousCovariates","creditCard","jStat","continousCov","normWeights","reConCor","kernal","d3","display"], outputs: ["temp","stdevs","data","unnormalizedweights","totalunnormalizedweight","weights"], body: (continousCovariates,creditCard,jStat,continousCov,normWeights,reConCor,kernal,d3,display) => {
-const temp = continousCovariates.map((key) => creditCard.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
-
+define({id: "173cbfa9", inputs: ["continousCov","computeStdevsByKey","jStat","creditCard","continousCovariates","computeKernelWeightedRows","d3","reConCor","kernal","display"], outputs: ["data","stdevs","data_with_weights","weights"], body: (continousCov,computeStdevsByKey,jStat,creditCard,continousCovariates,computeKernelWeightedRows,d3,reConCor,kernal,display) => {
 const data = continousCov;
-const unnormalizedweights = normWeights(
-  data,
-  reConCor,
+const stdevs = computeStdevsByKey({
+  jStat,
+  rows: creditCard,
+  keys: continousCovariates,
+});
+const { dataWithWeights: data_with_weights, weights } = computeKernelWeightedRows({
+  d3,
+  rows: creditCard,
+  covariates: data,
+  conditionPoint: reConCor,
   stdevs,
-  undefined,
-  kernal,
-);
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+  kernelScale: kernal,
+});
 display(weights);
 display(data);
-return {temp,stdevs,data,unnormalizedweights,totalunnormalizedweight,weights};
+return {data,stdevs,data_with_weights,weights};
 }});
 
-define({id: "163b819f", inputs: ["data","weights","display","getCombinations","continousCovariates","Plot","conditionPoint"], outputs: ["weighteddata","data_with_weights","distance_type","dim","axisAr","scatterList"], body: (data,weights,display,getCombinations,continousCovariates,Plot,conditionPoint) => {
-const weighteddata = "Yes";
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  weight:
-    weighteddata == "Yes"
-      ? weights.find((item) => item.id === index).w
-      : 1 / data.length,
-}));
-
+define({id: "0ae5a135", inputs: ["display","data_with_weights","createWeightedScatterGridPlot","Plot","d3","getCombinations","continousCovariates","conditionPoint"], outputs: ["scatterList"], body: (display,data_with_weights,createWeightedScatterGridPlot,Plot,d3,getCombinations,continousCovariates,conditionPoint) => {
 display(data_with_weights);
 
-const distance_type = "euclidean";
-
-const dim = 2;
-const axisAr = getCombinations(continousCovariates, dim);
-
-const scatterList = axisAr.map((item) => {
-  const [key1, key2] = item;
-  return Plot.plot({
-    color: {
-      scheme: "blues",
-      transform: (f) => Math.sqrt(f),
-    },
-    title: `${key1} vs ${key2}`,
-    marks: [
-      Plot.dot(data_with_weights, {
-        filter: (d) => distance_type == "euclidean",
-        x: key1,
-        y: key2,
-        fill: "weight",
-        sort: "weight",
-      }),
-      // Plot.dot(data_with_weights, {
-      //   filter: (d) => (distance_type == "k-nearest") & (d.weight == 0),
-      //   x: "heatstress",
-      //   y: "cloudfree",
-      //   fill: "#E8E8E8",
-      //   sort: "weight",
-      // }),
-      // Plot.dot(data_with_weights, {
-      //   filter: (d) => (distance_type == "k-nearest") & (d.weight > 0),
-      //   x: "heatstress",
-      //   y: "cloudfree",
-      //   fill: "#0047AB",
-      //   sort: "weight",
-      // }),
-
-      // conditional data point with orange color
-      Plot.dot(
-        [
-          {
-            [key1]: conditionPoint[key1],
-            [key2]: conditionPoint[key2],
-          },
-        ],
-        {
-          x: key1,
-          y: key2,
-          fill: "orange",
-          r: 5,
-        },
-      ),
-      // Plot.tip(
-      //   data_with_weights,
-      //   Plot.pointer({
-      //     x: "heatstress",
-      //     y: "cloudfree",
-      //     title: (d) =>
-      //       [
-      //         "bleaching = ",
-      //         d.reports.toFixed(1),
-      //         ", depth = ",
-      //         d.age.toFixed(1),
-      //         ", weight = ",
-      //         d.income.toFixed(3),
-      //       ].join(""),
-      //   }),
-      // ),
-    ],
-  });
+const scatterList = createWeightedScatterGridPlot({
+  Plot,
+  d3,
+  axisPairs: getCombinations(continousCovariates, 2),
+  data: data_with_weights,
+  conditionPoint,
 });
-return {weighteddata,data_with_weights,distance_type,dim,axisAr,scatterList};
+return {scatterList};
 }});
 
 define({id: "bc286b65", inputs: ["display","html","scatterList"], body: (display,html,scatterList) => {
@@ -441,7 +369,7 @@ display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:93170b3c:--></div>
+<div class="observablehq observablehq--block"><!--:e59f9d6d:--></div>
 <h1 id="visualizing-conditional-distributions-with-pca" tabindex="-1"><a class="observablehq-header-anchor" href="#visualizing-conditional-distributions-with-pca">Visualizing Conditional Distributions with PCA</a></h1>
 <p>This page extends the slider prototype with PCA. Instead of moving one slider for every continuous covariate, the user moves through a three-dimensional PCA space. The selected PCA coordinates are reconstructed back into the original covariates, then the same local-fit comparison is recomputed.</p>
 <h2 id="load-dataset" tabindex="-1"><a class="observablehq-header-anchor" href="#load-dataset">Load Dataset</a></h2>
@@ -457,23 +385,23 @@ display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
 <div class="observablehq observablehq--block"><!--:56d0f008:--></div>
 <div class="observablehq observablehq--block"><!--:ca24a8b4:--></div>
-<div class="observablehq observablehq--block"><!--:b3f6495e:--></div>
+<div class="observablehq observablehq--block"><!--:a81c24ba:--></div>
 <div class="observablehq observablehq--block"><!--:1fdb8fbe:--></div>
 <h2 id="check-model-adequacy" tabindex="-1"><a class="observablehq-header-anchor" href="#check-model-adequacy">Check Model Adequacy</a></h2>
 <h3 id="select-conditioning-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditioning-data">Select Conditioning Data</a></h3>
-<div class="observablehq observablehq--block"><!--:a3c331af:--></div>
+<div class="observablehq observablehq--block"><!--:c614223e:--></div>
 <p>The PCA controls are a navigation tool. The actual conditional point used by the model is reconstructed in the original covariate units:</p>
 <div class="observablehq observablehq--block"><!--:3a5868e6:--></div>
 <h3 id="select-smoothing-parameter" tabindex="-1"><a class="observablehq-header-anchor" href="#select-smoothing-parameter">Select smoothing parameter</a></h3>
 <p>To give every data point a weight.</p>
 <div class="observablehq observablehq--block"><!--:fb03a970:--></div>
-<div class="observablehq observablehq--block"><!--:c6a8be93:--></div>
-<div class="observablehq observablehq--block"><!--:163b819f:--></div>
+<div class="observablehq observablehq--block"><!--:173cbfa9:--></div>
+<div class="observablehq observablehq--block"><!--:0ae5a135:--></div>
 <div class="observablehq observablehq--block"><!--:bc286b65:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./vcd_v0"><span>Slider Prototype</span></a><a rel="next" href="./react"><span>React</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T01:56:57">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T02:18:31">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>

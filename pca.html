@@ -18,24 +18,33 @@
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
-<link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_import/components/r.bd092806.js">
-<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
 <link rel="modulepreload" href="./_import/components/getPcaData.efb7c441.js">
-<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.a6a44b29.js">
-<link rel="modulepreload" href="./_import/components/scatterPlot3d.a1619c2a.js">
+<link rel="modulepreload" href="./_import/components/forms.8eae4b50.js">
+<link rel="modulepreload" href="./_import/components/pcaUtils.9772a307.js">
+<link rel="modulepreload" href="./_import/components/plots.063ae0a1.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/tex.10826b50.js">
 <link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
+<link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
+<link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
+<link rel="modulepreload" href="./_import/components/UI/PcaInputRange.a6a44b29.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
+<link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
+<link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot.86ab2c01.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.a1619c2a.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_node/plotly.js-dist-min@3.6.0/index.43b8cd79.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
 <link rel="modulepreload" href="./_npm/htl@1.0.0/87d6f6ef.js">
 <link rel="modulepreload" href="./_npm/isoformat@0.2.1/18cbf477.js">
 <link rel="modulepreload" href="./_npm/katex@0.17.0/61cbe9f1.js">
+<link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/53fe8176.js">
+<link rel="modulepreload" href="./_node/htl@0.3.1/index.0caf36e7.js">
+<link rel="modulepreload" href="./_node/isoformat@0.2.1/index.0882e9d9.js">
 <link rel="modulepreload" href="./_node/@babel/runtime@7.28.6/helpers/extends.0f306b39.js">
 <link rel="modulepreload" href="./_node/typed-function@undefined/index.1109ce0c.js">
 <link rel="modulepreload" href="./_node/decimal.js@10.6.0/index.7033d8a1.js">
@@ -46,9 +55,6 @@
 <link rel="modulepreload" href="./_node/escape-latex@1.2.0/index.8adbe58e.js">
 <link rel="modulepreload" href="./_node/seedrandom@3.0.5/index.d180388a.js">
 <link rel="modulepreload" href="./_node/tiny-emitter@2.1.0/index.82df77ed.js">
-<link rel="modulepreload" href="./_npm/interval-tree-1d@1.0.4/53fe8176.js">
-<link rel="modulepreload" href="./_node/htl@0.3.1/index.0caf36e7.js">
-<link rel="modulepreload" href="./_node/isoformat@0.2.1/index.0882e9d9.js">
 <link rel="modulepreload" href="./_npm/d3-array@3.2.4/e93ca09f.js">
 <link rel="modulepreload" href="./_npm/d3-axis@3.0.0/0f2de24d.js">
 <link rel="modulepreload" href="./_npm/d3-brush@3.0.0/65eb105b.js">
@@ -88,13 +94,13 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1780538112858,"size":73250});
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1780539438364,"size":73250});
 
-define({id: "ddfc56b3", outputs: ["_","multiply","transpose","dotMultiply","add","modelConfig","webR","matrixData","getPcaData","PcaInputRange","scatterPlot3d"], body: async () => {
-const [{default: _}, {multiply, transpose, dotMultiply, add}, {modelConfig}, {webR}, {matrixData}, {getPcaData}, {PcaInputRange}, {scatterPlot3d}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/r.bd092806.js"), import("./_import/components/organizeData.e4ace3b1.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/UI/PcaInputRange.a6a44b29.js"), import("./_import/components/scatterPlot3d.a1619c2a.js")]);
+define({id: "822d498e", outputs: ["_","modelConfig","webR","getPcaData","createPcaForm","reconstructPcaCoordinate","createPcaScatter3d"], body: async () => {
+const [{default: _}, {modelConfig}, {webR}, {getPcaData}, {createPcaForm}, {reconstructPcaCoordinate}, {createPcaScatter3d}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/r.bd092806.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/forms.8eae4b50.js"), import("./_import/components/pcaUtils.9772a307.js"), import("./_import/components/plots.063ae0a1.js")]);
 
 
-return {_,multiply,transpose,dotMultiply,add,modelConfig,webR,matrixData,getPcaData,PcaInputRange,scatterPlot3d};
+return {_,modelConfig,webR,getPcaData,createPcaForm,reconstructPcaCoordinate,createPcaScatter3d};
 }});
 
 define({id: "3e3650fd", inputs: ["FileAttachment"], outputs: ["creditCard"], body: (FileAttachment) => {
@@ -172,31 +178,24 @@ define({id: "70d56781", inputs: ["display","pcaPlot2d"], body: (display,pcaPlot2
 display(pcaPlot2d);
 }});
 
-define({id: "113b3e74", inputs: ["scatterPlot3d","pcaData","pcCordinate","display"], outputs: ["container"], body: (scatterPlot3d,pcaData,pcCordinate,display) => {
-const container = scatterPlot3d(pcaData, ["pc1", "pc2", "pc3"], pcCordinate);
+define({id: "d89cf312", inputs: ["createPcaScatter3d","pcaData","pcCordinate","display"], outputs: ["container"], body: (createPcaScatter3d,pcaData,pcCordinate,display) => {
+const container = createPcaScatter3d({ pcaData, pcCordinate });
 display(container);
 return {container};
 }});
 
-define({id: "a3c331af", inputs: ["PcaInputRange","view","Inputs"], outputs: ["inputRanges","pcCordinate"], body: (PcaInputRange,view,Inputs) => {
-const inputRanges = PcaInputRange();
-const pcCordinate = view(Inputs.form(inputRanges));
-return {inputRanges,pcCordinate};
+define({id: "c614223e", inputs: ["view","createPcaForm"], outputs: ["pcCordinate"], body: (view,createPcaForm) => {
+const pcCordinate = view(createPcaForm());
+return {pcCordinate};
 }});
 
-define({id: "93072d29", inputs: ["continousCovariates","pcCordinate","matrixData","pcaProxyObj","add","dotMultiply","multiply","transpose"], outputs: ["zCor","rotationMatrix","scaleVec","centerVec","reConCor"], body: (continousCovariates,pcCordinate,matrixData,pcaProxyObj,add,dotMultiply,multiply,transpose) => {
-const zCor = continousCovariates.map((_, index) => {
-  return pcCordinate[index] || 0;
+define({id: "336e6dde", inputs: ["reconstructPcaCoordinate","pcaProxyObj","continousCovariates","pcCordinate"], outputs: ["reConCor"], body: (reconstructPcaCoordinate,pcaProxyObj,continousCovariates,pcCordinate) => {
+const reConCor = reconstructPcaCoordinate({
+  pcaProxyObj,
+  continousKeys: continousCovariates,
+  pcCordinate,
 });
-const rotationMatrix = matrixData(pcaProxyObj.values[1].values, 8, 8);
-const scaleVec = pcaProxyObj.values[3].values;
-const centerVec = pcaProxyObj.values[2].values;
-
-const reConCor = add(
-  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
-  centerVec,
-);
-return {zCor,rotationMatrix,scaleVec,centerVec,reConCor};
+return {reConCor};
 }});
 
 define({id: "a91f3ff3", inputs: ["display","pcCordinate"], body: (display,pcCordinate) => {
@@ -251,7 +250,7 @@ display(reConCor);
 <script>{const e=document.querySelector("#observablehq-sidebar"),o=document.querySelector("#observablehq-sidebar-toggle"),r=sessionStorage.getItem("observablehq-sidebar");r?o.checked=r==="true":o.indeterminate=!0;for(const t of document.querySelectorAll("#observablehq-sidebar summary")){const s=t.parentElement;switch(sessionStorage.getItem(`observablehq-sidebar:${t.textContent}`)){case"true":s.open=!0;break;case"false":s.classList.contains("observablehq-section-active")||(s.open=!1);break}}addEventListener("beforeunload",()=>sessionStorage.setItem("observablehq-sidebar-scrolly",`${e.scrollTop}`));const a=sessionStorage.getItem("observablehq-sidebar-scrolly");a!=null&&(e.style.cssText="overflow: hidden;",e.scrollTop=+a,e.style.cssText="");}</script>
 <div id="observablehq-center">
 <main id="observablehq-main" class="observablehq">
-<div class="observablehq observablehq--block"><!--:ddfc56b3:--></div>
+<div class="observablehq observablehq--block"><!--:822d498e:--></div>
 <div class="observablehq observablehq--block"><!--:3e3650fd:--></div>
 <div class="observablehq observablehq--block"><!--:0dd1dfbd:--></div>
 <h1 id="pca-as-a-navigation-layer" tabindex="-1"><a class="observablehq-header-anchor" href="#pca-as-a-navigation-layer">PCA as a Navigation Layer</a></h1>
@@ -275,10 +274,10 @@ display(reConCor);
 <h3 id="scatterplot-of-pc-1-and-pc-2" tabindex="-1"><a class="observablehq-header-anchor" href="#scatterplot-of-pc-1-and-pc-2">Scatterplot of PC1 and PC2</a></h3>
 <div class="observablehq observablehq--block"><!--:70d56781:--></div>
 <h3 id="scatterplot-of-pc-1-pc-2-and-pc-3" tabindex="-1"><a class="observablehq-header-anchor" href="#scatterplot-of-pc-1-pc-2-and-pc-3">Scatterplot of PC1, PC2 and PC3</a></h3>
-<div class="observablehq observablehq--block"><!--:113b3e74:--></div>
+<div class="observablehq observablehq--block"><!--:d89cf312:--></div>
 <h2 id="reconstruct-data-from-reduced-space-to-original-space" tabindex="-1"><a class="observablehq-header-anchor" href="#reconstruct-data-from-reduced-space-to-original-space">Reconstruct Data from Reduced Space to Original Space</a></h2>
-<div class="observablehq observablehq--block"><!--:a3c331af:--></div>
-<div class="observablehq observablehq--block"><!--:93072d29:--></div>
+<div class="observablehq observablehq--block"><!--:c614223e:--></div>
+<div class="observablehq observablehq--block"><!--:336e6dde:--></div>
 <p>The selected point in reduced space is:</p>
 <div class="observablehq observablehq--block"><!--:a91f3ff3:--></div>
 <p>The reconstructed covariate point is:</p>
@@ -286,7 +285,7 @@ display(reConCor);
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./density_estimate"><span>Density Estimator</span></a><a rel="next" href="./poisson_neg"><span>Poisson &amp; Negative Binomial</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T01:56:57">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T02:18:31">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>
