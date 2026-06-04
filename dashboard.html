@@ -16,15 +16,15 @@
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
-<link rel="modulepreload" href="./_import/components/getEstimate.dc2133f3.js">
+<link rel="modulepreload" href="./_import/components/getEstimate.cb8dc28e.js">
 <link rel="modulepreload" href="./_import/components/pageCache.349f7456.js">
-<link rel="modulepreload" href="./_import/components/r.69b7eafc.js">
+<link rel="modulepreload" href="./_import/components/r.9606feb4.js">
 <link rel="modulepreload" href="./_import/components/config.9887161e.js">
-<link rel="modulepreload" href="./_import/components/getPcaData.bbf820ea.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.b02e4d0a.js">
 <link rel="modulepreload" href="./_import/components/forms.1434876a.js">
 <link rel="modulepreload" href="./_import/components/pcaUtils.9558b6bb.js">
 <link rel="modulepreload" href="./_import/components/weighting.07bf1cf9.js">
-<link rel="modulepreload" href="./_import/components/plots.fa919c0f.js">
+<link rel="modulepreload" href="./_import/components/plots.e88b2325.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_npm/htl@1.0.0/87d6f6ef.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
@@ -99,9 +99,9 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780609626086,"size":63992});
-registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1780609626086,"size":97292});
-registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780609626086,"size":108748});
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780611824677,"size":63992});
+registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1780611824677,"size":97292});
+registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780611824679,"size":108748});
 
 define({id: "818bbada", inputs: ["view","Inputs","DATASET","DEFAULT_DATASET_INDEX"], outputs: ["selectedDataset"], body: (view,Inputs,DATASET,DEFAULT_DATASET_INDEX) => {
 const selectedDataset = view(
@@ -220,17 +220,19 @@ const externalLamda = view(bandwidthInputs.lambda);
 return {bandwidthInputs,externalH,externalLamda};
 }});
 
-define({id: "353f30d3", inputs: ["Inputs","ESTIMATORS","html","setSelectedEstimators"], outputs: ["selectedEstimatorsInput"], body: (Inputs,ESTIMATORS,html,setSelectedEstimators) => {
+define({id: "dfcff96b", inputs: ["getDefaultSelectedEstimators","selectedDataset","Inputs","ESTIMATORS","html","setSelectedEstimators"], outputs: ["defaultSelectedEstimators","selectedEstimatorsInput"], body: (getDefaultSelectedEstimators,selectedDataset,Inputs,ESTIMATORS,html,setSelectedEstimators) => {
+const defaultSelectedEstimators = getDefaultSelectedEstimators(selectedDataset);
 const selectedEstimatorsInput = Inputs.checkbox(ESTIMATORS, {
   format: (item) =>
     html`<span style="color: ${item.color}">${item.name}</span>`,
-  value: ESTIMATORS.slice(1, ESTIMATORS.length - 1),
+  value: defaultSelectedEstimators,
 });
+setSelectedEstimators(defaultSelectedEstimators);
 selectedEstimatorsInput.classList.add("estimator-selector");
 selectedEstimatorsInput.addEventListener("input", () =>
   setSelectedEstimators(selectedEstimatorsInput.value),
 );
-return {selectedEstimatorsInput};
+return {defaultSelectedEstimators,selectedEstimatorsInput};
 }});
 
 define({id: "762d018b", inputs: ["display","html","selectedEstimatorsInput","pdfplot"], body: (display,html,selectedEstimatorsInput,pdfplot) => {
@@ -384,8 +386,8 @@ const pdfplot = createResponseDensityPlot({
 return {pdfplot};
 }});
 
-define({id: "dc7d74bf", outputs: ["_","getEstimate","pageCache","Mutable","betaRegression","negativeBinomialRegression","webR","getSummary","poissonRegession","getResiduals","DATASET","MODEL","DEFAULT_DATASET_INDEX","DEFAULT_MODEL_INDEX","ESTIMATORS","RADIO_OPTIONS","RADIO_OPTION_INDEX","RESIDUAL_OPTIONS","DEFAULT_RESIDUAL_INDEX","getPcaData","createBandwidthInputs","createConditionFormMap","createConditionFormUpdater","createPcaForm","setConditionFormMode","setFormEnabled","createPcaClickHandler","getConditionPointState","reconstructPcaCoordinate","computeDashboardWeights","createConditionalScatterGrid","createPcaScatter3d","createResponseDensityPlot","residuals","setResiduals","modelState","setModelState","selectedEstimators","setSelectedEstimators"], body: async () => {
-const [{default: _}, {getEstimate}, {pageCache}, {Mutable}, {betaRegression, negativeBinomialRegression, webR, getSummary, poissonRegession, getResiduals}, {DATASET, MODEL, DEFAULT_DATASET_INDEX, DEFAULT_MODEL_INDEX, ESTIMATORS, RADIO_OPTIONS, RADIO_OPTION_INDEX, RESIDUAL_OPTIONS, DEFAULT_RESIDUAL_INDEX}, {getPcaData}, {createBandwidthInputs, createConditionFormMap, createConditionFormUpdater, createPcaForm, setConditionFormMode, setFormEnabled}, {createPcaClickHandler, getConditionPointState, reconstructPcaCoordinate}, {computeDashboardWeights}, {createConditionalScatterGrid, createPcaScatter3d, createResponseDensityPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_import/components/getEstimate.dc2133f3.js"), import("./_import/components/pageCache.349f7456.js"), import("./_observablehq/stdlib.73a8ec5a.js"), import("./_import/components/r.69b7eafc.js"), import("./_import/components/config.9887161e.js"), import("./_import/components/getPcaData.bbf820ea.js"), import("./_import/components/forms.1434876a.js"), import("./_import/components/pcaUtils.9558b6bb.js"), import("./_import/components/weighting.07bf1cf9.js"), import("./_import/components/plots.fa919c0f.js")]);
+define({id: "0c3655e7", outputs: ["_","getEstimate","pageCache","Mutable","betaRegression","negativeBinomialRegression","webR","getSummary","poissonRegession","getResiduals","DATASET","MODEL","DEFAULT_DATASET_INDEX","DEFAULT_MODEL_INDEX","ESTIMATORS","RADIO_OPTIONS","RADIO_OPTION_INDEX","RESIDUAL_OPTIONS","DEFAULT_RESIDUAL_INDEX","getPcaData","createBandwidthInputs","createConditionFormMap","createConditionFormUpdater","createPcaForm","setConditionFormMode","setFormEnabled","createPcaClickHandler","getConditionPointState","reconstructPcaCoordinate","computeDashboardWeights","createConditionalScatterGrid","createPcaScatter3d","createResponseDensityPlot","residuals","setResiduals","modelState","setModelState","getDefaultSelectedEstimators","selectedEstimators","setSelectedEstimators"], body: async () => {
+const [{default: _}, {getEstimate}, {pageCache}, {Mutable}, {betaRegression, negativeBinomialRegression, webR, getSummary, poissonRegession, getResiduals}, {DATASET, MODEL, DEFAULT_DATASET_INDEX, DEFAULT_MODEL_INDEX, ESTIMATORS, RADIO_OPTIONS, RADIO_OPTION_INDEX, RESIDUAL_OPTIONS, DEFAULT_RESIDUAL_INDEX}, {getPcaData}, {createBandwidthInputs, createConditionFormMap, createConditionFormUpdater, createPcaForm, setConditionFormMode, setFormEnabled}, {createPcaClickHandler, getConditionPointState, reconstructPcaCoordinate}, {computeDashboardWeights}, {createConditionalScatterGrid, createPcaScatter3d, createResponseDensityPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_import/components/getEstimate.cb8dc28e.js"), import("./_import/components/pageCache.349f7456.js"), import("./_observablehq/stdlib.73a8ec5a.js"), import("./_import/components/r.9606feb4.js"), import("./_import/components/config.9887161e.js"), import("./_import/components/getPcaData.b02e4d0a.js"), import("./_import/components/forms.1434876a.js"), import("./_import/components/pcaUtils.9558b6bb.js"), import("./_import/components/weighting.07bf1cf9.js"), import("./_import/components/plots.e88b2325.js")]);
 
 // non-input state
 const residuals = Mutable([]);
@@ -407,13 +409,16 @@ const setModelState = (newValue) => {
   }
 };
 
-const selectedEstimators = Mutable(ESTIMATORS.slice(1, ESTIMATORS.length - 1));
+const getDefaultSelectedEstimators = (dataset) =>
+  dataset.name === "Discrete Response" ? ESTIMATORS.slice(1, -1) : ESTIMATORS.slice(1);
+
+const selectedEstimators = Mutable(ESTIMATORS.slice(1, -1));
 const setSelectedEstimators = (newValue) => {
   if (!_.isEqual(newValue, selectedEstimators.value)) {
     selectedEstimators.value = newValue;
   }
 };
-return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegression,webR,getSummary,poissonRegession,getResiduals,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,RADIO_OPTIONS,RADIO_OPTION_INDEX,RESIDUAL_OPTIONS,DEFAULT_RESIDUAL_INDEX,getPcaData,createBandwidthInputs,createConditionFormMap,createConditionFormUpdater,createPcaForm,setConditionFormMode,setFormEnabled,createPcaClickHandler,getConditionPointState,reconstructPcaCoordinate,computeDashboardWeights,createConditionalScatterGrid,createPcaScatter3d,createResponseDensityPlot,residuals,setResiduals,modelState,setModelState,selectedEstimators,setSelectedEstimators};
+return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegression,webR,getSummary,poissonRegession,getResiduals,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,RADIO_OPTIONS,RADIO_OPTION_INDEX,RESIDUAL_OPTIONS,DEFAULT_RESIDUAL_INDEX,getPcaData,createBandwidthInputs,createConditionFormMap,createConditionFormUpdater,createPcaForm,setConditionFormMode,setFormEnabled,createPcaClickHandler,getConditionPointState,reconstructPcaCoordinate,computeDashboardWeights,createConditionalScatterGrid,createPcaScatter3d,createResponseDensityPlot,residuals,setResiduals,modelState,setModelState,getDefaultSelectedEstimators,selectedEstimators,setSelectedEstimators};
 }});
 
 </script>
@@ -477,14 +482,14 @@ return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegressio
 <div class="observablehq observablehq--block"><!--:39386325:--></div>
 <h2 id="select-bandwidth" tabindex="-1"><a class="observablehq-header-anchor" href="#select-bandwidth">Select bandwidth</a></h2>
 <div class="observablehq observablehq--block"><!--:cc12f82c:--></div>
-<div class="observablehq observablehq--block"><!--:353f30d3:--></div>
+<div class="observablehq observablehq--block"><!--:dfcff96b:--></div>
 <div class="observablehq observablehq--block"><!--:762d018b:--></div>
 <div class="observablehq observablehq--block"><!--:d454a666:--></div>
 <div class="observablehq observablehq--block"><!--:eea69503:--></div>
 <div class="observablehq observablehq--block"><!--:577e238b:--></div>
 <div class="observablehq observablehq--block"><!--:6905baf3:--></div>
 <div class="observablehq observablehq--block"><!--:dd41cba3:--></div>
-<div class="observablehq observablehq--block"><!--:dc7d74bf:--></div>
+<div class="observablehq observablehq--block"><!--:0c3655e7:--></div>
 <style>
 .comparison-layout {
   display: grid;
@@ -589,7 +594,7 @@ return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegressio
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./density_estimate"><span>Density Estimator</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T21:48:18">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T22:25:20">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>

@@ -22,7 +22,7 @@
 <link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
 <link rel="modulepreload" href="./_import/components/pageComponents.f0021791.js">
 <link rel="modulepreload" href="./_import/components/weighting.07bf1cf9.js">
-<link rel="modulepreload" href="./_import/components/r.69b7eafc.js">
+<link rel="modulepreload" href="./_import/components/r.9606feb4.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
@@ -91,7 +91,7 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780609626086,"size":108748});
+registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780611824679,"size":108748});
 
 define({id: "516fa5a0", outputs: ["_","jStat","multiply","transpose","createRangeFormMap","computeKernelWeightedRows","computeStdevsByKey"], body: async () => {
 const [{default: _}, {default: jStat}, {multiply, transpose}, {createRangeFormMap}, {computeKernelWeightedRows, computeStdevsByKey}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/pageComponents.f0021791.js"), import("./_import/components/weighting.07bf1cf9.js")]);
@@ -337,7 +337,7 @@ return {keys,formMap};
 }});
 
 define({id: "cd3cca89", inputs: ["conditionPointObj","betaData","_","computeStdevsByKey","jStat","computeKernelWeightedRows","d3","kernal","multiply","transpose","Plot"], outputs: ["betaRegession","webR","loess","conditionPoint","keys","data","stdevs","weightedData","weights","output","betas","phi","linearCom","mu","loessRes","loessMu","data_with_weights","weightedResidual","xGrid","coordinates","denCoordinates","h","ckdCoordinates","modCkdCoordinates","pdfplot"], body: async (conditionPointObj,betaData,_,computeStdevsByKey,jStat,computeKernelWeightedRows,d3,kernal,multiply,transpose,Plot) => {
-const {betaRegession, webR, loess} = await import("./_import/components/r.69b7eafc.js");
+const {betaRegession, webR, loess} = await import("./_import/components/r.9606feb4.js");
 
 const conditionPoint = Object.values(conditionPointObj);
 
@@ -642,7 +642,7 @@ tex.block`e_j = Y_j - \hat r(X_j)`
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./dashboard"><span>Dashboard</span></a><a rel="next" href="./pca"><span>PCA Navigation</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T21:48:18">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T22:25:20">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>
