@@ -10,6 +10,62 @@ const formatHoverText = (details) =>
     .map(([key, value]) => `<b>${key}</b>: ${value ?? ""}`)
     .join("<br>");
 
+const scheduleResponsiveResize = (container) => {
+  const resize = () => {
+    if (
+      container.isConnected &&
+      container.clientWidth &&
+      container.clientHeight
+    ) {
+      Plotly.Plots.resize(container);
+    }
+  };
+
+  requestAnimationFrame(resize);
+  requestAnimationFrame(() => requestAnimationFrame(resize));
+
+  const observer = new ResizeObserver(resize);
+  observer.observe(container);
+
+  const observeParent = () => {
+    if (container.parentElement) {
+      observer.observe(container.parentElement);
+      resize();
+    } else {
+      requestAnimationFrame(observeParent);
+    }
+  };
+  observeParent();
+};
+
+const createTooltip = (container) => {
+  const tooltip = document.createElement("div");
+  tooltip.className = "pca-latent-tooltip";
+  tooltip.style.display = "none";
+  document.body.append(tooltip);
+
+  const removeTooltip = () => {
+    if (!container.isConnected) {
+      tooltip.remove();
+      return;
+    }
+
+    requestAnimationFrame(removeTooltip);
+  };
+  requestAnimationFrame(removeTooltip);
+
+  return tooltip;
+};
+
+const positionTooltip = (tooltip, pointer) => {
+  const x = pointer?.clientX ?? 20;
+  const y = pointer?.clientY ?? 20;
+  const offset = 14;
+
+  tooltip.style.left = `${x + offset}px`;
+  tooltip.style.top = `${y + offset}px`;
+};
+
 export const scatterPlot3d = (
   data,
   keys = ["x", "y", "z"],
@@ -29,7 +85,8 @@ export const scatterPlot3d = (
     .map((d) => d.weight)
     .filter((weight) => Number.isFinite(weight));
   const [minWeight = 0, maxWeight = 1] = d3.extent(finiteWeights);
-  const weightDomain = minWeight === maxWeight ? [0, 1] : [minWeight, maxWeight];
+  const weightDomain =
+    minWeight === maxWeight ? [0, 1] : [minWeight, maxWeight];
   const wScale = d3
     .scaleLinear()
     .domain(weightDomain)
@@ -93,7 +150,8 @@ export const scatterPlot3d = (
       opacity: 1,
     },
     text: hoverText,
-    hovertemplate: "%{text}<extra></extra>",
+    customdata: hoverText,
+    hoverinfo: "none",
     name: "data",
   };
 
@@ -127,7 +185,8 @@ export const scatterPlot3d = (
       },
     },
     text: topHoverText,
-    hovertemplate: "%{text}<extra></extra>",
+    customdata: topHoverText,
+    hoverinfo: "none",
     name: "top residuals",
   };
 
@@ -157,11 +216,23 @@ export const scatterPlot3d = (
         residual: "",
       }),
     ],
-    hovertemplate: "%{text}<extra></extra>",
+    customdata: [
+      formatHoverText({
+        type: "conditional",
+        residualType,
+        [keys[0]]: coordinate[0],
+        [keys[1]]: coordinate[1],
+        [keys[2]]: coordinate[2],
+        weight: "",
+        residual: "",
+      }),
+    ],
+    hoverinfo: "none",
     name: "conditional",
   };
 
   const layout = {
+    autosize: true,
     margin: { l: 0, r: 0, b: 0, t: 0 },
     scene: {
       xaxis: { title: "PC1 Axis" },
@@ -171,12 +242,45 @@ export const scatterPlot3d = (
   };
 
   const container = document.createElement("div");
+  container.className = "pca-latent-scatterplot";
+  container.style.width = "100%";
+  container.style.height = "100%";
+  container.style.position = "relative";
+  let latestPointer = null;
+  container.addEventListener(
+    "pointermove",
+    (event) => {
+      latestPointer = { clientX: event.clientX, clientY: event.clientY };
+    },
+    true,
+  );
 
   Plotly.newPlot(
     container,
     [shadowTrace, mainTrace, topTrace, conditionalTrace],
     layout,
-  );
+    { responsive: true },
+  ).then(() => {
+    const tooltip = createTooltip(container);
+
+    container.on("plotly_hover", (eventData) => {
+      const point = eventData?.points?.[0];
+      const hoverHtml =
+        point?.customdata || point?.data?.customdata?.[point.pointIndex];
+
+      if (!hoverHtml) return;
+
+      tooltip.innerHTML = hoverHtml;
+      tooltip.style.display = "block";
+      positionTooltip(tooltip, eventData.event || latestPointer);
+    });
+
+    container.on("plotly_unhover", () => {
+      tooltip.style.display = "none";
+    });
+
+    scheduleResponsiveResize(container);
+  });
 
   container.on("plotly_click", onClick3D);
 

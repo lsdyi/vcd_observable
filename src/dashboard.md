@@ -26,6 +26,65 @@ const selectedModel = view(
 );
 ```
 
+Every data point with weight is listed as follows.
+
+```js
+display(data_with_weights);
+display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
+```
+
+## Select Residual
+
+```js
+const selectedResidual = view(
+  Inputs.radio(RESIDUAL_OPTIONS, {
+    format: (x) => x.name,
+    value: RESIDUAL_OPTIONS[DEFAULT_RESIDUAL_INDEX],
+    label: "Residual",
+  }),
+);
+```
+
+```js
+const residualType = selectedResidual.type;
+```
+
+```js
+const onClick = createConditionFormUpdater({ formMap, formNode });
+const scatterPlotList = createConditionalScatterGrid({
+  keys,
+  dataWithWeights: data_with_weights,
+  residuals,
+  residualType,
+  conditionPointObj,
+  width: 400,
+  onClick: usePCA ? undefined : onClick,
+});
+const scatterItems = usePCA ? [container, ...scatterPlotList] : scatterPlotList;
+
+display(
+  html`<div>
+    <div class="scatterplot-scroll-hint">
+      Scroll horizontally to view all scatterplots.
+    </div>
+    <div class="scatterplot-scroll-row">
+      ${scatterItems.map(
+        (plot) => html`<div class="scatterplot-scroll-item">${plot}</div>`,
+      )}
+    </div>
+  </div>`,
+);
+```
+
+```js
+display(html`
+  <div>
+    <strong>Conditional Point</strong>
+    ${JSON.stringify(conditionPoint, null, 2)}
+  </div>
+`);
+```
+
 ## Select Conditional Data
 
 ```js
@@ -63,82 +122,28 @@ const externalH = view(bandwidthInputs.h);
 const externalLamda = view(bandwidthInputs.lambda);
 ```
 
-Every data point with weight is listed as follows.
-
 ```js
-display(data_with_weights);
-display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
-```
-
-```js
-display(html`
-  <div>
-    <strong>Conditional Point</strong>
-    ${JSON.stringify(conditionPoint, null, 2)}
-  </div>
-`);
-```
-
-```js
-display(usePCA ? container : html`<span></span>`);
-```
-
-## Select Residual
-
-```js
-const selectedResidual = view(
-  Inputs.radio(RESIDUAL_OPTIONS, {
-    format: (x) => x.name,
-    value: RESIDUAL_OPTIONS[DEFAULT_RESIDUAL_INDEX],
-    label: "Residual",
-  }),
+const selectedEstimatorsInput = Inputs.checkbox(ESTIMATORS, {
+  format: (item) =>
+    html`<span style="color: ${item.color}">${item.name}</span>`,
+  value: ESTIMATORS.slice(1, ESTIMATORS.length - 1),
+});
+selectedEstimatorsInput.classList.add("estimator-selector");
+selectedEstimatorsInput.addEventListener("input", () =>
+  setSelectedEstimators(selectedEstimatorsInput.value),
 );
 ```
 
 ```js
-const residualType = selectedResidual.type;
-```
-
-```js
-const onClick = createConditionFormUpdater({ formMap, formNode });
-const scatterPlotList = createConditionalScatterGrid({
-  keys,
-  dataWithWeights: data_with_weights,
-  residuals,
-  residualType,
-  conditionPointObj,
-  width: 400,
-  onClick: usePCA ? undefined : onClick,
-});
-
 display(
-  html`<div>
-    <div class="scatterplot-scroll-hint">Scroll horizontally to view all scatterplots.</div>
-    <div class="scatterplot-scroll-row">
-      ${scatterPlotList.map(
-        (plot) => html`<div class="scatterplot-scroll-item">${plot}</div>`,
-      )}
-    </div>
+  html`<div class="comparison-layout">
+    <aside class="comparison-controls">
+      <strong>Estimators</strong>
+      ${selectedEstimatorsInput}
+    </aside>
+    <div class="comparison-plot">${pdfplot}</div>
   </div>`,
 );
-```
-
-```js
-const selectedEstimators = view(
-  Inputs.checkbox(ESTIMATORS, {
-    format: (item) =>
-      html`<span style="color: ${item.color}">${item.name}</span>`,
-    value: ESTIMATORS.slice(1, ESTIMATORS.length - 1),
-  }),
-);
-```
-
-```js
-display(selectedEstimators);
-```
-
-```js
-display(pdfplot);
 ```
 
 ```js
@@ -340,9 +345,42 @@ const setModelState = (newValue) => {
     modelState.value = newValue;
   }
 };
+
+const selectedEstimators = Mutable(ESTIMATORS.slice(1, ESTIMATORS.length - 1));
+const setSelectedEstimators = (newValue) => {
+  if (!_.isEqual(newValue, selectedEstimators.value)) {
+    selectedEstimators.value = newValue;
+  }
+};
 ```
 
 <style>
+.comparison-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.comparison-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 12px;
+}
+
+.comparison-controls .estimator-selector,
+.comparison-controls .estimator-selector > * {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comparison-plot {
+  min-width: 0;
+}
+
 .scatterplot-scroll-hint {
   color: #4b5563;
   font-size: 13px;
@@ -359,7 +397,7 @@ const setModelState = (newValue) => {
   max-width: 100%;
   height: 300px;
   overflow-x: scroll;
-  overflow-y: hidden;
+  overflow-y: visible;
   padding: 0 0 12px;
   scroll-snap-type: x proximity;
 }
@@ -375,5 +413,45 @@ const setModelState = (newValue) => {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.scatterplot-scroll-item .pca-latent-scatterplot,
+.scatterplot-scroll-item .pca-latent-scatterplot .plot-container,
+.scatterplot-scroll-item .pca-latent-scatterplot .svg-container,
+.scatterplot-scroll-item .pca-latent-scatterplot .main-svg,
+.scatterplot-scroll-item .pca-latent-scatterplot .gl-container,
+.scatterplot-scroll-item .pca-latent-scatterplot canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.pca-latent-tooltip {
+  position: fixed;
+  z-index: 1000;
+  max-width: 220px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 8px 10px;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.18);
+  font: 12px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  pointer-events: none;
+}
+
+#scene {
+  width: 100% !important;
+}
+
+@media (max-width: 760px) {
+  .comparison-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-controls {
+    position: static;
+  }
 }
 </style>
