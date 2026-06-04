@@ -100,6 +100,18 @@ const DEFAULT_DATASET_INDEX = 1;
 const DEFAULT_MODEL_INDEX = MODEL.length - 1;
 const DEFAULT_ESTIMATOR_LIST = [0, 1, 2, 3];
 
+const RADIO_OPTIONS = [
+  {
+    name: "use PCA",
+    id: 0,
+  },
+  {
+    name: "NOT use PCA",
+    id: 1,
+  },
+];
+const RADIO_OPTION_INDEX = 0;
+
 export {
   DATASET,
   MODEL,
@@ -107,4 +119,6 @@ export {
   DEFAULT_MODEL_INDEX,
   ESTIMATORS,
   DEFAULT_ESTIMATOR_LIST,
+  RADIO_OPTIONS,
+  RADIO_OPTION_INDEX
 };

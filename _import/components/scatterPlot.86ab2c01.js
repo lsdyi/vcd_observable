@@ -166,13 +166,14 @@ function chart(
     .join("feMergeNode")
     .attr("in", (d) => d);
 
-  const dataSortedByResidual = d3
-    .sort(
-      data.map((d, i) => ({ ...d, idx: i })),
-      (d) => d.residual,
-    )
-    .slice(0, topNresidual);
-
+  const dataSortedByResidual = data[0].residual
+    ? d3
+        .sort(
+          data.map((d, i) => ({ ...d, idx: i })),
+          (a, b) => Math.abs(b.residual) - Math.abs(a.residual)
+        )
+        .slice(0, topNresidual)
+    : [];
   gDot
     .selectAll("circle")
     .data(data.map((d, i) => ({ ...d, idx: i })))

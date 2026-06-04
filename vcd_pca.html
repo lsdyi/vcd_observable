@@ -24,7 +24,7 @@
 <link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
 <link rel="modulepreload" href="./_import/components/UI/PcaInputRange.a6a44b29.js">
-<link rel="modulepreload" href="./_import/components/scatterPlot3d.3c677cab.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.a1619c2a.js">
 <link rel="modulepreload" href="./_import/components/getPcaData.efb7c441.js">
 <link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
 <link rel="modulepreload" href="./_npm/react@19.2.7/jsx-runtime.c6c547ca.js">
@@ -95,10 +95,10 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1780517923849,"size":73250});
+registerFile("./data/AER_credit_card_data.csv", {"name":"./data/AER_credit_card_data.csv","mimeType":"text/csv","path":"./_file/data/AER_credit_card_data.93a46ce4.csv","lastModified":1780538112858,"size":73250});
 
 define({id: "93170b3c", outputs: ["_","jStat","multiply","transpose","dotMultiply","add","useOption","modelList","modelConfig","normWeights","getCombinations","PcaInputRange","scatterPlot3d","getPcaData","matrixData"], body: async () => {
-const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {modelConfig}, {normWeights}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.12937a58.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.a6a44b29.js"), import("./_import/components/scatterPlot3d.3c677cab.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
+const [{default: _}, {default: jStat}, {multiply, transpose, dotMultiply, add}, {useOption}, {modelList}, {modelConfig}, {normWeights}, {getCombinations}, {PcaInputRange}, {scatterPlot3d}, {getPcaData}, {matrixData}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_node/mathjs@undefined/index.7496a740.js"), import("./_import/components/hook/useOption.a983f875.js"), import("./_import/components/modelList.98b739ae.js"), import("./_import/components/modelConfig.6feb3b8c.js"), import("./_import/components/normWeights.12937a58.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/UI/PcaInputRange.a6a44b29.js"), import("./_import/components/scatterPlot3d.a1619c2a.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/organizeData.e4ace3b1.js")]);
 
 
 return {_,jStat,multiply,transpose,dotMultiply,add,useOption,modelList,modelConfig,normWeights,getCombinations,PcaInputRange,scatterPlot3d,getPcaData,matrixData};
@@ -410,7 +410,7 @@ display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
   </ol>
   <div id="observablehq-search"><input type="search" placeholder="Search"></div>
   <div id="observablehq-search-results"></div>
-  <script>{const o=document.querySelector("#observablehq-search");o.setAttribute("data-shortcut",`${/Mac|iPhone/.test(navigator.platform)?"\u2318":"Alt-"}K`);const t=o.querySelector("input"),r=()=>import("./_observablehq/search.37554d01.js");t.addEventListener("focus",r,{once:!0}),t.addEventListener("keydown",r,{once:!0});const c=document.querySelector("#observablehq-sidebar-toggle");addEventListener("keydown",e=>{(e.code==="KeyK"&&e.metaKey&&!e.altKey&&!e.ctrlKey||e.key==="/"&&!e.metaKey&&!e.altKey&&!e.ctrlKey&&e.target===document.body)&&(c.checked?t.focus():(c.click(),t.focus(),c.click()),t.select(),e.preventDefault())});}</script>
+  <script>{const o=document.querySelector("#observablehq-search");o.setAttribute("data-shortcut",`${/Mac|iPhone/.test(navigator.platform)?"\u2318":"Alt-"}K`);const t=o.querySelector("input"),r=()=>import("./_observablehq/search.34078ebe.js");t.addEventListener("focus",r,{once:!0}),t.addEventListener("keydown",r,{once:!0});const c=document.querySelector("#observablehq-sidebar-toggle");addEventListener("keydown",e=>{(e.code==="KeyK"&&e.metaKey&&!e.altKey&&!e.ctrlKey||e.key==="/"&&!e.metaKey&&!e.altKey&&!e.ctrlKey&&e.target===document.body)&&(c.checked?t.focus():(c.click(),t.focus(),c.click()),t.select(),e.preventDefault())});}</script>
   <ol>
     <li class="observablehq-link"><a href="./">Overview</a></li>
   </ol>
@@ -434,6 +434,7 @@ display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
     <ol>
     <li class="observablehq-link"><a href="./vcd_v0">Slider Prototype</a></li>
     <li class="observablehq-link observablehq-link-active"><a href="./vcd_pca">PCA Prototype</a></li>
+    <li class="observablehq-link"><a href="./react">React</a></li>
     </ol>
   </section>
 </nav>
@@ -471,8 +472,8 @@ display(html`<div class="grid grid-cols-4">${scatterList}</div>`);
 <div class="observablehq observablehq--block"><!--:bc286b65:--></div>
 </main>
 <footer id="observablehq-footer">
-<nav><a rel="prev" href="./vcd_v0"><span>Slider Prototype</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-03T20:21:19">Jun 3, 2026</a>.</div>
+<nav><a rel="prev" href="./vcd_v0"><span>Slider Prototype</span></a><a rel="next" href="./react"><span>React</span></a></nav>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T01:56:57">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>
