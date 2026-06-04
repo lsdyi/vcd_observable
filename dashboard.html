@@ -16,21 +16,21 @@
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
-<link rel="modulepreload" href="./_import/components/getEstimate.d2432d66.js">
+<link rel="modulepreload" href="./_import/components/getEstimate.dc2133f3.js">
 <link rel="modulepreload" href="./_import/components/pageCache.349f7456.js">
-<link rel="modulepreload" href="./_import/components/r.bd092806.js">
-<link rel="modulepreload" href="./_import/components/config.bc56fe4b.js">
-<link rel="modulepreload" href="./_import/components/getPcaData.efb7c441.js">
-<link rel="modulepreload" href="./_import/components/forms.8eae4b50.js">
-<link rel="modulepreload" href="./_import/components/pcaUtils.9772a307.js">
-<link rel="modulepreload" href="./_import/components/weighting.b58377f1.js">
-<link rel="modulepreload" href="./_import/components/plots.063ae0a1.js">
+<link rel="modulepreload" href="./_import/components/r.69b7eafc.js">
+<link rel="modulepreload" href="./_import/components/config.9887161e.js">
+<link rel="modulepreload" href="./_import/components/getPcaData.bbf820ea.js">
+<link rel="modulepreload" href="./_import/components/forms.1434876a.js">
+<link rel="modulepreload" href="./_import/components/pcaUtils.9558b6bb.js">
+<link rel="modulepreload" href="./_import/components/weighting.07bf1cf9.js">
+<link rel="modulepreload" href="./_import/components/plots.fa919c0f.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_npm/htl@1.0.0/87d6f6ef.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
 <link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
-<link rel="modulepreload" href="./_import/components/kernel.a91a6573.js">
+<link rel="modulepreload" href="./_import/components/kernel.cbab8af1.js">
 <link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
 <link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
@@ -41,8 +41,8 @@
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
 <link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
-<link rel="modulepreload" href="./_import/components/scatterPlot.86ab2c01.js">
-<link rel="modulepreload" href="./_import/components/scatterPlot3d.a1619c2a.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot.e2447d93.js">
+<link rel="modulepreload" href="./_import/components/scatterPlot3d.f802a374.js">
 <link rel="modulepreload" href="./_node/kd-tree-javascript@1.0.3/index.9d2a7aff.js">
 <link rel="modulepreload" href="./_node/plotly.js-dist-min@3.6.0/index.43b8cd79.js">
 <link rel="modulepreload" href="./_npm/d3-dsv@3.0.1/9cffc2bd.js">
@@ -99,9 +99,9 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780568274178,"size":63992});
-registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1780568274178,"size":97292});
-registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780568274179,"size":108748});
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780609626086,"size":63992});
+registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1780609626086,"size":97292});
+registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780609626086,"size":108748});
 
 define({id: "818bbada", inputs: ["view","Inputs","DATASET","DEFAULT_DATASET_INDEX"], outputs: ["selectedDataset"], body: (view,Inputs,DATASET,DEFAULT_DATASET_INDEX) => {
 const selectedDataset = view(
@@ -124,40 +124,53 @@ const selectedModel = view(
 return {selectedModel};
 }});
 
-define({id: "c6dd75a2", inputs: ["view","Inputs","RADIO_OPTIONS","RADIO_OPTION_INDEX"], outputs: ["showPCA"], body: (view,Inputs,RADIO_OPTIONS,RADIO_OPTION_INDEX) => {
-const showPCA = view(
-  Inputs.radio(RADIO_OPTIONS, {
-    format: (x) => x.name,
-    value: RADIO_OPTIONS[RADIO_OPTION_INDEX],
-    label: "PCA radio",
-  }),
-);
-return {showPCA};
-}});
-
-define({id: "abf04568", inputs: ["createConditionFormMap","data","keys","continousKeys","Inputs","view"], outputs: ["formMap","formNode","conditionPointObjFromSlider"], body: (createConditionFormMap,data,keys,continousKeys,Inputs,view) => {
-const formMap = createConditionFormMap({ data, keys, continousKeys });
-const formNode = Inputs.form(formMap);
-const conditionPointObjFromSlider = view(formNode);
-return {formMap,formNode,conditionPointObjFromSlider};
-}});
-
-define({id: "ff561a88", inputs: ["createPcaForm","view"], outputs: ["pcaFormNode","pcCordinate"], body: (createPcaForm,view) => {
-const pcaFormNode = createPcaForm();
-const pcCordinate = view(pcaFormNode);
-return {pcaFormNode,pcCordinate};
-}});
-
-define({id: "cc12f82c", inputs: ["createBandwidthInputs","view"], outputs: ["bandwidthInputs","externalH","externalLamda"], body: (createBandwidthInputs,view) => {
-const bandwidthInputs = createBandwidthInputs();
-const externalH = view(bandwidthInputs.h);
-const externalLamda = view(bandwidthInputs.lambda);
-return {bandwidthInputs,externalH,externalLamda};
-}});
-
 define({id: "96e16aed", inputs: ["display","data_with_weights","d3"], body: (display,data_with_weights,d3) => {
 display(data_with_weights);
 display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
+}});
+
+define({id: "c810db61", inputs: ["view","Inputs","RESIDUAL_OPTIONS","DEFAULT_RESIDUAL_INDEX"], outputs: ["selectedResidual"], body: (view,Inputs,RESIDUAL_OPTIONS,DEFAULT_RESIDUAL_INDEX) => {
+const selectedResidual = view(
+  Inputs.radio(RESIDUAL_OPTIONS, {
+    format: (x) => x.name,
+    value: RESIDUAL_OPTIONS[DEFAULT_RESIDUAL_INDEX],
+    label: "Residual",
+  }),
+);
+return {selectedResidual};
+}});
+
+define({id: "78d892c6", inputs: ["selectedResidual"], outputs: ["residualType"], body: (selectedResidual) => {
+const residualType = selectedResidual.type;
+return {residualType};
+}});
+
+define({id: "f716db02", inputs: ["createConditionFormUpdater","formMap","formNode","createConditionalScatterGrid","keys","data_with_weights","residuals","residualType","conditionPointObj","usePCA","container","display","html"], outputs: ["onClick","scatterPlotList","scatterItems"], body: (createConditionFormUpdater,formMap,formNode,createConditionalScatterGrid,keys,data_with_weights,residuals,residualType,conditionPointObj,usePCA,container,display,html) => {
+const onClick = createConditionFormUpdater({ formMap, formNode });
+const scatterPlotList = createConditionalScatterGrid({
+  keys,
+  dataWithWeights: data_with_weights,
+  residuals,
+  residualType,
+  conditionPointObj,
+  width: 400,
+  onClick: usePCA ? undefined : onClick,
+});
+const scatterItems = usePCA ? [container, ...scatterPlotList] : scatterPlotList;
+
+display(
+  html`<div>
+    <div class="scatterplot-scroll-hint">
+      Scroll horizontally to view all scatterplots.
+    </div>
+    <div class="scatterplot-scroll-row">
+      ${scatterItems.map(
+        (plot) => html`<div class="scatterplot-scroll-item">${plot}</div>`,
+      )}
+    </div>
+  </div>`,
+);
+return {onClick,scatterPlotList,scatterItems};
 }});
 
 define({id: "cc2f3aca", inputs: ["display","html","conditionPoint"], body: (display,html,conditionPoint) => {
@@ -169,42 +182,67 @@ display(html`
 `);
 }});
 
-define({id: "46446e32", inputs: ["display","showPCA","container","html"], body: (display,showPCA,container,html) => {
-display(showPCA.id === 0 ? container : html`<span></span>`);
-}});
-
-define({id: "85ef7f6d", inputs: ["createConditionFormUpdater","formMap","formNode","createConditionalScatterGrid","keys","data_with_weights","residuals","conditionPointObj","width","display","html"], outputs: ["onClick","scatterPlotList"], body: (createConditionFormUpdater,formMap,formNode,createConditionalScatterGrid,keys,data_with_weights,residuals,conditionPointObj,width,display,html) => {
-const onClick = createConditionFormUpdater({ formMap, formNode });
-const scatterPlotList = createConditionalScatterGrid({
-  keys,
-  dataWithWeights: data_with_weights,
-  residuals,
-  conditionPointObj,
-  width,
-  onClick,
-});
-
-display(html`<div class="grid grid-cols-4">${scatterPlotList}</div>`);
-return {onClick,scatterPlotList};
-}});
-
-define({id: "f4c52645", inputs: ["view","Inputs","ESTIMATORS","html"], outputs: ["selectedEstimators"], body: (view,Inputs,ESTIMATORS,html) => {
-const selectedEstimators = view(
-  Inputs.checkbox(ESTIMATORS, {
-    format: (item) =>
-      html`<span style="color: ${item.color}">${item.name}</span>`,
-    value: ESTIMATORS.slice(1, ESTIMATORS.length - 1),
+define({id: "c6dd75a2", inputs: ["view","Inputs","RADIO_OPTIONS","RADIO_OPTION_INDEX"], outputs: ["showPCA"], body: (view,Inputs,RADIO_OPTIONS,RADIO_OPTION_INDEX) => {
+const showPCA = view(
+  Inputs.radio(RADIO_OPTIONS, {
+    format: (x) => x.name,
+    value: RADIO_OPTIONS[RADIO_OPTION_INDEX],
+    label: "PCA radio",
   }),
 );
-return {selectedEstimators};
+return {showPCA};
 }});
 
-define({id: "024d8268", inputs: ["display","selectedEstimators"], body: (display,selectedEstimators) => {
-display(selectedEstimators);
+define({id: "b3f09dde", inputs: ["showPCA"], outputs: ["usePCA"], body: (showPCA) => {
+const usePCA = showPCA.id === 0;
+return {usePCA};
 }});
 
-define({id: "05ced95b", inputs: ["display","pdfplot"], body: (display,pdfplot) => {
-display(pdfplot);
+define({id: "04061cd6", inputs: ["createConditionFormMap","data","keys","continousKeys","Inputs","setConditionFormMode","usePCA","view"], outputs: ["formMap","formNode","conditionPointObjFromSlider"], body: (createConditionFormMap,data,keys,continousKeys,Inputs,setConditionFormMode,usePCA,view) => {
+const formMap = createConditionFormMap({ data, keys, continousKeys });
+const formNode = Inputs.form(formMap);
+setConditionFormMode({ formMap, formNode, keys, continousKeys, usePCA });
+const conditionPointObjFromSlider = view(formNode);
+return {formMap,formNode,conditionPointObjFromSlider};
+}});
+
+define({id: "39386325", inputs: ["createPcaForm","setFormEnabled","usePCA","view"], outputs: ["pcaFormNode","pcCordinate"], body: (createPcaForm,setFormEnabled,usePCA,view) => {
+const pcaFormNode = createPcaForm();
+setFormEnabled(pcaFormNode, usePCA);
+const pcCordinate = view(pcaFormNode);
+return {pcaFormNode,pcCordinate};
+}});
+
+define({id: "cc12f82c", inputs: ["createBandwidthInputs","view"], outputs: ["bandwidthInputs","externalH","externalLamda"], body: (createBandwidthInputs,view) => {
+const bandwidthInputs = createBandwidthInputs();
+const externalH = view(bandwidthInputs.h);
+const externalLamda = view(bandwidthInputs.lambda);
+return {bandwidthInputs,externalH,externalLamda};
+}});
+
+define({id: "353f30d3", inputs: ["Inputs","ESTIMATORS","html","setSelectedEstimators"], outputs: ["selectedEstimatorsInput"], body: (Inputs,ESTIMATORS,html,setSelectedEstimators) => {
+const selectedEstimatorsInput = Inputs.checkbox(ESTIMATORS, {
+  format: (item) =>
+    html`<span style="color: ${item.color}">${item.name}</span>`,
+  value: ESTIMATORS.slice(1, ESTIMATORS.length - 1),
+});
+selectedEstimatorsInput.classList.add("estimator-selector");
+selectedEstimatorsInput.addEventListener("input", () =>
+  setSelectedEstimators(selectedEstimatorsInput.value),
+);
+return {selectedEstimatorsInput};
+}});
+
+define({id: "762d018b", inputs: ["display","html","selectedEstimatorsInput","pdfplot"], body: (display,html,selectedEstimatorsInput,pdfplot) => {
+display(
+  html`<div class="comparison-layout">
+    <aside class="comparison-controls">
+      <strong>Estimators</strong>
+      ${selectedEstimatorsInput}
+    </aside>
+    <div class="comparison-plot">${pdfplot}</div>
+  </div>`,
+);
 }});
 
 define({id: "d454a666", inputs: ["display","summary"], body: (display,summary) => {
@@ -237,19 +275,24 @@ const data = datasets[index]; // original data selected
 return {datasets,categoricalKeys,continousKeys,ordinalKeys,bwCont,lambdaCat,lambdaOrd,index,keys,responseKey,name,responseBw,data};
 }});
 
-define({id: "f6762f67", inputs: ["getPcaData","data","_","continousKeys","reconstructPcaCoordinate","pcCordinate","getConditionPointState","showPCA","keys","conditionPointObjFromSlider","computeDashboardWeights","categoricalKeys","ordinalKeys","bwCont","lambdaCat","lambdaOrd","externalH","externalLamda","createPcaClickHandler","pcaFormNode","formNode","createPcaScatter3d","residuals"], outputs: ["pcaData","pcaProxyObj","reConCor","conditionPoint","conditionPointObj","data_with_weights","onClick3D","container"], body: async (getPcaData,data,_,continousKeys,reconstructPcaCoordinate,pcCordinate,getConditionPointState,showPCA,keys,conditionPointObjFromSlider,computeDashboardWeights,categoricalKeys,ordinalKeys,bwCont,lambdaCat,lambdaOrd,externalH,externalLamda,createPcaClickHandler,pcaFormNode,formNode,createPcaScatter3d,residuals) => {
-const { pcaData, pcaProxyObj } = await getPcaData(
-  data.map((item) => _.pick(item, continousKeys)),
-  continousKeys,
-);
-const reConCor = reconstructPcaCoordinate({
-  pcaProxyObj,
-  continousKeys,
-  pcCordinate,
-});
+define({id: "577e238b", inputs: ["usePCA","getPcaData","data","_","continousKeys","reconstructPcaCoordinate","pcCordinate","getConditionPointState","keys","conditionPointObjFromSlider","computeDashboardWeights","categoricalKeys","ordinalKeys","bwCont","lambdaCat","lambdaOrd","externalH","externalLamda","createPcaClickHandler","pcaFormNode","formNode","createPcaScatter3d","residuals","residualType","html"], outputs: ["pcaData","pcaProxyObj","reConCor","conditionPoint","conditionPointObj","data_with_weights","onClick3D","container"], body: async (usePCA,getPcaData,data,_,continousKeys,reconstructPcaCoordinate,pcCordinate,getConditionPointState,keys,conditionPointObjFromSlider,computeDashboardWeights,categoricalKeys,ordinalKeys,bwCont,lambdaCat,lambdaOrd,externalH,externalLamda,createPcaClickHandler,pcaFormNode,formNode,createPcaScatter3d,residuals,residualType,html) => {
+const { pcaData, pcaProxyObj } = usePCA
+  ? await getPcaData(
+      data.map((item) => _.pick(item, continousKeys)),
+      continousKeys,
+    )
+  : { pcaData: [], pcaProxyObj: null };
+const reConCor = usePCA
+  ? reconstructPcaCoordinate({
+      pcaProxyObj,
+      continousKeys,
+      pcCordinate,
+    })
+  : [];
 const { conditionPoint, conditionPointObj } = getConditionPointState({
-  showPCA,
+  usePCA,
   keys,
+  continousKeys,
   reconstructedCoordinate: reConCor,
   sliderPoint: conditionPointObjFromSlider,
 });
@@ -266,17 +309,20 @@ const { dataWithWeights: data_with_weights } = computeDashboardWeights({
   externalLamda,
 });
 const onClick3D = createPcaClickHandler({ pcaFormNode, formNode });
-const container = createPcaScatter3d({
-  pcaData,
-  residuals,
-  pcCordinate,
-  dataWithWeights: data_with_weights,
-  onClick: onClick3D,
-});
+const container = usePCA
+  ? createPcaScatter3d({
+      pcaData,
+      residuals,
+      residualType,
+      pcCordinate,
+      dataWithWeights: data_with_weights,
+      onClick: onClick3D,
+    })
+  : html`<span></span>`;
 return {pcaData,pcaProxyObj,reConCor,conditionPoint,conditionPointObj,data_with_weights,onClick3D,container};
 }});
 
-define({id: "0c0829f8", inputs: ["webR","data","betaRegression","negativeBinomialRegression","selectedModel","pageCache","responseKey","keys","poissonRegession","getEstimate","conditionPoint","data_with_weights","responseBw","setModelState","getSummary","getPearsonResiduals","setResiduals"], outputs: ["rFunctions","rFunName","family","conditional","rFun","newModelOrData","output","newModelState","summary","temp"], body: async (webR,data,betaRegression,negativeBinomialRegression,selectedModel,pageCache,responseKey,keys,poissonRegession,getEstimate,conditionPoint,data_with_weights,responseBw,setModelState,getSummary,getPearsonResiduals,setResiduals) => {
+define({id: "6905baf3", inputs: ["webR","data","betaRegression","negativeBinomialRegression","selectedModel","pageCache","responseKey","keys","poissonRegession","getEstimate","conditionPoint","data_with_weights","responseBw","setModelState","getSummary","getResiduals","residualType","setResiduals"], outputs: ["rFunctions","rFunName","family","conditional","rFun","newModelOrData","output","newModelState","summary","temp"], body: async (webR,data,betaRegression,negativeBinomialRegression,selectedModel,pageCache,responseKey,keys,poissonRegession,getEstimate,conditionPoint,data_with_weights,responseBw,setModelState,getSummary,getResiduals,residualType,setResiduals) => {
 // R regression code
 await webR.objs.globalEnv.bind("data", data);
 
@@ -320,7 +366,7 @@ const newModelState = await getEstimate(
 setModelState(newModelState);
 
 const summary = await getSummary();
-const temp = await getPearsonResiduals();
+const temp = await getResiduals(residualType);
 setResiduals(temp.values);
 return {rFunctions,rFunName,family,conditional,rFun,newModelOrData,output,newModelState,summary,temp};
 }});
@@ -338,8 +384,8 @@ const pdfplot = createResponseDensityPlot({
 return {pdfplot};
 }});
 
-define({id: "7ea0ebd7", outputs: ["_","getEstimate","pageCache","Mutable","betaRegression","negativeBinomialRegression","webR","getSummary","poissonRegession","getPearsonResiduals","DATASET","MODEL","DEFAULT_DATASET_INDEX","DEFAULT_MODEL_INDEX","ESTIMATORS","RADIO_OPTIONS","RADIO_OPTION_INDEX","getPcaData","createBandwidthInputs","createConditionFormMap","createConditionFormUpdater","createPcaForm","createPcaClickHandler","getConditionPointState","reconstructPcaCoordinate","computeDashboardWeights","createConditionalScatterGrid","createPcaScatter3d","createResponseDensityPlot","residuals","setResiduals","modelState","setModelState"], body: async () => {
-const [{default: _}, {getEstimate}, {pageCache}, {Mutable}, {betaRegression, negativeBinomialRegression, webR, getSummary, poissonRegession, getPearsonResiduals}, {DATASET, MODEL, DEFAULT_DATASET_INDEX, DEFAULT_MODEL_INDEX, ESTIMATORS, RADIO_OPTIONS, RADIO_OPTION_INDEX}, {getPcaData}, {createBandwidthInputs, createConditionFormMap, createConditionFormUpdater, createPcaForm}, {createPcaClickHandler, getConditionPointState, reconstructPcaCoordinate}, {computeDashboardWeights}, {createConditionalScatterGrid, createPcaScatter3d, createResponseDensityPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_import/components/getEstimate.d2432d66.js"), import("./_import/components/pageCache.349f7456.js"), import("./_observablehq/stdlib.73a8ec5a.js"), import("./_import/components/r.bd092806.js"), import("./_import/components/config.bc56fe4b.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/forms.8eae4b50.js"), import("./_import/components/pcaUtils.9772a307.js"), import("./_import/components/weighting.b58377f1.js"), import("./_import/components/plots.063ae0a1.js")]);
+define({id: "dc7d74bf", outputs: ["_","getEstimate","pageCache","Mutable","betaRegression","negativeBinomialRegression","webR","getSummary","poissonRegession","getResiduals","DATASET","MODEL","DEFAULT_DATASET_INDEX","DEFAULT_MODEL_INDEX","ESTIMATORS","RADIO_OPTIONS","RADIO_OPTION_INDEX","RESIDUAL_OPTIONS","DEFAULT_RESIDUAL_INDEX","getPcaData","createBandwidthInputs","createConditionFormMap","createConditionFormUpdater","createPcaForm","setConditionFormMode","setFormEnabled","createPcaClickHandler","getConditionPointState","reconstructPcaCoordinate","computeDashboardWeights","createConditionalScatterGrid","createPcaScatter3d","createResponseDensityPlot","residuals","setResiduals","modelState","setModelState","selectedEstimators","setSelectedEstimators"], body: async () => {
+const [{default: _}, {getEstimate}, {pageCache}, {Mutable}, {betaRegression, negativeBinomialRegression, webR, getSummary, poissonRegession, getResiduals}, {DATASET, MODEL, DEFAULT_DATASET_INDEX, DEFAULT_MODEL_INDEX, ESTIMATORS, RADIO_OPTIONS, RADIO_OPTION_INDEX, RESIDUAL_OPTIONS, DEFAULT_RESIDUAL_INDEX}, {getPcaData}, {createBandwidthInputs, createConditionFormMap, createConditionFormUpdater, createPcaForm, setConditionFormMode, setFormEnabled}, {createPcaClickHandler, getConditionPointState, reconstructPcaCoordinate}, {computeDashboardWeights}, {createConditionalScatterGrid, createPcaScatter3d, createResponseDensityPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_import/components/getEstimate.dc2133f3.js"), import("./_import/components/pageCache.349f7456.js"), import("./_observablehq/stdlib.73a8ec5a.js"), import("./_import/components/r.69b7eafc.js"), import("./_import/components/config.9887161e.js"), import("./_import/components/getPcaData.bbf820ea.js"), import("./_import/components/forms.1434876a.js"), import("./_import/components/pcaUtils.9558b6bb.js"), import("./_import/components/weighting.07bf1cf9.js"), import("./_import/components/plots.fa919c0f.js")]);
 
 // non-input state
 const residuals = Mutable([]);
@@ -360,7 +406,14 @@ const setModelState = (newValue) => {
     modelState.value = newValue;
   }
 };
-return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegression,webR,getSummary,poissonRegession,getPearsonResiduals,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,RADIO_OPTIONS,RADIO_OPTION_INDEX,getPcaData,createBandwidthInputs,createConditionFormMap,createConditionFormUpdater,createPcaForm,createPcaClickHandler,getConditionPointState,reconstructPcaCoordinate,computeDashboardWeights,createConditionalScatterGrid,createPcaScatter3d,createResponseDensityPlot,residuals,setResiduals,modelState,setModelState};
+
+const selectedEstimators = Mutable(ESTIMATORS.slice(1, ESTIMATORS.length - 1));
+const setSelectedEstimators = (newValue) => {
+  if (!_.isEqual(newValue, selectedEstimators.value)) {
+    selectedEstimators.value = newValue;
+  }
+};
+return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegression,webR,getSummary,poissonRegession,getResiduals,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,RADIO_OPTIONS,RADIO_OPTION_INDEX,RESIDUAL_OPTIONS,DEFAULT_RESIDUAL_INDEX,getPcaData,createBandwidthInputs,createConditionFormMap,createConditionFormUpdater,createPcaForm,setConditionFormMode,setFormEnabled,createPcaClickHandler,getConditionPointState,reconstructPcaCoordinate,computeDashboardWeights,createConditionalScatterGrid,createPcaScatter3d,createResponseDensityPlot,residuals,setResiduals,modelState,setModelState,selectedEstimators,setSelectedEstimators};
 }});
 
 </script>
@@ -375,7 +428,7 @@ return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegressio
   </ol>
   <div id="observablehq-search"><input type="search" placeholder="Search"></div>
   <div id="observablehq-search-results"></div>
-  <script>{const o=document.querySelector("#observablehq-search");o.setAttribute("data-shortcut",`${/Mac|iPhone/.test(navigator.platform)?"\u2318":"Alt-"}K`);const t=o.querySelector("input"),r=()=>import("./_observablehq/search.34078ebe.js");t.addEventListener("focus",r,{once:!0}),t.addEventListener("keydown",r,{once:!0});const c=document.querySelector("#observablehq-sidebar-toggle");addEventListener("keydown",e=>{(e.code==="KeyK"&&e.metaKey&&!e.altKey&&!e.ctrlKey||e.key==="/"&&!e.metaKey&&!e.altKey&&!e.ctrlKey&&e.target===document.body)&&(c.checked?t.focus():(c.click(),t.focus(),c.click()),t.select(),e.preventDefault())});}</script>
+  <script>{const o=document.querySelector("#observablehq-search");o.setAttribute("data-shortcut",`${/Mac|iPhone/.test(navigator.platform)?"\u2318":"Alt-"}K`);const t=o.querySelector("input"),r=()=>import("./_observablehq/search.a6b3e9ef.js");t.addEventListener("focus",r,{once:!0}),t.addEventListener("keydown",r,{once:!0});const c=document.querySelector("#observablehq-sidebar-toggle");addEventListener("keydown",e=>{(e.code==="KeyK"&&e.metaKey&&!e.altKey&&!e.ctrlKey||e.key==="/"&&!e.metaKey&&!e.altKey&&!e.ctrlKey&&e.target===document.body)&&(c.checked?t.focus():(c.click(),t.focus(),c.click()),t.select(),e.preventDefault())});}</script>
   <ol>
     <li class="observablehq-link"><a href="./">Overview</a></li>
   </ol>
@@ -410,30 +463,133 @@ return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegressio
 <div class="observablehq observablehq--block"><!--:818bbada:--></div>
 <h2 id="select-model" tabindex="-1"><a class="observablehq-header-anchor" href="#select-model">Select Model</a></h2>
 <div class="observablehq observablehq--block"><!--:255639e8:--></div>
-<h2 id="select-conditional-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditional-data">Select Conditional Data</a></h2>
-<div class="observablehq observablehq--block"><!--:c6dd75a2:--></div>
-<div class="observablehq observablehq--block"><!--:abf04568:--></div>
-<div class="observablehq observablehq--block"><!--:ff561a88:--></div>
-<h2 id="select-bandwidth" tabindex="-1"><a class="observablehq-header-anchor" href="#select-bandwidth">Select bandwidth</a></h2>
-<div class="observablehq observablehq--block"><!--:cc12f82c:--></div>
 <p>Every data point with weight is listed as follows.</p>
 <div class="observablehq observablehq--block"><!--:96e16aed:--></div>
+<h2 id="select-residual" tabindex="-1"><a class="observablehq-header-anchor" href="#select-residual">Select Residual</a></h2>
+<div class="observablehq observablehq--block"><!--:c810db61:--></div>
+<div class="observablehq observablehq--block"><!--:78d892c6:--></div>
+<div class="observablehq observablehq--block"><!--:f716db02:--></div>
 <div class="observablehq observablehq--block"><!--:cc2f3aca:--></div>
-<div class="observablehq observablehq--block"><!--:46446e32:--></div>
-<div class="observablehq observablehq--block"><!--:85ef7f6d:--></div>
-<div class="observablehq observablehq--block"><!--:f4c52645:--></div>
-<div class="observablehq observablehq--block"><!--:024d8268:--></div>
-<div class="observablehq observablehq--block"><!--:05ced95b:--></div>
+<h2 id="select-conditional-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditional-data">Select Conditional Data</a></h2>
+<div class="observablehq observablehq--block"><!--:c6dd75a2:--></div>
+<div class="observablehq observablehq--block"><!--:b3f09dde:--></div>
+<div class="observablehq observablehq--block"><!--:04061cd6:--></div>
+<div class="observablehq observablehq--block"><!--:39386325:--></div>
+<h2 id="select-bandwidth" tabindex="-1"><a class="observablehq-header-anchor" href="#select-bandwidth">Select bandwidth</a></h2>
+<div class="observablehq observablehq--block"><!--:cc12f82c:--></div>
+<div class="observablehq observablehq--block"><!--:353f30d3:--></div>
+<div class="observablehq observablehq--block"><!--:762d018b:--></div>
 <div class="observablehq observablehq--block"><!--:d454a666:--></div>
 <div class="observablehq observablehq--block"><!--:eea69503:--></div>
-<div class="observablehq observablehq--block"><!--:f6762f67:--></div>
-<div class="observablehq observablehq--block"><!--:0c0829f8:--></div>
+<div class="observablehq observablehq--block"><!--:577e238b:--></div>
+<div class="observablehq observablehq--block"><!--:6905baf3:--></div>
 <div class="observablehq observablehq--block"><!--:dd41cba3:--></div>
-<div class="observablehq observablehq--block"><!--:7ea0ebd7:--></div>
+<div class="observablehq observablehq--block"><!--:dc7d74bf:--></div>
+<style>
+.comparison-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.comparison-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 12px;
+}
+
+.comparison-controls .estimator-selector,
+.comparison-controls .estimator-selector > * {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comparison-plot {
+  min-width: 0;
+}
+
+.scatterplot-scroll-hint {
+  color: #4b5563;
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+
+.scatterplot-scroll-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 100%;
+  height: 300px;
+  overflow-x: scroll;
+  overflow-y: visible;
+  padding: 0 0 12px;
+  scroll-snap-type: x proximity;
+}
+
+.scatterplot-scroll-item {
+  flex: 0 0 300px;
+  width: 300px;
+  height: 300px;
+  scroll-snap-align: start;
+}
+
+.scatterplot-scroll-item > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scatterplot-scroll-item .pca-latent-scatterplot,
+.scatterplot-scroll-item .pca-latent-scatterplot .plot-container,
+.scatterplot-scroll-item .pca-latent-scatterplot .svg-container,
+.scatterplot-scroll-item .pca-latent-scatterplot .main-svg,
+.scatterplot-scroll-item .pca-latent-scatterplot .gl-container,
+.scatterplot-scroll-item .pca-latent-scatterplot canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.pca-latent-tooltip {
+  position: fixed;
+  z-index: 1000;
+  max-width: 220px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 8px 10px;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.18);
+  font: 12px/1.35 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  pointer-events: none;
+}
+
+#scene {
+  width: 100% !important;
+}
+
+@media (max-width: 760px) {
+  .comparison-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-controls {
+    position: static;
+  }
+}
+</style>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./density_estimate"><span>Density Estimator</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T10:19:49">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T21:48:18">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>

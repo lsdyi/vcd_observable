@@ -1,7 +1,7 @@
 import jStat from "../../_node/jstat@1.9.6/index.bc60a888.js";
 import { multiply, transpose } from "../../_node/mathjs@undefined/index.7496a740.js";
 
-import { poissonKernel } from "./kernel.a91a6573.js";
+import { poissonKernel } from "./kernel.cbab8af1.js";
 import { negBinomialPMF } from "./util.8c2c9357.js";
 
 const poissonPdf = (x, mean) => jStat.jStat.poisson.pdf(x, mean) || 0;

@@ -17,11 +17,11 @@
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
 <link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
-<link rel="modulepreload" href="./_import/components/r.bd092806.js">
+<link rel="modulepreload" href="./_import/components/r.69b7eafc.js">
 <link rel="modulepreload" href="./_import/components/getCombinations.5c1dc902.js">
 <link rel="modulepreload" href="./_import/components/pageComponents.f0021791.js">
-<link rel="modulepreload" href="./_import/components/weighting.b58377f1.js">
-<link rel="modulepreload" href="./_import/components/countModels.4c4872f0.js">
+<link rel="modulepreload" href="./_import/components/weighting.07bf1cf9.js">
+<link rel="modulepreload" href="./_import/components/countModels.005edfe4.js">
 <link rel="modulepreload" href="./_npm/d3@7.9.0/66d82917.js">
 <link rel="modulepreload" href="./_npm/htl@1.0.0/87d6f6ef.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
@@ -30,7 +30,7 @@
 <link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
 <link rel="modulepreload" href="./_import/components/getRanges.5556642d.js">
 <link rel="modulepreload" href="./_node/@observablehq/inputs@0.12.0/index.4eed0a6e.js">
-<link rel="modulepreload" href="./_import/components/kernel.a91a6573.js">
+<link rel="modulepreload" href="./_import/components/kernel.cbab8af1.js">
 <link rel="modulepreload" href="./_import/components/normWeights.12937a58.js">
 <link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
 <link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
@@ -89,10 +89,10 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780568274178,"size":63992});
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780609626086,"size":63992});
 
 define({id: "78c71412", outputs: ["_","jStat","negativeBinomialRegression","webR","getSummary","poissonRegression","getCombinations","createRangeFormMap","createWeightedScatterGrid","computeKernelWeightedRows","computeStdevsByKey","createCountModelCurves","createCountPmfPlot"], body: async () => {
-const [{default: _}, {default: jStat}, {negativeBinomialRegression, webR, getSummary, poissonRegression}, {getCombinations}, {createRangeFormMap, createWeightedScatterGrid}, {computeKernelWeightedRows, computeStdevsByKey}, {createCountModelCurves, createCountPmfPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_import/components/r.bd092806.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/pageComponents.f0021791.js"), import("./_import/components/weighting.b58377f1.js"), import("./_import/components/countModels.4c4872f0.js")]);
+const [{default: _}, {default: jStat}, {negativeBinomialRegression, webR, getSummary, poissonRegression}, {getCombinations}, {createRangeFormMap, createWeightedScatterGrid}, {computeKernelWeightedRows, computeStdevsByKey}, {createCountModelCurves, createCountPmfPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_node/jstat@1.9.6/index.bc60a888.js"), import("./_import/components/r.69b7eafc.js"), import("./_import/components/getCombinations.5c1dc902.js"), import("./_import/components/pageComponents.f0021791.js"), import("./_import/components/weighting.07bf1cf9.js"), import("./_import/components/countModels.005edfe4.js")]);
 
 
 return {_,jStat,negativeBinomialRegression,webR,getSummary,poissonRegression,getCombinations,createRangeFormMap,createWeightedScatterGrid,computeKernelWeightedRows,computeStdevsByKey,createCountModelCurves,createCountPmfPlot};
@@ -234,7 +234,7 @@ return {isPoissonReg,output,estimates,summary,xGrid,coordinates,weightedDen,pdfp
   </ol>
   <div id="observablehq-search"><input type="search" placeholder="Search"></div>
   <div id="observablehq-search-results"></div>
-  <script>{const o=document.querySelector("#observablehq-search");o.setAttribute("data-shortcut",`${/Mac|iPhone/.test(navigator.platform)?"\u2318":"Alt-"}K`);const t=o.querySelector("input"),r=()=>import("./_observablehq/search.34078ebe.js");t.addEventListener("focus",r,{once:!0}),t.addEventListener("keydown",r,{once:!0});const c=document.querySelector("#observablehq-sidebar-toggle");addEventListener("keydown",e=>{(e.code==="KeyK"&&e.metaKey&&!e.altKey&&!e.ctrlKey||e.key==="/"&&!e.metaKey&&!e.altKey&&!e.ctrlKey&&e.target===document.body)&&(c.checked?t.focus():(c.click(),t.focus(),c.click()),t.select(),e.preventDefault())});}</script>
+  <script>{const o=document.querySelector("#observablehq-search");o.setAttribute("data-shortcut",`${/Mac|iPhone/.test(navigator.platform)?"\u2318":"Alt-"}K`);const t=o.querySelector("input"),r=()=>import("./_observablehq/search.a6b3e9ef.js");t.addEventListener("focus",r,{once:!0}),t.addEventListener("keydown",r,{once:!0});const c=document.querySelector("#observablehq-sidebar-toggle");addEventListener("keydown",e=>{(e.code==="KeyK"&&e.metaKey&&!e.altKey&&!e.ctrlKey||e.key==="/"&&!e.metaKey&&!e.altKey&&!e.ctrlKey&&e.target===document.body)&&(c.checked?t.focus():(c.click(),t.focus(),c.click()),t.select(),e.preventDefault())});}</script>
   <ol>
     <li class="observablehq-link"><a href="./">Overview</a></li>
   </ol>
@@ -292,7 +292,7 @@ return {isPoissonReg,output,estimates,summary,xGrid,coordinates,weightedDen,pdfp
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./pca"><span>PCA Navigation</span></a><a rel="next" href="./doctor"><span>Doctor Visit</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T10:19:49">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T21:48:18">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>

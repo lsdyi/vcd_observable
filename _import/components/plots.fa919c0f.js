@@ -1,10 +1,11 @@
 import { getCombinations } from "./getCombinations.5c1dc902.js";
-import { chart } from "./scatterPlot.86ab2c01.js";
-import { scatterPlot3d } from "./scatterPlot3d.a1619c2a.js";
+import { chart } from "./scatterPlot.e2447d93.js";
+import { scatterPlot3d } from "./scatterPlot3d.f802a374.js";
 
 export const createPcaScatter3d = ({
   pcaData,
   residuals = [],
+  residualType = "deviance",
   pcCordinate,
   dataWithWeights,
   onClick,
@@ -12,11 +13,13 @@ export const createPcaScatter3d = ({
   scatterPlot3d(
     pcaData.map((item, index) => ({
       ...item,
+      idx: index,
       residual: residuals[index],
     })),
     ["pc1", "pc2", "pc3"],
     pcCordinate,
     dataWithWeights,
+    residualType,
     onClick,
   );
 
@@ -24,6 +27,7 @@ export const createConditionalScatterGrid = ({
   keys,
   dataWithWeights,
   residuals = [],
+  residualType = "deviance",
   conditionPointObj,
   width,
   onClick,
@@ -50,6 +54,7 @@ export const createConditionalScatterGrid = ({
       key1,
       key2,
       dataWithWeights,
+      residualType,
       onClick,
     ),
   );

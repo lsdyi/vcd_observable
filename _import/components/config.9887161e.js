@@ -111,6 +111,18 @@ const RADIO_OPTIONS = [
 ];
 const RADIO_OPTION_INDEX = 0;
 
+const RESIDUAL_OPTIONS = [
+  {
+    name: "Deviance residual",
+    type: "deviance",
+  },
+  {
+    name: "Pearson residual",
+    type: "pearson",
+  },
+];
+const DEFAULT_RESIDUAL_INDEX = 0;
+
 export {
   DATASET,
   MODEL,
@@ -119,5 +131,7 @@ export {
   ESTIMATORS,
   DEFAULT_ESTIMATOR_LIST,
   RADIO_OPTIONS,
-  RADIO_OPTION_INDEX
+  RADIO_OPTION_INDEX,
+  RESIDUAL_OPTIONS,
+  DEFAULT_RESIDUAL_INDEX,
 };

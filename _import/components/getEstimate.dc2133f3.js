@@ -3,9 +3,9 @@ import { multiply, transpose } from "../../_node/mathjs@undefined/index.7496a740
 import * as d3 from "../../_npm/d3@7.9.0/66d82917.js";
 import jStat from "../../_node/jstat@1.9.6/index.bc60a888.js";
 
-import { loess } from "./r.bd092806.js";
+import { loess } from "./r.69b7eafc.js";
 import { negBinomialPMF } from "./util.8c2c9357.js";
-import { poissonKernel, kContinuous } from "./kernel.a91a6573.js";
+import { poissonKernel, kContinuous } from "./kernel.cbab8af1.js";
 
 const getEstimate = async (
   family,
