@@ -20,22 +20,32 @@ function chart(
   const tickFontSize = compact ? 11 : 30;
   const labelFontSize = compact ? 16 : 40;
   const xTickCount = compact ? 5 : 12;
+  const observationRadius = compact ? 2 : 5;
+  const conditionalRadius = compact ? 5 : 8;
+  const residualStrokeWidth = compact ? 1.5 : 3;
 
   const k = innerHeight / innerWidth;
 
-  const minX = d3.min(data, (d) => d.x);
-  const maxX = d3.max(data, (d) => d.x);
-  const minY = d3.min(data, (d) => d.y);
-  const maxY = d3.max(data, (d) => d.y);
+  const getDomain = (values) => {
+    const finiteValues = values.filter((value) => Number.isFinite(value));
+    const [min = 0, max = 1] = d3.extent(finiteValues);
+    const span = max - min;
+    const pad = span > 0 ? span * 0.04 : 0.5;
+
+    return [min - pad, max + pad];
+  };
+
+  const xDomain = getDomain(data.map((d) => d.x));
+  const yDomain = getDomain(data.map((d) => d.y));
 
   const x = d3
     .scaleLinear()
-    .domain([minX - 0.5, maxX + 0.5])
+    .domain(xDomain)
     .range([0, innerWidth]);
 
   const y = d3
     .scaleLinear()
-    .domain([minY - 0.5, maxY + 0.5])
+    .domain(yDomain)
     .range([innerHeight, 0]);
 
   const z = d3
@@ -218,17 +228,38 @@ function chart(
         sameCoordinate(residualPoint.x, datum.x) && sameCoordinate(residualPoint.y, datum.y),
     );
   const hasResidualHighlight = (datum) => isTopResidual(datum) || overlapsTopResidual(datum);
+  const pointKey = (d) => `${d.x}\u0000${d.y}`;
+  const stackedGroups = d3.group(
+    data.map((d, i) => ({ ...d, idx: i })).filter((d) => d.group !== "conditional"),
+    pointKey,
+  );
+  const jitterByIndex = new Map();
+  for (const values of stackedGroups.values()) {
+    if (values.length < 2) continue;
+
+    values.forEach((d, index) => {
+      const angle = index * 2.399963229728653;
+      const radius = compact
+        ? Math.min(3.5, 0.8 + Math.sqrt(index) * 0.9)
+        : Math.min(10, 2 + Math.sqrt(index) * 3);
+      jitterByIndex.set(d.idx, {
+        x: Math.cos(angle) * radius,
+        y: Math.sin(angle) * radius,
+      });
+    });
+  }
+  const getJitter = (d) => jitterByIndex.get(d.idx) || { x: 0, y: 0 };
 
   gDot
     .selectAll("circle")
     .data(data.map((d, i) => ({ ...d, idx: i })))
     .join("circle")
-    .attr("cx", (d) => x(d.x))
-    .attr("cy", (d) => y(d.y))
-    .attr("r", (d) => (d.weight === undefined ? 8 : 5))
+    .attr("cx", (d) => x(d.x) + getJitter(d).x)
+    .attr("cy", (d) => y(d.y) + getJitter(d).y)
+    .attr("r", (d) => (d.weight === undefined ? conditionalRadius : observationRadius))
     .attr("fill", (d) => getColor(d))
     .attr("stroke", (d) => (hasResidualHighlight(d) ? "red" : "none"))
-    .attr("stroke-width", (d) => (hasResidualHighlight(d) ? 3 : 1))
+    .attr("stroke-width", (d) => (hasResidualHighlight(d) ? residualStrokeWidth : 1))
     .attr("filter", (d) => (hasResidualHighlight(d) ? "url(#red-glow)" : null))
     .on("mouseover", function (event, d) {
       const obs = data_with_weights[d.idx] || d;

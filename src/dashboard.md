@@ -112,10 +112,13 @@ const scatterPlotList = createConditionalScatterGrid({
 });
 
 display(
-  html`<div class="scatterplot-scroll-row">
-    ${scatterPlotList.map(
-      (plot) => html`<div class="scatterplot-scroll-item">${plot}</div>`,
-    )}
+  html`<div>
+    <div class="scatterplot-scroll-hint">Scroll horizontally to view all scatterplots.</div>
+    <div class="scatterplot-scroll-row">
+      ${scatterPlotList.map(
+        (plot) => html`<div class="scatterplot-scroll-item">${plot}</div>`,
+      )}
+    </div>
   </div>`,
 );
 ```
@@ -340,6 +343,12 @@ const setModelState = (newValue) => {
 ```
 
 <style>
+.scatterplot-scroll-hint {
+  color: #4b5563;
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+
 .scatterplot-scroll-row {
   display: flex;
   flex-direction: row;
@@ -348,7 +357,7 @@ const setModelState = (newValue) => {
   flex-wrap: nowrap;
   width: 100%;
   max-width: 100%;
-  height: 400px;
+  height: 300px;
   overflow-x: scroll;
   overflow-y: hidden;
   padding: 0 0 12px;
@@ -356,9 +365,9 @@ const setModelState = (newValue) => {
 }
 
 .scatterplot-scroll-item {
-  flex: 0 0 400px;
-  width: 400px;
-  height: 388px;
+  flex: 0 0 300px;
+  width: 300px;
+  height: 300px;
   scroll-snap-align: start;
 }
 
