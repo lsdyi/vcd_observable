@@ -1,5 +1,4 @@
 import jStat from "../../_node/jstat@1.9.6/index.bc60a888.js";
-import { betaRegression, negativeBinomialRegression } from "./r.bd092806.js";
 
 const DATASET = [
   {
@@ -75,15 +74,15 @@ const MODEL = [
 
   {
     family: `negative binomial regression`,
-    rFun: negativeBinomialRegression,
+    rFunName: "negativeBinomialRegression",
   },
   {
     family: `beta regression`,
-    rFun: betaRegression,
+    rFunName: "betaRegression",
   },
   {
     family: `beta regression`,
-    rFun: betaRegression,
+    rFunName: "betaRegression",
     conditional: ' | X1',
   },
 ];
@@ -96,8 +95,8 @@ const ESTIMATORS = [
   { id: 3, name: "modiﬁed kernel estimator", color: "#6A5ACD" },
 ];
 
-const DEFAULT_DATASET_INDEX = 1;
-const DEFAULT_MODEL_INDEX = MODEL.length - 1;
+const DEFAULT_DATASET_INDEX = 0;
+const DEFAULT_MODEL_INDEX = 4;
 const DEFAULT_ESTIMATOR_LIST = [0, 1, 2, 3];
 
 const RADIO_OPTIONS = [

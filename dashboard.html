@@ -16,10 +16,10 @@
 <link rel="modulepreload" href="./_observablehq/runtime.e080113b.js">
 <link rel="modulepreload" href="./_observablehq/stdlib.73a8ec5a.js">
 <link rel="modulepreload" href="./_node/lodash@4.17.23/index.7ea066fd.js">
-<link rel="modulepreload" href="./_import/components/config.dfd22411.js">
 <link rel="modulepreload" href="./_import/components/getEstimate.d2432d66.js">
 <link rel="modulepreload" href="./_import/components/pageCache.349f7456.js">
 <link rel="modulepreload" href="./_import/components/r.bd092806.js">
+<link rel="modulepreload" href="./_import/components/config.bc56fe4b.js">
 <link rel="modulepreload" href="./_import/components/getPcaData.efb7c441.js">
 <link rel="modulepreload" href="./_import/components/forms.8eae4b50.js">
 <link rel="modulepreload" href="./_import/components/pcaUtils.9772a307.js">
@@ -29,10 +29,10 @@
 <link rel="modulepreload" href="./_npm/htl@1.0.0/87d6f6ef.js">
 <link rel="modulepreload" href="./_observablehq/stdlib/inputs.e6c672de.js">
 <link rel="modulepreload" href="./_npm/@observablehq/plot@0.6.17/a96a6bbb.js">
-<link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
 <link rel="modulepreload" href="./_import/components/util.8c2c9357.js">
 <link rel="modulepreload" href="./_import/components/kernel.a91a6573.js">
 <link rel="modulepreload" href="./_node/mathjs@undefined/index.7496a740.js">
+<link rel="modulepreload" href="./_node/jstat@1.9.6/index.bc60a888.js">
 <link rel="modulepreload" href="./_import/components/modelConfig.6feb3b8c.js">
 <link rel="modulepreload" href="./_node/webr@0.5.9/index.1cb224c9.js">
 <link rel="modulepreload" href="./_import/components/organizeData.e4ace3b1.js">
@@ -99,9 +99,9 @@
 import {define} from "./_observablehq/client.e73ce0be.js";
 import {registerFile} from "./_observablehq/stdlib.73a8ec5a.js";
 
-registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780539438365,"size":63992});
-registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1780539438365,"size":97292});
-registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780539438366,"size":108748});
+registerFile("./data/dgp.csv", {"name":"./data/dgp.csv","mimeType":"text/csv","path":"./_file/data/dgp.e185f3bc.csv","lastModified":1780568274178,"size":63992});
+registerFile("./data/doctorvisits.csv", {"name":"./data/doctorvisits.csv","mimeType":"text/csv","path":"./_file/data/doctorvisits.b31ac658.csv","lastModified":1780568274178,"size":97292});
+registerFile("./data/simulated_beta_data_phix.csv", {"name":"./data/simulated_beta_data_phix.csv","mimeType":"text/csv","path":"./_file/data/simulated_beta_data_phix.0b9013ab.csv","lastModified":1780568274179,"size":108748});
 
 define({id: "818bbada", inputs: ["view","Inputs","DATASET","DEFAULT_DATASET_INDEX"], outputs: ["selectedDataset"], body: (view,Inputs,DATASET,DEFAULT_DATASET_INDEX) => {
 const selectedDataset = view(
@@ -142,6 +142,12 @@ const conditionPointObjFromSlider = view(formNode);
 return {formMap,formNode,conditionPointObjFromSlider};
 }});
 
+define({id: "ff561a88", inputs: ["createPcaForm","view"], outputs: ["pcaFormNode","pcCordinate"], body: (createPcaForm,view) => {
+const pcaFormNode = createPcaForm();
+const pcCordinate = view(pcaFormNode);
+return {pcaFormNode,pcCordinate};
+}});
+
 define({id: "cc12f82c", inputs: ["createBandwidthInputs","view"], outputs: ["bandwidthInputs","externalH","externalLamda"], body: (createBandwidthInputs,view) => {
 const bandwidthInputs = createBandwidthInputs();
 const externalH = view(bandwidthInputs.h);
@@ -152,12 +158,6 @@ return {bandwidthInputs,externalH,externalLamda};
 define({id: "96e16aed", inputs: ["display","data_with_weights","d3"], body: (display,data_with_weights,d3) => {
 display(data_with_weights);
 display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
-}});
-
-define({id: "ff561a88", inputs: ["createPcaForm","view"], outputs: ["pcaFormNode","pcCordinate"], body: (createPcaForm,view) => {
-const pcaFormNode = createPcaForm();
-const pcCordinate = view(pcaFormNode);
-return {pcaFormNode,pcCordinate};
 }});
 
 define({id: "cc2f3aca", inputs: ["display","html","conditionPoint"], body: (display,html,conditionPoint) => {
@@ -211,7 +211,7 @@ define({id: "d454a666", inputs: ["display","summary"], body: (display,summary) =
 display(summary);
 }});
 
-define({id: "569fd974", inputs: ["FileAttachment","selectedDataset"], outputs: ["datasets","categoricalKeys","continousKeys","ordinalKeys","bwCont","lambdaCat","lambdaOrd","index","keys","responseKey","name","responseBw","data"], body: async (FileAttachment,selectedDataset) => {
+define({id: "eea69503", inputs: ["FileAttachment","selectedDataset"], outputs: ["datasets","categoricalKeys","continousKeys","ordinalKeys","bwCont","lambdaCat","lambdaOrd","index","keys","responseKey","name","responseBw","data"], body: async (FileAttachment,selectedDataset) => {
 // load all the datasets
 const datasets = [
   await FileAttachment("./data/dgp.csv").csv({ typed: true }),
@@ -220,7 +220,6 @@ const datasets = [
   }),
   await FileAttachment("./data/doctorvisits.csv").csv({ typed: true }),
 ];
-
 const {
   categoricalKeys,
   continousKeys,
@@ -277,11 +276,16 @@ const container = createPcaScatter3d({
 return {pcaData,pcaProxyObj,reConCor,conditionPoint,conditionPointObj,data_with_weights,onClick3D,container};
 }});
 
-define({id: "302c553b", inputs: ["webR","data","selectedModel","pageCache","responseKey","keys","poissonRegession","getEstimate","conditionPoint","data_with_weights","responseBw","setModelState","getSummary","getPearsonResiduals","setResiduals"], outputs: ["rFun","family","conditional","newModelOrData","output","newModelState","summary","temp"], body: async (webR,data,selectedModel,pageCache,responseKey,keys,poissonRegession,getEstimate,conditionPoint,data_with_weights,responseBw,setModelState,getSummary,getPearsonResiduals,setResiduals) => {
+define({id: "0c0829f8", inputs: ["webR","data","betaRegression","negativeBinomialRegression","selectedModel","pageCache","responseKey","keys","poissonRegession","getEstimate","conditionPoint","data_with_weights","responseBw","setModelState","getSummary","getPearsonResiduals","setResiduals"], outputs: ["rFunctions","rFunName","family","conditional","rFun","newModelOrData","output","newModelState","summary","temp"], body: async (webR,data,betaRegression,negativeBinomialRegression,selectedModel,pageCache,responseKey,keys,poissonRegession,getEstimate,conditionPoint,data_with_weights,responseBw,setModelState,getSummary,getPearsonResiduals,setResiduals) => {
 // R regression code
 await webR.objs.globalEnv.bind("data", data);
 
-const { rFun, family, conditional } = selectedModel;
+const rFunctions = {
+  betaRegression,
+  negativeBinomialRegression,
+};
+const { rFunName, family, conditional } = selectedModel;
+const rFun = rFunctions[rFunName];
 
 const newModelOrData =
   pageCache.data !== data ||
@@ -303,23 +307,22 @@ if (newModelOrData) {
 
 const { output } = pageCache;
 
-const newModelState =
-  await getEstimate(
-    family,
-    output,
-    conditionPoint,
-    data_with_weights,
-    keys,
-    responseKey,
-    responseBw,
-    conditional,
-  );
+const newModelState = await getEstimate(
+  family,
+  output,
+  conditionPoint,
+  data_with_weights,
+  keys,
+  responseKey,
+  responseBw,
+  conditional,
+);
 setModelState(newModelState);
 
 const summary = await getSummary();
 const temp = await getPearsonResiduals();
 setResiduals(temp.values);
-return {rFun,family,conditional,newModelOrData,output,newModelState,summary,temp};
+return {rFunctions,rFunName,family,conditional,rFun,newModelOrData,output,newModelState,summary,temp};
 }});
 
 define({id: "dd41cba3", inputs: ["createResponseDensityPlot","Plot","d3","name","responseKey","data_with_weights","modelState","selectedEstimators"], outputs: ["pdfplot"], body: (createResponseDensityPlot,Plot,d3,name,responseKey,data_with_weights,modelState,selectedEstimators) => {
@@ -335,9 +338,8 @@ const pdfplot = createResponseDensityPlot({
 return {pdfplot};
 }});
 
-define({id: "94f2966a", outputs: ["_","DATASET","MODEL","DEFAULT_DATASET_INDEX","DEFAULT_MODEL_INDEX","ESTIMATORS","RADIO_OPTIONS","RADIO_OPTION_INDEX","getEstimate","pageCache","Mutable","webR","getSummary","poissonRegession","getPearsonResiduals","getPcaData","createBandwidthInputs","createConditionFormMap","createConditionFormUpdater","createPcaForm","createPcaClickHandler","getConditionPointState","reconstructPcaCoordinate","computeDashboardWeights","createConditionalScatterGrid","createPcaScatter3d","createResponseDensityPlot","residuals","setResiduals","modelState","setModelState"], body: async () => {
-const [{default: _}, {DATASET, MODEL, DEFAULT_DATASET_INDEX, DEFAULT_MODEL_INDEX, ESTIMATORS, RADIO_OPTIONS, RADIO_OPTION_INDEX}, {getEstimate}, {pageCache}, {Mutable}, {webR, getSummary, poissonRegession, getPearsonResiduals}, {getPcaData}, {createBandwidthInputs, createConditionFormMap, createConditionFormUpdater, createPcaForm}, {createPcaClickHandler, getConditionPointState, reconstructPcaCoordinate}, {computeDashboardWeights}, {createConditionalScatterGrid, createPcaScatter3d, createResponseDensityPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_import/components/config.dfd22411.js"), import("./_import/components/getEstimate.d2432d66.js"), import("./_import/components/pageCache.349f7456.js"), import("./_observablehq/stdlib.73a8ec5a.js"), import("./_import/components/r.bd092806.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/forms.8eae4b50.js"), import("./_import/components/pcaUtils.9772a307.js"), import("./_import/components/weighting.b58377f1.js"), import("./_import/components/plots.063ae0a1.js")]);
-
+define({id: "7ea0ebd7", outputs: ["_","getEstimate","pageCache","Mutable","betaRegression","negativeBinomialRegression","webR","getSummary","poissonRegession","getPearsonResiduals","DATASET","MODEL","DEFAULT_DATASET_INDEX","DEFAULT_MODEL_INDEX","ESTIMATORS","RADIO_OPTIONS","RADIO_OPTION_INDEX","getPcaData","createBandwidthInputs","createConditionFormMap","createConditionFormUpdater","createPcaForm","createPcaClickHandler","getConditionPointState","reconstructPcaCoordinate","computeDashboardWeights","createConditionalScatterGrid","createPcaScatter3d","createResponseDensityPlot","residuals","setResiduals","modelState","setModelState"], body: async () => {
+const [{default: _}, {getEstimate}, {pageCache}, {Mutable}, {betaRegression, negativeBinomialRegression, webR, getSummary, poissonRegession, getPearsonResiduals}, {DATASET, MODEL, DEFAULT_DATASET_INDEX, DEFAULT_MODEL_INDEX, ESTIMATORS, RADIO_OPTIONS, RADIO_OPTION_INDEX}, {getPcaData}, {createBandwidthInputs, createConditionFormMap, createConditionFormUpdater, createPcaForm}, {createPcaClickHandler, getConditionPointState, reconstructPcaCoordinate}, {computeDashboardWeights}, {createConditionalScatterGrid, createPcaScatter3d, createResponseDensityPlot}] = await Promise.all([import("./_node/lodash@4.17.23/index.7ea066fd.js"), import("./_import/components/getEstimate.d2432d66.js"), import("./_import/components/pageCache.349f7456.js"), import("./_observablehq/stdlib.73a8ec5a.js"), import("./_import/components/r.bd092806.js"), import("./_import/components/config.bc56fe4b.js"), import("./_import/components/getPcaData.efb7c441.js"), import("./_import/components/forms.8eae4b50.js"), import("./_import/components/pcaUtils.9772a307.js"), import("./_import/components/weighting.b58377f1.js"), import("./_import/components/plots.063ae0a1.js")]);
 
 // non-input state
 const residuals = Mutable([]);
@@ -358,7 +360,7 @@ const setModelState = (newValue) => {
     modelState.value = newValue;
   }
 };
-return {_,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,RADIO_OPTIONS,RADIO_OPTION_INDEX,getEstimate,pageCache,Mutable,webR,getSummary,poissonRegession,getPearsonResiduals,getPcaData,createBandwidthInputs,createConditionFormMap,createConditionFormUpdater,createPcaForm,createPcaClickHandler,getConditionPointState,reconstructPcaCoordinate,computeDashboardWeights,createConditionalScatterGrid,createPcaScatter3d,createResponseDensityPlot,residuals,setResiduals,modelState,setModelState};
+return {_,getEstimate,pageCache,Mutable,betaRegression,negativeBinomialRegression,webR,getSummary,poissonRegession,getPearsonResiduals,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,RADIO_OPTIONS,RADIO_OPTION_INDEX,getPcaData,createBandwidthInputs,createConditionFormMap,createConditionFormUpdater,createPcaForm,createPcaClickHandler,getConditionPointState,reconstructPcaCoordinate,computeDashboardWeights,createConditionalScatterGrid,createPcaScatter3d,createResponseDensityPlot,residuals,setResiduals,modelState,setModelState};
 }});
 
 </script>
@@ -411,11 +413,11 @@ return {_,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,RAD
 <h2 id="select-conditional-data" tabindex="-1"><a class="observablehq-header-anchor" href="#select-conditional-data">Select Conditional Data</a></h2>
 <div class="observablehq observablehq--block"><!--:c6dd75a2:--></div>
 <div class="observablehq observablehq--block"><!--:abf04568:--></div>
+<div class="observablehq observablehq--block"><!--:ff561a88:--></div>
 <h2 id="select-bandwidth" tabindex="-1"><a class="observablehq-header-anchor" href="#select-bandwidth">Select bandwidth</a></h2>
 <div class="observablehq observablehq--block"><!--:cc12f82c:--></div>
 <p>Every data point with weight is listed as follows.</p>
 <div class="observablehq observablehq--block"><!--:96e16aed:--></div>
-<div class="observablehq observablehq--block"><!--:ff561a88:--></div>
 <div class="observablehq observablehq--block"><!--:cc2f3aca:--></div>
 <div class="observablehq observablehq--block"><!--:46446e32:--></div>
 <div class="observablehq observablehq--block"><!--:85ef7f6d:--></div>
@@ -423,15 +425,15 @@ return {_,DATASET,MODEL,DEFAULT_DATASET_INDEX,DEFAULT_MODEL_INDEX,ESTIMATORS,RAD
 <div class="observablehq observablehq--block"><!--:024d8268:--></div>
 <div class="observablehq observablehq--block"><!--:05ced95b:--></div>
 <div class="observablehq observablehq--block"><!--:d454a666:--></div>
-<div class="observablehq observablehq--block"><!--:569fd974:--></div>
+<div class="observablehq observablehq--block"><!--:eea69503:--></div>
 <div class="observablehq observablehq--block"><!--:f6762f67:--></div>
-<div class="observablehq observablehq--block"><!--:302c553b:--></div>
+<div class="observablehq observablehq--block"><!--:0c0829f8:--></div>
 <div class="observablehq observablehq--block"><!--:dd41cba3:--></div>
-<div class="observablehq observablehq--block"><!--:94f2966a:--></div>
+<div class="observablehq observablehq--block"><!--:7ea0ebd7:--></div>
 </main>
 <footer id="observablehq-footer">
 <nav><a rel="prev" href="./"><span>VCD Project</span></a><a rel="next" href="./density_estimate"><span>Density Estimator</span></a></nav>
-<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T02:18:31">Jun 4, 2026</a>.</div>
+<div>Built with <a href="https://observablehq.com/" target="_blank" rel="noopener noreferrer">Observable</a> on <a title="2026-06-04T10:19:49">Jun 4, 2026</a>.</div>
 </footer>
 </div>
 </body>
