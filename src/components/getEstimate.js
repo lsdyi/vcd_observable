@@ -7,6 +7,65 @@ import { loess } from "./r.js";
 import { negBinomialPMF } from "./util.js";
 import { poissonKernel, kContinuous } from "./kernel.js";
 
+const getFiniteNumber = (value, fallback = 0) =>
+  Number.isFinite(value) ? value : fallback;
+
+const buildModifiedKernelDensity = async ({
+  xGrid,
+  dataWithWeights,
+  keys,
+  responseKey,
+  responseBw,
+  conditionPoint,
+}) => {
+  const response = responseKey[0];
+  const loessKeys = keys.slice(0, 4);
+  const formula = `${response} ~ ${loessKeys.join(" + ")}`;
+  const conditionPointObj = Object.fromEntries(
+    loessKeys.map((key) => [key, conditionPoint[keys.indexOf(key)]]),
+  );
+  const loessRows = await loess(formula);
+  const loessCondition = await loess(formula, [conditionPointObj]);
+  const fittedValues = loessRows.values ?? [];
+  const conditionMean = getFiniteNumber(
+    loessCondition.values?.[0],
+    d3.sum(dataWithWeights.map((item) => item.weight * item[response])),
+  );
+
+  const dataWithResiduals = dataWithWeights.map((item, index) => {
+    const fitted = getFiniteNumber(fittedValues[index], conditionMean);
+
+    return {
+      ...item,
+      modifiedKernelResidual: item[response] - fitted,
+    };
+  });
+  const weightedResidual = d3.sum(
+    dataWithResiduals.map(
+      (item) => item.weight * item.modifiedKernelResidual,
+    ),
+  );
+
+  return xGrid.map((item) => {
+    const density = dataWithResiduals.map((datapoint) => {
+      const { weight, modifiedKernelResidual } = datapoint;
+      const adjustedResponse =
+        conditionMean + modifiedKernelResidual - weightedResidual;
+
+      return (
+        (1 / responseBw) *
+        weight *
+        kContinuous(item, adjustedResponse, responseBw)
+      );
+    });
+
+    return {
+      x: item,
+      y: d3.sum(density),
+    };
+  });
+};
+
 const getEstimate = async (
   family,
   modelOutput,
@@ -57,8 +116,13 @@ const getEstimate = async (
 
     const ckCoordinates = xGrid.map((item) => {
       const temp = data_with_weights.map((datapoint) => {
-        const { Y, weight } = datapoint;
-        return (1 / responseBw) * weight * kContinuous(item, Y, responseBw);
+        const { weight } = datapoint;
+        const response = datapoint[responseKey[0]];
+        return (
+          (1 / responseBw) *
+          weight *
+          kContinuous(item, response, responseBw)
+        );
       });
       return {
         x: item,
@@ -66,34 +130,20 @@ const getEstimate = async (
       };
     });
 
-    // const loessRes = await loess();
-    // const loessMu = loessRes.values[0];
-
-    // const data_with_weights_e = data_with_weights.map((d, index) => ({
-    //   ...d,
-    //   e: d.Y - loessMu,
-    // }));
-    // const weightedResidual = d3.sum(
-    //   data_with_weights_e.map((item) => item.weight * item.e),
-    // );
-
-    // const modCkdCoordinates = xGrid.map((item) => {
-    //   const temp = data_with_weights_e.map((datapoint) => {
-    //     const { Y, weight, e } = datapoint;
-    //     const yStar = loessMu + e - weightedResidual;
-    //     return (1 / responseBw) * weight * kContinuous(item, yStar, responseBw)
-    //   });
-    //   return {
-    //     x: item,
-    //     y: d3.sum(temp),
-    //   };
-    // });
+    const modCkdCoordinates = await buildModifiedKernelDensity({
+      xGrid,
+      dataWithWeights: data_with_weights,
+      keys,
+      responseKey,
+      responseBw,
+      conditionPoint,
+    });
 
     return {
       coordinates,
       weightedGLM,
       ckCoordinates,
-      modCkdCoordinates: [],
+      modCkdCoordinates,
     };
   } else if (family === `poisson(link = "log")`) {
     const estimates = modelOutput.values;

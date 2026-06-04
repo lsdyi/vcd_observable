@@ -110,12 +110,14 @@ const getResiduals = async (type = "deviance") => {
 
 const getPearsonResiduals = () => getResiduals("pearson");
 
-const loess = async (setup = "Y ~ X1 + X2 + X3 + X4") => {
+const loess = async (setup = "Y ~ X1 + X2 + X3 + X4", newData = null) => {
+  if (newData) {
+    await webR.objs.globalEnv.bind("new_df", newData);
+  }
+
   const rCodes = `
-    loessFit <- loess(${setup}, data = data, span = 0.5)
-    summary_stats <- summary(loessFit)
-    
-    mu = predict(loessFit, newdata = new_df)
+    loessFit <- loess(${setup}, data = data, span = 0.5)    
+    mu = predict(loessFit, newdata = ${newData ? "new_df" : "data"})
     `;
   await webR.evalR(rCodes);
 

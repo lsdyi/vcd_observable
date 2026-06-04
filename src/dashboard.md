@@ -123,11 +123,13 @@ const externalLamda = view(bandwidthInputs.lambda);
 ```
 
 ```js
+const defaultSelectedEstimators = getDefaultSelectedEstimators(selectedDataset);
 const selectedEstimatorsInput = Inputs.checkbox(ESTIMATORS, {
   format: (item) =>
     html`<span style="color: ${item.color}">${item.name}</span>`,
-  value: ESTIMATORS.slice(1, ESTIMATORS.length - 1),
+  value: defaultSelectedEstimators,
 });
+setSelectedEstimators(defaultSelectedEstimators);
 selectedEstimatorsInput.classList.add("estimator-selector");
 selectedEstimatorsInput.addEventListener("input", () =>
   setSelectedEstimators(selectedEstimatorsInput.value),
@@ -346,7 +348,10 @@ const setModelState = (newValue) => {
   }
 };
 
-const selectedEstimators = Mutable(ESTIMATORS.slice(1, ESTIMATORS.length - 1));
+const getDefaultSelectedEstimators = (dataset) =>
+  dataset.name === "Discrete Response" ? ESTIMATORS.slice(1, -1) : ESTIMATORS.slice(1);
+
+const selectedEstimators = Mutable(ESTIMATORS.slice(1, -1));
 const setSelectedEstimators = (newValue) => {
   if (!_.isEqual(newValue, selectedEstimators.value)) {
     selectedEstimators.value = newValue;

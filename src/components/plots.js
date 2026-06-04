@@ -106,7 +106,7 @@ export const createResponseDensityPlot = ({
           Plot.line((showModifiedCKE && modCkdCoordinates) || [], {
             x: "x",
             y: "y",
-            stroke: "black",
+            stroke: "#6A5ACD",
             strokeWidth: 2,
           }),
           Plot.line(showWeightedGLMEstimator && weightedGLM, {
