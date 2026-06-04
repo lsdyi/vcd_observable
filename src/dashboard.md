@@ -94,6 +94,7 @@ const selectedResidual = view(
   }),
 );
 ```
+
 ```js
 const residualType = selectedResidual.type;
 ```
@@ -106,11 +107,17 @@ const scatterPlotList = createConditionalScatterGrid({
   residuals,
   residualType,
   conditionPointObj,
-  width,
+  width: 400,
   onClick: usePCA ? undefined : onClick,
 });
 
-display(html`<div class="grid grid-cols-4">${scatterPlotList}</div>`);
+display(
+  html`<div class="scatterplot-scroll-row">
+    ${scatterPlotList.map(
+      (plot) => html`<div class="scatterplot-scroll-item">${plot}</div>`,
+    )}
+  </div>`,
+);
 ```
 
 ```js
@@ -331,3 +338,33 @@ const setModelState = (newValue) => {
   }
 };
 ```
+
+<style>
+.scatterplot-scroll-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 100%;
+  height: 400px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding: 0 0 12px;
+  scroll-snap-type: x proximity;
+}
+
+.scatterplot-scroll-item {
+  flex: 0 0 400px;
+  width: 400px;
+  height: 388px;
+  scroll-snap-align: start;
+}
+
+.scatterplot-scroll-item > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+</style>

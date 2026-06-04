@@ -11,9 +11,15 @@ function chart(
   residualType = "deviance",
   onClick,
 ) {
-  const margin = { top: 50, right: 30, bottom: 80, left: 100 };
+  const compact = width <= 500 || height <= 500;
+  const margin = compact
+    ? { top: 28, right: 18, bottom: 48, left: 58 }
+    : { top: 50, right: 30, bottom: 80, left: 100 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
+  const tickFontSize = compact ? 11 : 30;
+  const labelFontSize = compact ? 16 : 40;
+  const xTickCount = compact ? 5 : 12;
 
   const k = innerHeight / innerWidth;
 
@@ -118,15 +124,15 @@ function chart(
     .attr("transform", `translate(${margin.left},${margin.top})`);
   const xAxis = (g, scale) =>
     g
-      .call(d3.axisBottom(scale).ticks(12))
+      .call(d3.axisBottom(scale).ticks(xTickCount))
       .call((g) => g.select(".domain").remove())
-      .call((g) => g.selectAll("text").style("font-size", "30px"));
+      .call((g) => g.selectAll("text").style("font-size", `${tickFontSize}px`));
 
   const yAxis = (g, scale) =>
     g
-      .call(d3.axisLeft(scale).ticks(12 * k))
+      .call(d3.axisLeft(scale).ticks(xTickCount * k))
       .call((g) => g.select(".domain").remove())
-      .call((g) => g.selectAll("text").style("font-size", "30px"));
+      .call((g) => g.selectAll("text").style("font-size", `${tickFontSize}px`));
 
   const grid = (g, xScale, yScale) =>
     g
@@ -135,7 +141,7 @@ function chart(
       .call((g) =>
         g
           .selectAll(".x")
-          .data(xScale.ticks(12))
+          .data(xScale.ticks(xTickCount))
           .join("line")
           .attr("class", "x")
           .attr("x1", (d) => 0.5 + xScale(d))
@@ -146,7 +152,7 @@ function chart(
       .call((g) =>
         g
           .selectAll(".y")
-          .data(yScale.ticks(12 * k))
+          .data(yScale.ticks(xTickCount * k))
           .join("line")
           .attr("class", "y")
           .attr("y1", (d) => 0.5 + yScale(d))
@@ -268,9 +274,9 @@ function chart(
     .append("text")
     .attr("text-anchor", "middle")
     .attr("x", margin.left + innerWidth / 2)
-    .attr("y", height - 10)
-    .style("font-size", "40px") // 👈 increase size
-    .style("font-weight", "600") // optional
+    .attr("y", height - (compact ? 12 : 10))
+    .style("font-size", `${labelFontSize}px`)
+    .style("font-weight", "600")
     .text(xLabelText);
 
   svg
@@ -280,8 +286,8 @@ function chart(
       "transform",
       `translate(${margin.left / 3}, ${margin.top + innerHeight / 2}) rotate(-90)`,
     )
-    .style("font-size", "40px") // 👈 increase size
-    .style("font-weight", "600") // optional
+    .style("font-size", `${labelFontSize}px`)
+    .style("font-weight", "600")
     .text(yLabelText);
 
   // ===== Zoom =====
