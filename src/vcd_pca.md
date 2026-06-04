@@ -6,17 +6,17 @@ toc: false
 ```js
 import _ from "lodash";
 import jStat from "jstat";
-import { multiply, transpose, dotMultiply, add } from "mathjs";
+import { multiply, transpose } from "mathjs";
 
 import { useOption } from "./components/hook/useOption.js";
 import { modelList } from "./components/modelList.js";
 import { modelConfig } from "./components/modelConfig.js";
-import { normWeights } from "./components/normWeights.js";
 import { getCombinations } from "./components/getCombinations.js";
-import { PcaInputRange } from "./components/UI/PcaInputRange.js";
-import { scatterPlot3d } from "./components/scatterPlot3d.js";
 import { getPcaData } from "./components/getPcaData.js";
-import { matrixData } from "./components/organizeData.js";
+import { createPcaForm } from "./components/forms.js";
+import { reconstructPcaCoordinate } from "./components/pcaUtils.js";
+import { computeKernelWeightedRows, computeStdevsByKey } from "./components/weighting.js";
+import { createPcaScatter3d, createWeightedScatterGridPlot } from "./components/plots.js";
 
 ```
 
@@ -127,17 +127,12 @@ const { pcaData, pcaProxyObj } = await getPcaData(
   continousCov,
   continousCovariates,
 );
-const zCor = continousCovariates.map((_, index) => {
-  return pcCordinate[index] || 0;
+const reConCor = reconstructPcaCoordinate({
+  pcaProxyObj,
+  continousKeys: continousCovariates,
+  pcCordinate,
 });
-const rotationMatrix = matrixData(pcaProxyObj.values[1].values, 8, 8);
-const scaleVec = pcaProxyObj.values[3].values;
-const centerVec = pcaProxyObj.values[2].values;
-const reConCor = add(
-  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
-  centerVec,
-);
-const container = scatterPlot3d(pcaData, ["pc1", "pc2", "pc3"], pcCordinate);
+const container = createPcaScatter3d({ pcaData, pcCordinate });
 display(container);
 const conditionPoint = Object.fromEntries(
       continousCovariates.map((key, index) => [key, reConCor[index]]),
@@ -202,8 +197,7 @@ const pdfplot = Plot.plot({
 ### Select Conditioning Data
 
 ```js
-const inputRanges = PcaInputRange();
-const pcCordinate = view(Inputs.form(inputRanges));
+const pcCordinate = view(createPcaForm());
 ```
 
 The PCA controls are a navigation tool. The actual conditional point used by the model is reconstructed in the original covariate units:
@@ -228,107 +222,33 @@ const kernal = view(
 
 ```js
 
-const temp = continousCovariates.map((key) => creditCard.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
-
 const data = continousCov;
-const unnormalizedweights = normWeights(
-  data,
-  reConCor,
+const stdevs = computeStdevsByKey({
+  jStat,
+  rows: creditCard,
+  keys: continousCovariates,
+});
+const { dataWithWeights: data_with_weights, weights } = computeKernelWeightedRows({
+  d3,
+  rows: creditCard,
+  covariates: data,
+  conditionPoint: reConCor,
   stdevs,
-  undefined,
-  kernal,
-);
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+  kernelScale: kernal,
+});
 display(weights);
 display(data);
 ```
 
 ```js
-const weighteddata = "Yes";
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  weight:
-    weighteddata == "Yes"
-      ? weights.find((item) => item.id === index).w
-      : 1 / data.length,
-}));
-
 display(data_with_weights);
 
-const distance_type = "euclidean";
-
-const dim = 2;
-const axisAr = getCombinations(continousCovariates, dim);
-
-const scatterList = axisAr.map((item) => {
-  const [key1, key2] = item;
-  return Plot.plot({
-    color: {
-      scheme: "blues",
-      transform: (f) => Math.sqrt(f),
-    },
-    title: `${key1} vs ${key2}`,
-    marks: [
-      Plot.dot(data_with_weights, {
-        filter: (d) => distance_type == "euclidean",
-        x: key1,
-        y: key2,
-        fill: "weight",
-        sort: "weight",
-      }),
-      // Plot.dot(data_with_weights, {
-      //   filter: (d) => (distance_type == "k-nearest") & (d.weight == 0),
-      //   x: "heatstress",
-      //   y: "cloudfree",
-      //   fill: "#E8E8E8",
-      //   sort: "weight",
-      // }),
-      // Plot.dot(data_with_weights, {
-      //   filter: (d) => (distance_type == "k-nearest") & (d.weight > 0),
-      //   x: "heatstress",
-      //   y: "cloudfree",
-      //   fill: "#0047AB",
-      //   sort: "weight",
-      // }),
-
-      // conditional data point with orange color
-      Plot.dot(
-        [
-          {
-            [key1]: conditionPoint[key1],
-            [key2]: conditionPoint[key2],
-          },
-        ],
-        {
-          x: key1,
-          y: key2,
-          fill: "orange",
-          r: 5,
-        },
-      ),
-      // Plot.tip(
-      //   data_with_weights,
-      //   Plot.pointer({
-      //     x: "heatstress",
-      //     y: "cloudfree",
-      //     title: (d) =>
-      //       [
-      //         "bleaching = ",
-      //         d.reports.toFixed(1),
-      //         ", depth = ",
-      //         d.age.toFixed(1),
-      //         ", weight = ",
-      //         d.income.toFixed(3),
-      //       ].join(""),
-      //   }),
-      // ),
-    ],
-  });
+const scatterList = createWeightedScatterGridPlot({
+  Plot,
+  d3,
+  axisPairs: getCombinations(continousCovariates, 2),
+  data: data_with_weights,
+  conditionPoint,
 });
 ```
 

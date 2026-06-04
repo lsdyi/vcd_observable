@@ -6,9 +6,7 @@ toc: false
 ```js
 import _ from "lodash";
 import jStat from "jstat";
-import { multiply, transpose } from "mathjs";
 
-import { normWeights } from "./components/normWeights.js";
 import {
   negativeBinomialRegression,
   webR,
@@ -17,11 +15,11 @@ import {
 } from "./components/r.js";
 import { getCombinations } from "./components/getCombinations.js";
 import {
-  attachWeights,
   createRangeFormMap,
   createWeightedScatterGrid,
-  normalizeWeights,
 } from "./components/pageComponents.js";
+import { computeKernelWeightedRows, computeStdevsByKey } from "./components/weighting.js";
+import { createCountModelCurves, createCountPmfPlot } from "./components/countModels.js";
 ```
 
 # Poisson & Negative Binomial Regression
@@ -109,25 +107,17 @@ const formMap = createRangeFormMap({
 const dim = 2;
 const axisAr = getCombinations(keys, dim);
 const conditionPoint = Object.values(conditionPointObj);
-const temp = keys.map((key) => poiNegData.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
 
 const data = poiNegData.map((item) => _.pick(item, keys));
-const unnormalizedweights = normWeights(
-  data,
-  conditionPoint,
-  stdevs,
-  undefined,
-  kernal,
-);
-const weights = normalizeWeights({ d3, rawWeights: unnormalizedweights });
-
-const data_with_weights = attachWeights({
+const stdevs = computeStdevsByKey({ jStat, rows: poiNegData, keys });
+const { dataWithWeights: data_with_weights } = computeKernelWeightedRows({
+  d3,
   rows: poiNegData,
   covariates: data,
+  conditionPoint,
+  stdevs,
+  kernelScale: kernal,
   responseKey: "Y",
-  sourceResponseKey: "Y",
-  weights,
   extra: (row) => ({ regime: row.REGIME }),
 });
 
@@ -151,109 +141,22 @@ const output = isPoissonReg ? await poissonRegression() : await negativeBinomial
 const estimates = output.values;
 const summary = await getSummary();
 
-const mean = Math.exp(
-  multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 4)),
-);
-
-const theta = estimates[4];
-
 const xGrid = d3.range(0, 50, 1);
-const coordinates = xGrid.map((item) => {
-  if (isPoissonReg) {
-    return {
-      x: item,
-      y: jStat.jStat.poisson.pdf(item, mean) || 0,
-    };
-  } else {
-    return {
-      x: item,
-      y: jStat.negbin.pdf(item, theta, theta / (mean + theta)) || 0,
-    };
-  }
+const { coordinates, weightedDen } = createCountModelCurves({
+  d3,
+  dataWithWeights: data_with_weights,
+  covariateKeys: keys,
+  conditionPoint,
+  estimates,
+  isPoissonReg,
+  xGrid,
 });
 
-const weightedDen = xGrid.map((xCor) => {
-  if (isPoissonReg) {
-    const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, keys);
-      const covariates = Object.values(covariateObj);
-      const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
-      );
-      const y = jStat.jStat.poisson.pdf(xCor, mean) || 0;
-      return y * item.weight;
-    });
-
-    return {
-      x: xCor,
-      y: d3.sum(yList),
-    };
-  } else {
-    const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, keys);
-      const covariates = Object.values(covariateObj);
-      const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 4)),
-      );
-      const y = jStat.negbin.pdf(xCor, theta, theta / (mean + theta)) || 0;
-      return y * item.weight;
-    });
-
-    return {
-      x: xCor,
-      y: d3.sum(yList),
-    };
-  }
-});
-
-const h = jStat.stdev(data_with_weights.map((item) => item.Y));
-const ckdCoordinates = xGrid.map((item) => {
-  const temp = data_with_weights.map((datapoint) => {
-    return datapoint.Y === item ? datapoint.weight : 0;
-  });
-  return {
-    x: item,
-    y: d3.sum(temp),
-  };
-});
-
-const pdfplot = Plot.plot({
-  title: "pmf",
-
-  color: {
-    legend: true,
-  },
-
-  marks: [
-    Plot.ruleX([0]),
-    Plot.ruleY([0]),
-    Plot.barY(data_with_weights, {
-      x: "Y",
-      y: "weight",
-      fill: "steelblue",
-      opacity: 0.7,
-    }),
-    Plot.line(coordinates, {
-      x: "x",
-      y: "y",
-      stroke: "#F28C28",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-    Plot.line(weightedDen, {
-      x: "x",
-      y: "y",
-      stroke: "green",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-    // Plot.line(ckdCoordinates, {
-    //   x: "x",
-    //   y: "y",
-    //   stroke: "red",
-    //   strokeWidth: 2,
-    //   marker: "circle",
-    // }),
-  ],
+const pdfplot = createCountPmfPlot({
+  Plot,
+  dataWithWeights: data_with_weights,
+  responseKey: "Y",
+  coordinates,
+  weightedDen,
 });
 ```

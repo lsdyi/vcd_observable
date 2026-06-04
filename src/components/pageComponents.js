@@ -31,29 +31,6 @@ export const createRangeFormMap = ({ data, keys, defaults = {}, step = 0.5 }) =>
   return formMap;
 };
 
-export const normalizeWeights = ({ d3, rawWeights }) => {
-  const total = d3.sum(rawWeights.map((d) => d.w));
-  return rawWeights.map((d) => ({
-    id: d.id,
-    w: total === 0 ? 0 : d.w / total,
-  }));
-};
-
-export const attachWeights = ({
-  rows,
-  covariates,
-  responseKey,
-  sourceResponseKey = responseKey,
-  weights,
-  extra = () => ({}),
-}) =>
-  covariates.map((row, index) => ({
-    ...row,
-    [responseKey]: rows[index][sourceResponseKey],
-    weight: weights.find((item) => item.id === index)?.w ?? 0,
-    ...extra(rows[index], index),
-  }));
-
 export const createWeightedScatterGrid = ({
   Plot,
   d3,

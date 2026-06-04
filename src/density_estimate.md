@@ -6,18 +6,10 @@ toc: false
 ```js
 import _ from "lodash";
 import jStat from "jstat";
-import { multiply, transpose, dotMultiply, add } from "mathjs";
+import { multiply, transpose } from "mathjs";
 
-import { useOption } from "./components/hook/useOption.js";
-import { modelList } from "./components/modelList.js";
-import { getRanges } from "./components/getRanges.js";
-import { modelConfig } from "./components/modelConfig.js";
-import { normWeights } from "./components/normWeights.js";
-import { getCombinations } from "./components/getCombinations.js";
-import { PcaInputRange } from "./components/UI/PcaInputRange.js";
-import { scatterPlot3d } from "./components/scatterPlot3d.js";
-import { matrixData } from "./components/organizeData.js";
-import { Mutable } from "observablehq:stdlib";
+import { createRangeFormMap } from "./components/pageComponents.js";
+import { computeKernelWeightedRows, computeStdevsByKey } from "./components/weighting.js";
 ```
 
 # Density Estimator
@@ -184,20 +176,10 @@ display(pdfplot);
 <!-- js logics -->
 ```js
 const keys = ["X1", "X2", "X3"];
-const formMap = {};
-const ranges = getRanges(betaData);
-keys.forEach((key) => {
-  const result = ranges[key];
-  if (result instanceof Set) {
-    // @todo: countable variable
-  } else {
-    const { min, max } = result;
-    formMap[key] = Inputs.range([min, max], {
-      value: (min + max) / 2,
-      step: 0.5,
-      label: key,
-    });
-  }
+const formMap = createRangeFormMap({
+  data: betaData,
+  keys,
+  step: 0.5,
 });
 ```
 
@@ -207,23 +189,17 @@ import { betaRegession, webR, loess } from "./components/r.js";
 const conditionPoint = Object.values(conditionPointObj);
 
 const keys = ["X1", "X2", "X3"];
-const temp = keys.map((key) => betaData.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
-
 const data = betaData.map((item) => _.pick(item, keys));
-const unnormalizedweights = normWeights(
-  data,
+const stdevs = computeStdevsByKey({ jStat, rows: betaData, keys });
+const { dataWithWeights: weightedData, weights } = computeKernelWeightedRows({
+  d3,
+  rows: betaData,
+  covariates: data,
   conditionPoint,
   stdevs,
-  undefined,
-  kernal,
-);
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+  kernelScale: kernal,
+  responseKey: "Y",
+});
 
 await webR.objs.globalEnv.bind("betaData", betaData);
 const output = await betaRegession();
@@ -236,10 +212,8 @@ const mu = 1 / (1 + Math.exp(-linearCom));
 const loessRes = await loess()
 const loessMu = loessRes.values[0]
 
-const data_with_weights = data.map((d, index) => ({
+const data_with_weights = weightedData.map((d, index) => ({
   ...d,
-  Y: betaData[index].Y,
-  weight: weights.find((item) => item.id === index).w,
   e: betaData[index].Y - loessMu,
 }));
 const weightedResidual = d3.sum(

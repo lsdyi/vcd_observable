@@ -5,14 +5,13 @@ toc: false
 
 ```js
 import _ from "lodash";
-import { multiply, transpose, dotMultiply, add } from "mathjs";
 
 import { modelConfig } from "./components/modelConfig.js";
 import { webR } from "./components/r.js";
-import { matrixData } from "./components/organizeData.js";
 import { getPcaData } from "./components/getPcaData.js";
-import { PcaInputRange } from "./components/UI/PcaInputRange.js";
-import { scatterPlot3d } from "./components/scatterPlot3d.js";
+import { createPcaForm } from "./components/forms.js";
+import { reconstructPcaCoordinate } from "./components/pcaUtils.js";
+import { createPcaScatter3d } from "./components/plots.js";
 ```
 
 ```js
@@ -115,29 +114,22 @@ display(pcaPlot2d);
 ### Scatterplot of PC1, PC2 and PC3
 
 ```js
-const container = scatterPlot3d(pcaData, ["pc1", "pc2", "pc3"], pcCordinate);
+const container = createPcaScatter3d({ pcaData, pcCordinate });
 display(container);
 ```
 
 ## Reconstruct Data from Reduced Space to Original Space
 
 ```js
-const inputRanges = PcaInputRange();
-const pcCordinate = view(Inputs.form(inputRanges));
+const pcCordinate = view(createPcaForm());
 ```
 
 ```js
-const zCor = continousCovariates.map((_, index) => {
-  return pcCordinate[index] || 0;
+const reConCor = reconstructPcaCoordinate({
+  pcaProxyObj,
+  continousKeys: continousCovariates,
+  pcCordinate,
 });
-const rotationMatrix = matrixData(pcaProxyObj.values[1].values, 8, 8);
-const scaleVec = pcaProxyObj.values[3].values;
-const centerVec = pcaProxyObj.values[2].values;
-
-const reConCor = add(
-  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
-  centerVec,
-);
 ```
 
 The selected point in reduced space is:

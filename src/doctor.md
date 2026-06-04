@@ -6,15 +6,18 @@ toc: false
 ```js
 import _ from "lodash";
 import jStat from "jstat";
-import { multiply, transpose } from "mathjs";
 
-import { computeWeightsMixed, poissonKernel } from "./components/kernel.js";
 import { getCombinations } from "./components/getCombinations.js";
-import { selectFromKeys, getCardinalityFromMatrix } from "./components/util.js";
 import {
   createRangeFormMap,
   createWeightedScatterGrid,
 } from "./components/pageComponents.js";
+import { computeDashboardWeights } from "./components/weighting.js";
+import {
+  createCountModelCurves,
+  createCountPmfPlot,
+  createPoissonKernelCurve,
+} from "./components/countModels.js";
 import {
   negativeBinomialRegression,
   webR,
@@ -105,36 +108,27 @@ const data = doctorvisits.map((item) => _.pick(item, keys));
 
 const categoricalKeys = ["reform", "badh"];
 const continousKeys = ["age", "educ", "loginc"];
-const XCont = selectFromKeys(data, continousKeys);
-const XCat = selectFromKeys(data, categoricalKeys);
-const XOrd = [];
-const x0 = {
-  cont: selectFromKeys([conditionPointObj], continousKeys).flat(),
-  cat: selectFromKeys([conditionPointObj], categoricalKeys).flat(),
-  ord: selectFromKeys([conditionPointObj], []).flat(),
-};
+const ordinalKeys = [];
 const bwCont = [13.91312, 2.417221, 124196.4];
 const lambdaCat = [0.3210706, 0.01451098];
 const lambdaOrd = [];
-const Ccat = getCardinalityFromMatrix(XCat);
 const externalH = kernal;
-
-const weights = computeWeightsMixed({
-  XCont,
-  XCat,
-  XOrd,
-  x0,
+const { dataWithWeights: weightedCovariates } = computeDashboardWeights({
+  data,
+  conditionPointObj,
+  continousKeys,
+  categoricalKeys,
+  ordinalKeys,
   bwCont,
   lambdaCat,
   lambdaOrd,
-  Ccat,
   externalH,
+  externalLamda: 1,
 });
 
-const data_with_weights = data.map((d, index) => ({
+const data_with_weights = weightedCovariates.map((d, index) => ({
   ...d,
   numvisit: doctorvisits[index].numvisit,
-  weight: weights[index],
 }));
 ```
 
@@ -168,119 +162,34 @@ const estimates = output.values;
 const summary = await getSummary();
 const residuals = await getPearsonResiduals();
 
-const mean = Math.exp(
-  multiply(transpose([1, ...conditionPoint]), estimates.slice(0, 6)),
-);
-const theta = estimates[6];
-
-function negBinomialPMF(k, r, p) {
-  if (k < 0) return 0;
-  const coef = jStat.gammafn(k + r) / (jStat.gammafn(r) * jStat.gammafn(k + 1));
-  return coef * Math.pow(p, r) * Math.pow(1 - p, k);
-}
-
 const xGrid = d3.range(0, 50, 1);
-const coordinates = xGrid.map((item) => {
-  if (isPoissonReg) {
-    return {
-      x: item,
-      y: jStat.jStat.poisson.pdf(item, mean) || 0,
-    };
-  } else {
-    return {
-      x: item,
-      y: negBinomialPMF(item, theta, theta / (mean + theta)) || 0,
-    };
-  }
-});
-
-const weightedDen = xGrid.map((xCor) => {
-  if (isPoissonReg) {
-    const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, keys);
-      const covariates = Object.values(covariateObj);
-      const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 6)),
-      );
-      const y = jStat.jStat.poisson.pdf(xCor, mean) || 0;
-      return y * item.weight;
-    });
-
-    return {
-      x: xCor,
-      y: d3.sum(yList),
-    };
-  } else {
-    const yList = data_with_weights.map((item) => {
-      const covariateObj = _.pick(item, keys);
-      const covariates = Object.values(covariateObj);
-      const mean = Math.exp(
-        multiply(transpose([1, ...covariates]), estimates.slice(0, 6)),
-      );
-      const y = negBinomialPMF(xCor, theta, theta / (mean + theta)) || 0;
-      return y * item.weight;
-    });
-
-    return {
-      x: xCor,
-      y: d3.sum(yList),
-    };
-  }
+const { coordinates, weightedDen } = createCountModelCurves({
+  d3,
+  dataWithWeights: data_with_weights,
+  covariateKeys: keys,
+  conditionPoint,
+  estimates,
+  isPoissonReg,
+  xGrid,
 });
 
 const h = jStat.stdev(data_with_weights.map((item) => item.numvisit));
-
-const ckdCoordinates = xGrid.map((item) => {
-  const temp = data_with_weights.map((datapoint) => {
-    const { numvisit, weight } = datapoint;
-
-    return weight * poissonKernel(item, numvisit, h);
-  });
-  return {
-    x: item,
-    y: d3.sum(temp),
-  };
+const ckdCoordinates = createPoissonKernelCurve({
+  d3,
+  dataWithWeights: data_with_weights,
+  responseKey: "numvisit",
+  bandwidth: h,
+  xGrid,
 });
 ```
 
 ```js
-const pdfplot = Plot.plot({
-  title: "pmf",
-
-  color: {
-    legend: true,
-  },
-
-  marks: [
-    Plot.ruleX([0]),
-    Plot.ruleY([0]),
-    Plot.barY(data_with_weights, {
-      x: "numvisit",
-      y: "weight",
-      fill: "steelblue",
-      opacity: 0.7,
-    }),
-    Plot.line(coordinates, {
-      x: "x",
-      y: "y",
-      stroke: "#F28C28",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-    Plot.line(weightedDen, {
-      x: "x",
-      y: "y",
-      stroke: "green",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-    Plot.line(ckdCoordinates, {
-      x: "x",
-      y: "y",
-      stroke: "red",
-      strokeWidth: 2,
-      marker: "circle",
-    }),
-  ],
+const pdfplot = createCountPmfPlot({
+  Plot,
+  dataWithWeights: data_with_weights,
+  responseKey: "numvisit",
+  coordinates,
+  weightedDen,
+  ckdCoordinates,
 });
 ```

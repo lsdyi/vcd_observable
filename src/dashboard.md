@@ -39,37 +39,7 @@ const showPCA = view(
 ```
 
 ```js
-const formMap = {};
-const ranges = getRanges(data);
-
-keys.forEach((key) => {
-  const result = ranges[key];
-
-  if (continousKeys.includes(key)) {
-    const { min, max } = result;
-    const value = (min + max) / 2;
-    const range = max - min;
-    const step = range > 100 ? 1 : range > 10 ? 0.1 : range > 1 ? 0.01 : 0.001;
-
-    formMap[key] = Inputs.range([min, max], {
-      value,
-      step,
-      label: key,
-    });
-  } else {
-    const options = Array.from(new Set(data.map((item) => item[key])));
-    const sortedOptions =
-      typeof options[0] === "number"
-        ? options.sort((a, b) => a - b)
-        : options.sort();
-
-    formMap[key] = Inputs.select(sortedOptions, {
-      label: key,
-      value: sortedOptions[0],
-    });
-  }
-});
-
+const formMap = createConditionFormMap({ data, keys, continousKeys });
 const formNode = Inputs.form(formMap);
 const conditionPointObjFromSlider = view(formNode);
 ```
@@ -77,21 +47,9 @@ const conditionPointObjFromSlider = view(formNode);
 ## Select bandwidth
 
 ```js
-const externalH = view(
-  Inputs.range([0.01, 20], {
-    value: 1,
-    step: 0.01,
-    label: "Smoothing parameter for continous covariate",
-  }),
-);
-
-const externalLamda = view(
-  Inputs.range([0.01, 100], {
-    value: 1,
-    step: 0.01,
-    label: "Smoothing parameter for discrete covariate",
-  }),
-);
+const bandwidthInputs = createBandwidthInputs();
+const externalH = view(bandwidthInputs.h);
+const externalLamda = view(bandwidthInputs.lambda);
 ```
 
 Every data point with weight is listed as follows.
@@ -102,8 +60,7 @@ display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
 ```
 
 ```js
-const inputRanges = PcaInputRange();
-const pcaFormNode = Inputs.form(inputRanges);
+const pcaFormNode = createPcaForm();
 const pcCordinate = view(pcaFormNode);
 ```
 
@@ -121,50 +78,14 @@ display(showPCA.id === 0 ? container : html`<span></span>`);
 ```
 
 ```js
-const dim = 2;
-const axisAr = getCombinations(keys, dim);
-const onClick = (d) => {
-  Object.keys(formMap).forEach((key) => {
-    if (d[key] !== undefined) {
-      const input = formMap[key];
-
-      input.value = d[key];
-
-      input.dispatchEvent(new Event("input"));
-    }
-  });
-
-  formNode.dispatchEvent(new Event("input", { bubbles: true }));
-};
-const scatterPlotList = axisAr.map((item) => {
-  const [key1, key2] = item;
-
-  return chart(
-    [
-      ...data_with_weights.map((item, index) => {
-        return {
-          group: "observation", // group key
-          x: item[key1],
-          y: item[key2],
-          weight: item.weight,
-          residual: residuals[index],
-        };
-      }),
-      {
-        group: "conditional", // group key
-        x: conditionPointObj[key1],
-        y: conditionPointObj[key2],
-        weight: item.weight,
-      },
-    ],
-    width,
-    width,
-    10,
-    key1,
-    key2,
-    data_with_weights,
-    onClick,
-  );
+const onClick = createConditionFormUpdater({ formMap, formNode });
+const scatterPlotList = createConditionalScatterGrid({
+  keys,
+  dataWithWeights: data_with_weights,
+  residuals,
+  conditionPointObj,
+  width,
+  onClick,
 });
 
 display(html`<div class="grid grid-cols-4">${scatterPlotList}</div>`);
@@ -203,7 +124,6 @@ const datasets = [
 ];
 
 const {
-  csvPath,
   categoricalKeys,
   continousKeys,
   ordinalKeys,
@@ -224,90 +144,37 @@ const { pcaData, pcaProxyObj } = await getPcaData(
   data.map((item) => _.pick(item, continousKeys)),
   continousKeys,
 );
-const zCor = continousKeys.map((_, index) => {
-  return pcCordinate[index] || 0;
+const reConCor = reconstructPcaCoordinate({
+  pcaProxyObj,
+  continousKeys,
+  pcCordinate,
 });
-const rotationMatrix = matrixData(
-  pcaProxyObj.values[1].values,
-  continousKeys.length,
-  continousKeys.length,
-);
-const scaleVec = pcaProxyObj.values[3].values;
-const centerVec = pcaProxyObj.values[2].values;
-const reConCor = add(
-  dotMultiply(scaleVec, multiply(zCor, transpose(rotationMatrix))),
-  centerVec,
-);
-
-const onClick3D = (eventData) => {
-  const temp = eventData.points[0];
-  const pc1 = pcaFormNode.children[0];
-  pc1.value = temp.x;
-
-  const pc2 = pcaFormNode.children[1];
-  pc2.value = temp.y;
-
-  const pc3 = pcaFormNode.children[2];
-  pc3.value = temp.z;
-
-  pcaFormNode.dispatchEvent(new Event("input", { bubbles: true }));
-  formNode.dispatchEvent(new Event("input", { bubbles: true }));
-};
-
-// weights calculation
-let conditionPointObj =
-  showPCA.id === 0
-    ? Object.fromEntries(keys.map((key, i) => [key, reConCor[i]]))
-    : conditionPointObjFromSlider;
-
-const conditionPoint =
-  showPCA.id === 0 ? reConCor : Object.values(conditionPointObj);
-
-const temp = keys.map((key) => data.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
-
-const XCont = selectFromKeys(data, continousKeys);
-const XCat = selectFromKeys(data, categoricalKeys);
-const XOrd = selectFromKeys(data, ordinalKeys);
-
-const x0 = {
-  cont: selectFromKeys([conditionPointObj], continousKeys).flat(),
-  cat: selectFromKeys([conditionPointObj], categoricalKeys).flat(),
-  ord: selectFromKeys([conditionPointObj], []).flat(),
-};
-
-const Ccat = getCardinalityFromMatrix(XCat);
-
-const weights = computeWeightsMixed({
-  XCont,
-  XCat,
-  XOrd,
-  x0,
+const { conditionPoint, conditionPointObj } = getConditionPointState({
+  showPCA,
+  keys,
+  reconstructedCoordinate: reConCor,
+  sliderPoint: conditionPointObjFromSlider,
+});
+const { dataWithWeights: data_with_weights } = computeDashboardWeights({
+  data,
+  conditionPointObj,
+  continousKeys,
+  categoricalKeys,
+  ordinalKeys,
   bwCont,
   lambdaCat,
   lambdaOrd,
-  Ccat,
   externalH,
   externalLamda,
 });
-
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  weight: weights[index],
-}));
-
-const container = scatterPlot3d(
-  pcaData.map((item, index) => {
-    return {
-      ...item,
-      residual: residuals[index],
-    };
-  }),
-  ["pc1", "pc2", "pc3"],
+const onClick3D = createPcaClickHandler({ pcaFormNode, formNode });
+const container = createPcaScatter3d({
+  pcaData,
+  residuals,
   pcCordinate,
-  data_with_weights,
-  onClick3D,
-);
+  dataWithWeights: data_with_weights,
+  onClick: onClick3D,
+});
 ```
 
 ```js
@@ -352,183 +219,59 @@ setModelState(newModelState);
 const summary = await getSummary();
 const temp = await getPearsonResiduals();
 setResiduals(temp.values);
-
-function negBinomialPMF(k, r, p) {
-  if (k < 0) return 0;
-  const coef = jStat.gammafn(k + r) / (jStat.gammafn(r) * jStat.gammafn(k + 1));
-  return coef * Math.pow(p, r) * Math.pow(1 - p, k);
-}
 ```
 
 ```js
-const { coordinates, weightedGLM, ckCoordinates, modCkdCoordinates } =
-  modelState;
-const showGLMEstimator =
-  selectedEstimators.findIndex((item) => item.id === 0) !== -1;
-
-const showWeightedGLMEstimator =
-  selectedEstimators.findIndex((item) => item.id === 1) !== -1;
-
-const showWeightedHist =
-  selectedEstimators.findIndex((item) => item.id === 4) !== -1;
-
-const showCKE = selectedEstimators.findIndex((item) => item.id === 2) !== -1;
-
-const showModifiedCKE =
-  selectedEstimators.findIndex((item) => item.id === 3) !== -1;
-
-let ss = 0;
-const ssum = d3.sum(data_with_weights.map((item) => item[responseKey[0]]));
-const marks =
-  name === "Continous Response"
-    ? [
-        Plot.ruleX([0]),
-        Plot.ruleY([0]),
-        Plot.rectY(
-          showWeightedHist &&
-            data_with_weights.map((item, index) => ({
-              ...item,
-              active: true,
-            })),
-          Plot.binX(
-            {
-              y: (bindata, bin) => {
-                return d3.sum(bindata.map((d) => d.weight)) / (bin.x2 - bin.x1);
-                ss += (bin.x2 - bin.x1) * d3.sum(bindata.map((d) => d.weight));
-              },
-            },
-            { x: "Y", thresholds: 50, fill: "steelblue", opacity: 0.7 },
-          ),
-        ),
-        // Plot.rectY(
-        //   data_with_weights,
-        //   Plot.binX(
-        //     {
-        //       y: (bin, b) =>
-        //         bin.length / ((b.x2 - b.x1) * data_with_weights.length),
-        //     },
-        //     {
-        //       x: "Y",
-        //       thresholds: 50,
-        //       fill: "purple",
-        //       opacity: 0.5,
-        //     },
-        //   ),
-        // ),   // response density
-        Plot.line(showGLMEstimator && coordinates, {
-          x: "x",
-          y: "y",
-          stroke: "#F28C28",
-          strokeWidth: 2,
-        }),
-
-        // conditional kernel estimator
-        Plot.line(showCKE && ckCoordinates, {
-          x: "x",
-          y: "y",
-          stroke: "red",
-          strokeWidth: 2,
-        }),
-
-        // conditional kernel estimator
-        Plot.line((showModifiedCKE && modCkdCoordinates) || [], {
-          x: "x",
-          y: "y",
-          stroke: "black",
-          strokeWidth: 2,
-        }),
-
-        // weighted conditional density
-        Plot.line(showWeightedGLMEstimator && weightedGLM, {
-          x: "x",
-          y: "y",
-          stroke: "green",
-          strokeWidth: 2,
-        }),
-      ]
-    : [
-        Plot.ruleX([0]),
-        Plot.ruleY([0]),
-        Plot.barY(showWeightedHist && data_with_weights, {
-          x: responseKey[0],
-          y: "weight",
-          fill: "steelblue",
-          opacity: 0.7,
-        }),
-        Plot.line(showGLMEstimator && coordinates, {
-          x: "x",
-          y: "y",
-          stroke: "#F28C28",
-          strokeWidth: 2,
-          marker: "circle",
-        }),
-        Plot.line(showWeightedGLMEstimator && weightedGLM, {
-          x: "x",
-          y: "y",
-          stroke: "green",
-          strokeWidth: 2,
-          marker: "circle",
-        }),
-        Plot.line(showCKE && ckCoordinates, {
-          x: "x",
-          y: "y",
-          stroke: "red",
-          strokeWidth: 2,
-          marker: "circle",
-        }),
-      ];
-
-const pdfplot = Plot.plot({
-  title: name === "Continous Response" ? "pdf" : "pmf",
-
-  color: {
-    legend: true,
-  },
-
-  marks,
+const pdfplot = createResponseDensityPlot({
+  Plot,
+  d3,
+  name,
+  responseKey,
+  dataWithWeights: data_with_weights,
+  modelState,
+  selectedEstimators,
 });
 ```
 
 ```js
 import _ from "lodash";
-import jStat from "jstat";
-import { multiply, transpose, dotMultiply, add } from "mathjs";
 
-import { useOption } from "./components/hook/useOption.js";
-import { modelList } from "./components/modelList.js";
-import { getRanges } from "./components/getRanges.js";
-import { modelConfig } from "./components/modelConfig.js";
-import { normWeights } from "./components/normWeights.js";
-import { computeWeightsMixed, poissonKernel } from "./components/kernel.js";
-import { getCombinations } from "./components/getCombinations.js";
-import { PcaInputRange } from "./components/UI/PcaInputRange.js";
-import { scatterPlot3d } from "./components/scatterPlot3d.js";
-import { matrixData } from "./components/organizeData.js";
-import { selectFromKeys, getCardinalityFromMatrix } from "./components/util.js";
 import {
   DATASET,
   MODEL,
   DEFAULT_DATASET_INDEX,
   DEFAULT_MODEL_INDEX,
   ESTIMATORS,
-  DEFAULT_ESTIMATOR_LIST,
   RADIO_OPTIONS,
   RADIO_OPTION_INDEX,
 } from "./components/config.js";
 import { getEstimate } from "./components/getEstimate.js";
-import { chart } from "./components/scatterPlot.js";
 import { pageCache } from "./components/pageCache.js";
 import { Mutable } from "observablehq:stdlib";
 import {
-  negRegession,
   webR,
   getSummary,
   poissonRegession,
-  cke,
-  loess,
   getPearsonResiduals,
 } from "./components/r.js";
 import { getPcaData } from "./components/getPcaData.js";
+import {
+  createBandwidthInputs,
+  createConditionFormMap,
+  createConditionFormUpdater,
+  createPcaForm,
+} from "./components/forms.js";
+import {
+  createPcaClickHandler,
+  getConditionPointState,
+  reconstructPcaCoordinate,
+} from "./components/pcaUtils.js";
+import { computeDashboardWeights } from "./components/weighting.js";
+import {
+  createConditionalScatterGrid,
+  createPcaScatter3d,
+  createResponseDensityPlot,
+} from "./components/plots.js";
 
 // non-input state
 const residuals = Mutable([]);

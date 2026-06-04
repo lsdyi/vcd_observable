@@ -11,9 +11,10 @@ import { multiply, transpose } from "mathjs";
 import { useOption } from "./components/hook/useOption.js";
 import { modelList } from "./components/modelList.js";
 import { modelConfig } from "./components/modelConfig.js";
-import { normWeights } from "./components/normWeights.js";
 import { getCombinations } from "./components/getCombinations.js";
 import { createRangeFormMap } from "./components/pageComponents.js";
+import { computeKernelWeightedRows, computeStdevsByKey } from "./components/weighting.js";
+import { createWeightedScatterGridPlot } from "./components/plots.js";
 ```
 
 # Visualizing Conditional Distributions: Slider Prototype
@@ -203,107 +204,30 @@ const kernal = view(
 const keys = continousCovariates;
 const conditionPoint = Object.values(conditionPointObj);
 
-const temp = keys.map((key) => creditCard.map((item) => item[key]));
-const stdevs = temp.map((item) => jStat.stdev(item));
-
 const data = creditCard.map((item) => _.pick(item, keys));
-const unnormalizedweights = normWeights(
-  data,
+const stdevs = computeStdevsByKey({ jStat, rows: creditCard, keys });
+const { dataWithWeights: data_with_weights, weights } = computeKernelWeightedRows({
+  d3,
+  rows: creditCard,
+  covariates: data,
   conditionPoint,
   stdevs,
-  undefined,
-  kernal,
-);
-const totalunnormalizedweight = d3.sum(unnormalizedweights.map((d) => d.w));
-const weights = unnormalizedweights.map((d) => ({
-  id: d.id,
-  w: d.w / totalunnormalizedweight,
-}));
+  kernelScale: kernal,
+});
 display(weights);
 display(data);
 ```
 
 ```js
-const weighteddata = "Yes";
-const data_with_weights = data.map((d, index) => ({
-  ...d,
-  weight:
-    weighteddata == "Yes"
-      ? weights.find((item) => item.id === index).w
-      : 1 / data.length,
-}));
-
 display(data_with_weights);
 
-const distance_type = "euclidean";
-
-const dim = 2;
-const axisAr = getCombinations(keys, dim);
-
-const scatterList = axisAr.map((item) => {
-  const [key1, key2] = item;
-  return Plot.plot({
-    color: {
-      scheme: "blues",
-      transform: (f) => Math.sqrt(f),
-    },
-    title: `${key1} vs ${key2}`,
-    marks: [
-      Plot.dot(data_with_weights, {
-        filter: (d) => distance_type == "euclidean",
-        x: key1,
-        y: key2,
-        fill: "weight",
-        sort: "weight",
-      }),
-      // Plot.dot(data_with_weights, {
-      //   filter: (d) => (distance_type == "k-nearest") & (d.weight == 0),
-      //   x: "heatstress",
-      //   y: "cloudfree",
-      //   fill: "#E8E8E8",
-      //   sort: "weight",
-      // }),
-      // Plot.dot(data_with_weights, {
-      //   filter: (d) => (distance_type == "k-nearest") & (d.weight > 0),
-      //   x: "heatstress",
-      //   y: "cloudfree",
-      //   fill: "#0047AB",
-      //   sort: "weight",
-      // }),
-
-      // conditional data point with orange color
-      Plot.dot(
-        [
-          {
-            [key1]: conditionPointObj[key1],
-            [key2]: conditionPointObj[key2],
-          },
-        ],
-        {
-          x: key1,
-          y: key2,
-          fill: "orange",
-          r: 5,
-        },
-      ),
-      // Plot.tip(
-      //   data_with_weights,
-      //   Plot.pointer({
-      //     x: "heatstress",
-      //     y: "cloudfree",
-      //     title: (d) =>
-      //       [
-      //         "bleaching = ",
-      //         d.reports.toFixed(1),
-      //         ", depth = ",
-      //         d.age.toFixed(1),
-      //         ", weight = ",
-      //         d.income.toFixed(3),
-      //       ].join(""),
-      //   }),
-      // ),
-    ],
-  });
+const axisAr = getCombinations(keys, 2);
+const scatterList = createWeightedScatterGridPlot({
+  Plot,
+  d3,
+  axisPairs: axisAr,
+  data: data_with_weights,
+  conditionPoint: conditionPointObj,
 });
 ```
 
