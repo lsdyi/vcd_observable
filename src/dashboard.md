@@ -181,7 +181,12 @@ const container = createPcaScatter3d({
 // R regression code
 await webR.objs.globalEnv.bind("data", data);
 
-const { rFun, family, conditional } = selectedModel;
+const rFunctions = {
+  betaRegression,
+  negativeBinomialRegression,
+};
+const { rFunName, family, conditional } = selectedModel;
+const rFun = rFunctions[rFunName];
 
 const newModelOrData =
   pageCache.data !== data ||
@@ -249,6 +254,8 @@ import { getEstimate } from "./components/getEstimate.js";
 import { pageCache } from "./components/pageCache.js";
 import { Mutable } from "observablehq:stdlib";
 import {
+  betaRegression,
+  negativeBinomialRegression,
   webR,
   getSummary,
   poissonRegession,
