@@ -95,8 +95,8 @@ const ESTIMATORS = [
   { id: 3, name: "modiﬁed kernel estimator", color: "#6A5ACD" },
 ];
 
-const DEFAULT_DATASET_INDEX = 1;
-const DEFAULT_MODEL_INDEX = MODEL.length - 1;
+const DEFAULT_DATASET_INDEX = 0;
+const DEFAULT_MODEL_INDEX = 4;
 const DEFAULT_ESTIMATOR_LIST = [0, 1, 2, 3];
 
 const RADIO_OPTIONS = [

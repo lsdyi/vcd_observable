@@ -44,6 +44,11 @@ const formNode = Inputs.form(formMap);
 const conditionPointObjFromSlider = view(formNode);
 ```
 
+```js
+const pcaFormNode = createPcaForm();
+const pcCordinate = view(pcaFormNode);
+```
+
 ## Select bandwidth
 
 ```js
@@ -57,11 +62,6 @@ Every data point with weight is listed as follows.
 ```js
 display(data_with_weights);
 display(d3.sort(data_with_weights, (item) => -item.weight).slice(0, 20));
-```
-
-```js
-const pcaFormNode = createPcaForm();
-const pcCordinate = view(pcaFormNode);
 ```
 
 ```js
@@ -122,7 +122,6 @@ const datasets = [
   }),
   await FileAttachment("./data/doctorvisits.csv").csv({ typed: true }),
 ];
-
 const {
   categoricalKeys,
   continousKeys,
@@ -208,17 +207,16 @@ if (newModelOrData) {
 
 const { output } = pageCache;
 
-const newModelState =
-  await getEstimate(
-    family,
-    output,
-    conditionPoint,
-    data_with_weights,
-    keys,
-    responseKey,
-    responseBw,
-    conditional,
-  );
+const newModelState = await getEstimate(
+  family,
+  output,
+  conditionPoint,
+  data_with_weights,
+  keys,
+  responseKey,
+  responseBw,
+  conditional,
+);
 setModelState(newModelState);
 
 const summary = await getSummary();
@@ -240,16 +238,6 @@ const pdfplot = createResponseDensityPlot({
 
 ```js
 import _ from "lodash";
-
-import {
-  DATASET,
-  MODEL,
-  DEFAULT_DATASET_INDEX,
-  DEFAULT_MODEL_INDEX,
-  ESTIMATORS,
-  RADIO_OPTIONS,
-  RADIO_OPTION_INDEX,
-} from "./components/config.js";
 import { getEstimate } from "./components/getEstimate.js";
 import { pageCache } from "./components/pageCache.js";
 import { Mutable } from "observablehq:stdlib";
@@ -261,6 +249,15 @@ import {
   poissonRegession,
   getPearsonResiduals,
 } from "./components/r.js";
+import {
+  DATASET,
+  MODEL,
+  DEFAULT_DATASET_INDEX,
+  DEFAULT_MODEL_INDEX,
+  ESTIMATORS,
+  RADIO_OPTIONS,
+  RADIO_OPTION_INDEX,
+} from "./components/config.js";
 import { getPcaData } from "./components/getPcaData.js";
 import {
   createBandwidthInputs,
