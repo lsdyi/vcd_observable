@@ -54,6 +54,38 @@ export const createBandwidthInputs = () => ({
 
 export const createPcaForm = () => Inputs.form(PcaInputRange());
 
+export const setFormEnabled = (formNode, enabled) => {
+  formNode.style.display = enabled ? "" : "none";
+
+  formNode.querySelectorAll("input, select, textarea, button").forEach((input) => {
+    input.disabled = !enabled;
+  });
+
+  return formNode;
+};
+
+export const setConditionFormMode = ({ formMap, formNode, keys, continousKeys, usePCA }) => {
+  const visibleKeys = keys.filter((key) => !usePCA || !continousKeys.includes(key));
+
+  keys.forEach((key) => {
+    const input = formMap[key];
+    const visible = visibleKeys.includes(key);
+
+    input.style.display = visible ? "" : "none";
+    input.querySelectorAll?.("input, select, textarea, button").forEach((child) => {
+      child.disabled = !visible;
+    });
+
+    if ("disabled" in input) {
+      input.disabled = !visible;
+    }
+  });
+
+  formNode.style.display = visibleKeys.length > 0 ? "" : "none";
+
+  return formNode;
+};
+
 export const createConditionFormUpdater = ({ formMap, formNode }) => (datum) => {
   Object.keys(formMap).forEach((key) => {
     if (datum[key] !== undefined) {

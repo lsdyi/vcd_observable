@@ -39,13 +39,19 @@ const showPCA = view(
 ```
 
 ```js
+const usePCA = showPCA.id === 0;
+```
+
+```js
 const formMap = createConditionFormMap({ data, keys, continousKeys });
 const formNode = Inputs.form(formMap);
+setConditionFormMode({ formMap, formNode, keys, continousKeys, usePCA });
 const conditionPointObjFromSlider = view(formNode);
 ```
 
 ```js
 const pcaFormNode = createPcaForm();
+setFormEnabled(pcaFormNode, usePCA);
 const pcCordinate = view(pcaFormNode);
 ```
 
@@ -74,7 +80,22 @@ display(html`
 ```
 
 ```js
-display(showPCA.id === 0 ? container : html`<span></span>`);
+display(usePCA ? container : html`<span></span>`);
+```
+
+## Select Residual
+
+```js
+const selectedResidual = view(
+  Inputs.radio(RESIDUAL_OPTIONS, {
+    format: (x) => x.name,
+    value: RESIDUAL_OPTIONS[DEFAULT_RESIDUAL_INDEX],
+    label: "Residual",
+  }),
+);
+```
+```js
+const residualType = selectedResidual.type;
 ```
 
 ```js
@@ -83,9 +104,10 @@ const scatterPlotList = createConditionalScatterGrid({
   keys,
   dataWithWeights: data_with_weights,
   residuals,
+  residualType,
   conditionPointObj,
   width,
-  onClick,
+  onClick: usePCA ? undefined : onClick,
 });
 
 display(html`<div class="grid grid-cols-4">${scatterPlotList}</div>`);
@@ -139,18 +161,23 @@ const data = datasets[index]; // original data selected
 ```
 
 ```js
-const { pcaData, pcaProxyObj } = await getPcaData(
-  data.map((item) => _.pick(item, continousKeys)),
-  continousKeys,
-);
-const reConCor = reconstructPcaCoordinate({
-  pcaProxyObj,
-  continousKeys,
-  pcCordinate,
-});
+const { pcaData, pcaProxyObj } = usePCA
+  ? await getPcaData(
+      data.map((item) => _.pick(item, continousKeys)),
+      continousKeys,
+    )
+  : { pcaData: [], pcaProxyObj: null };
+const reConCor = usePCA
+  ? reconstructPcaCoordinate({
+      pcaProxyObj,
+      continousKeys,
+      pcCordinate,
+    })
+  : [];
 const { conditionPoint, conditionPointObj } = getConditionPointState({
-  showPCA,
+  usePCA,
   keys,
+  continousKeys,
   reconstructedCoordinate: reConCor,
   sliderPoint: conditionPointObjFromSlider,
 });
@@ -167,13 +194,16 @@ const { dataWithWeights: data_with_weights } = computeDashboardWeights({
   externalLamda,
 });
 const onClick3D = createPcaClickHandler({ pcaFormNode, formNode });
-const container = createPcaScatter3d({
-  pcaData,
-  residuals,
-  pcCordinate,
-  dataWithWeights: data_with_weights,
-  onClick: onClick3D,
-});
+const container = usePCA
+  ? createPcaScatter3d({
+      pcaData,
+      residuals,
+      residualType,
+      pcCordinate,
+      dataWithWeights: data_with_weights,
+      onClick: onClick3D,
+    })
+  : html`<span></span>`;
 ```
 
 ```js
@@ -220,7 +250,7 @@ const newModelState = await getEstimate(
 setModelState(newModelState);
 
 const summary = await getSummary();
-const temp = await getPearsonResiduals();
+const temp = await getResiduals(residualType);
 setResiduals(temp.values);
 ```
 
@@ -247,7 +277,7 @@ import {
   webR,
   getSummary,
   poissonRegession,
-  getPearsonResiduals,
+  getResiduals,
 } from "./components/r.js";
 import {
   DATASET,
@@ -257,6 +287,8 @@ import {
   ESTIMATORS,
   RADIO_OPTIONS,
   RADIO_OPTION_INDEX,
+  RESIDUAL_OPTIONS,
+  DEFAULT_RESIDUAL_INDEX,
 } from "./components/config.js";
 import { getPcaData } from "./components/getPcaData.js";
 import {
@@ -264,6 +296,8 @@ import {
   createConditionFormMap,
   createConditionFormUpdater,
   createPcaForm,
+  setConditionFormMode,
+  setFormEnabled,
 } from "./components/forms.js";
 import {
   createPcaClickHandler,

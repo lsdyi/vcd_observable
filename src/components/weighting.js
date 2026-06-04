@@ -3,10 +3,22 @@ import { normWeights } from "./normWeights.js";
 import { getCardinalityFromMatrix, selectFromKeys } from "./util.js";
 
 export const normalizeRawWeights = ({ d3, rawWeights }) => {
-  const total = d3.sum(rawWeights.map((d) => d.w));
-  return rawWeights.map((d) => ({
+  const safeWeights = rawWeights.map((d) => ({
+    ...d,
+    w: Number.isFinite(d.w) && d.w > 0 ? d.w : 0,
+  }));
+  const total = d3.sum(safeWeights.map((d) => d.w));
+
+  if (!Number.isFinite(total) || total <= 0) {
+    return safeWeights.map((d) => ({
+      id: d.id,
+      w: 1 / safeWeights.length,
+    }));
+  }
+
+  return safeWeights.map((d) => ({
     id: d.id,
-    w: total === 0 ? 0 : d.w / total,
+    w: d.w / total,
   }));
 };
 
@@ -90,7 +102,7 @@ export const computeDashboardWeights = ({
 
   const dataWithWeights = data.map((datum, index) => ({
     ...datum,
-    weight: weights[index],
+    weight: Number.isFinite(weights[index]) ? weights[index] : 0,
   }));
 
   return { dataWithWeights, weights };

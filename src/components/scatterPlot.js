@@ -8,6 +8,7 @@ function chart(
   xLabelText = "X Axis",
   yLabelText = "Y Axis",
   data_with_weights,
+  residualType = "deviance",
   onClick,
 ) {
   const margin = { top: 50, right: 30, bottom: 80, left: 100 };
@@ -39,21 +40,41 @@ function chart(
   const grouped = d3.group(data, (d) => d.group);
 
   const wScaleByCat = new Map(
-    Array.from(grouped, ([key, values]) => [
-      key,
-      d3
-        .scaleLinear()
-        .domain(d3.extent(values, (d) => d.weight))
-        .range([0.1, 1.5]),
-    ]),
+    Array.from(grouped, ([key, values]) => {
+      const finiteWeights = values
+        .map((d) => d.weight)
+        .filter((weight) => Number.isFinite(weight));
+      const [minWeight = 0, maxWeight = 1] = d3.extent(finiteWeights);
+      const domain = minWeight === maxWeight ? [0, 1] : [minWeight, maxWeight];
+
+      return [
+        key,
+        d3
+          .scaleLinear()
+          .domain(domain)
+          .range([0.1, 1.5])
+          .clamp(true),
+      ];
+    }),
   );
 
   const getColor = (d) => {
-    if (d.weight === undefined) return z(d.group);
+    if (!Number.isFinite(d.weight)) return z(d.group);
     const base = d3.color(z(d.group));
     const t = wScaleByCat.get(d.group)(d.weight);
     return d3.interpolateRgb("white", base)(t);
   };
+
+  const formatTooltipRows = (rows) =>
+    Object.entries(rows)
+      .map(
+        ([key, value]) => `
+        <div>
+          <strong>${key}:</strong> ${value ?? ""}
+        </div>
+      `,
+      )
+      .join("");
 
   const svg = d3
     .create("svg")
@@ -166,7 +187,7 @@ function chart(
     .join("feMergeNode")
     .attr("in", (d) => d);
 
-  const dataSortedByResidual = data[0].residual
+  const dataSortedByResidual = data.some((d) => Number.isFinite(d.residual))
     ? d3
         .sort(
           data.map((d, i) => ({ ...d, idx: i })),
@@ -174,6 +195,24 @@ function chart(
         )
         .slice(0, topNresidual)
     : [];
+
+  const isTopResidual = (datum) =>
+    datum.group !== "conditional" && dataSortedByResidual.some((d) => d.idx === datum.idx);
+  const sameCoordinate = (a, b) => {
+    if (Number.isFinite(a) && Number.isFinite(b)) {
+      return Math.abs(a - b) <= 1e-9;
+    }
+
+    return String(a) === String(b);
+  };
+  const overlapsTopResidual = (datum) =>
+    datum.group === "conditional" &&
+    dataSortedByResidual.some(
+      (residualPoint) =>
+        sameCoordinate(residualPoint.x, datum.x) && sameCoordinate(residualPoint.y, datum.y),
+    );
+  const hasResidualHighlight = (datum) => isTopResidual(datum) || overlapsTopResidual(datum);
+
   gDot
     .selectAll("circle")
     .data(data.map((d, i) => ({ ...d, idx: i })))
@@ -182,39 +221,27 @@ function chart(
     .attr("cy", (d) => y(d.y))
     .attr("r", (d) => (d.weight === undefined ? 8 : 5))
     .attr("fill", (d) => getColor(d))
-    .attr("stroke", (_, i) =>
-      dataSortedByResidual.find((d) => d.idx === i) ? "red" : "none",
-    )
-    .attr("filter", (_, i) =>
-      dataSortedByResidual.find((d) => d.idx === i) ? "url(#red-glow)" : null,
-    )
+    .attr("stroke", (d) => (hasResidualHighlight(d) ? "red" : "none"))
+    .attr("stroke-width", (d) => (hasResidualHighlight(d) ? 3 : 1))
+    .attr("filter", (d) => (hasResidualHighlight(d) ? "url(#red-glow)" : null))
     .on("mouseover", function (event, d) {
       const obs = data_with_weights[d.idx] || d;
+      const details = {
+        group: d.group,
+        index: d.idx,
+        residualType,
+        [xLabelText]: d.x,
+        [yLabelText]: d.y,
+        ...obs,
+        weight: Number.isFinite(d.weight) ? d.weight : obs.weight,
+        residual: Number.isFinite(d.residual) ? d.residual : obs.residual,
+      };
+
       tooltip.style("visibility", "visible").html(`
-      <div><strong>Group:</strong> ${d.group}</div>
-     ${Object.keys(obs)
-       .map(
-         (key) => `
-        <div>
-          <strong>${key}:</strong> ${obs[key]}
-        </div>
-      `,
-       )
-       .join("")}
-      
-      ${
-        d.weight !== undefined
-          ? `<div><strong>weight:</strong> ${d.weight}</div>`
-          : ""
-      }
-      ${
-        d.residual !== undefined
-          ? `<div><strong>residual:</strong> ${d.residual}</div>`
-          : ""
-      }
+      ${formatTooltipRows(details)}
     `);
 
-      d3.select(this).attr("stroke", "black");
+      d3.select(this).attr("stroke", hasResidualHighlight(d) ? "red" : "black");
     })
     .on("mousemove", function (event) {
       tooltip
@@ -224,11 +251,11 @@ function chart(
     .on("mouseout", function (event) {
       tooltip.style("visibility", "hidden");
 
-      d3.select(this).attr("stroke", (d) =>
-        dataSortedByResidual.find((x) => x.idx === d.idx) ? "red" : "none",
-      );
+      d3.select(this).attr("stroke", (d) => (hasResidualHighlight(d) ? "red" : "none"));
     })
     .on("click", function (event, d) {
+      if (!onClick) return;
+
       const obs = data_with_weights[d.idx];
       if (obs) {
         onClick?.(obs);

@@ -19,18 +19,22 @@ export const reconstructPcaCoordinate = ({ pcaProxyObj, continousKeys, pcCordina
 };
 
 export const getConditionPointState = ({
-  showPCA,
+  usePCA,
   keys,
+  continousKeys,
   reconstructedCoordinate,
   sliderPoint,
 }) => {
-  const conditionPointObj =
-    showPCA.id === 0
-      ? Object.fromEntries(keys.map((key, index) => [key, reconstructedCoordinate[index]]))
-      : sliderPoint;
+  const conditionPointObj = usePCA
+    ? {
+        ...sliderPoint, // PCA only process continous covariates
+        ...Object.fromEntries(
+          continousKeys.map((key, index) => [key, reconstructedCoordinate[index]]),
+        ),
+      }
+    : sliderPoint;
 
-  const conditionPoint =
-    showPCA.id === 0 ? reconstructedCoordinate : Object.values(conditionPointObj);
+  const conditionPoint = keys.map((key) => conditionPointObj[key]);
 
   return { conditionPoint, conditionPointObj };
 };

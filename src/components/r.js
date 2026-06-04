@@ -93,17 +93,22 @@ const poissonRegression = async (
   return output;
 };
 
-const getPearsonResiduals = async () => {
+const getResiduals = async (type = "deviance") => {
+  const residualType = type === "pearson" ? "pearson" : "deviance";
   const rCodes = `
-    p_res <- residuals(fit, type = "pearson")
+    p_res <- tryCatch(
+      residuals(fit, type = "${residualType}"),
+      error = function(e) residuals(fit, type = "pearson")
+    )
   `;
 
   const result = await webR.evalR(rCodes);
 
   const output = await result.toJs();
-
   return output;
 };
+
+const getPearsonResiduals = () => getResiduals("pearson");
 
 const loess = async (setup = "Y ~ X1 + X2 + X3 + X4") => {
   const rCodes = `
@@ -139,5 +144,6 @@ export {
   poissonRegression,
   poissonRegession,
   loess,
+  getResiduals,
   getPearsonResiduals,
 };
